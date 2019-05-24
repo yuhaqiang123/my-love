@@ -1,3 +1,4 @@
+[![HitCount](http://hits.dwyl.io/yuhaiqiang/https://githubcom/yuhaqiang123/my-love.svg)](http://hits.dwyl.io/yuhaiqiang/https://githubcom/yuhaqiang123/my-love)
 
 兵者,国之大事.面试亦,人生之大事.面好了,外道超车,走出困境,一路凯歌,走向下一个巅峰.面差了,不光白费力,还会进入自暴自弃,自我否定的旋涡.
  笔者在面过 猿辅导,去哪儿,旷视, 陌陌,头条, 阿里, 快手, 美团, 腾讯之后,除了收获一大堆面试问题,还思考到如何成为面试官眼中的"爱技术,爱思考,靠谱,有潜力候选人的"一些"套路".
