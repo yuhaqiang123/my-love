@@ -1,0 +1,443 @@
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+<meta content="text/css" http-equiv="Content-Style-Type">
+<title>零拷贝&amp; mmap</title>
+</head>
+<body>
+<h1 align="center" class="root">
+<a name="3cujs2945t1nvaj392r4dgpitn">零拷贝&amp; mmap</a>
+</h1>
+<h2 class="topic">
+<a name="4uiqpqb69betdffv0otngo1vph">内存零拷贝技术</a>
+</h2>
+<h3 class="topic">
+<a name="58b4p8k9g89jvceqfcbuhlhc4l">&nbsp;实现方式</a>
+</h3>
+<h3 class="topic">
+<a name="77pgo13i1ovetisp5mq3am3bpa">&nbsp;&nbsp;直接 IO</a>
+</h3>
+<h3 class="topic">
+<a name="0j79dqpbtflf8sdpot4ljk28f4">&nbsp;&nbsp;&nbsp;直接 I/O：对于这种数据传输方式来说，应用程序可以直接访问硬件存储，操作系统内核只是辅助数据传输。这种方式依旧存在用户空间和内核空间的上下文切换，但是硬件上的数据不会拷贝一份到内核空间，而是直接拷贝至了用户空间，因此直接I/O不存在内核空间缓冲区和用户空间缓冲区之间的数据拷贝。</a>
+</h3>
+<h3 class="topic">
+<a name="4b915382v98v89pe4sjeq4r6l0">&nbsp;&nbsp;&nbsp;直接硬件(磁盘)-&gt;用户控件缓冲区</a>
+</h3>
+<h3 class="topic">
+<a name="22djbshsr023e4erfm8k4d2iv4">&nbsp;&nbsp;避免内核空间和用户控件内的数据拷贝</a>
+</h3>
+<h3 class="topic">
+<a name="7npva8j2038m7jp1idbth70p6c">&nbsp;&nbsp;&nbsp;② 在数据传输过程中，避免数据在用户空间缓冲区和系统内核空间缓冲区之间的CPU拷贝，以及数据在系统内核空间内的CPU拷贝。本文主要讨论的就是该方式下的零拷贝机制。</a>
+</h3>
+<h3 class="topic">
+<a name="585oeogmnr6bl629l2sltbkie4">&nbsp;&nbsp;&nbsp;共享内核缓冲区到用户地址空间</a>
+</h3>
+<h3 class="topic">
+<a name="28a11va2k2spcdug1bas2i6bar">&nbsp;&nbsp;写时复制</a>
+</h3>
+<h3 class="topic">
+<a name="5f3lo8gbsniok3ok5kp4retnk7">&nbsp;&nbsp;&nbsp;copy-on-write(写时复制技术)：在某些情况下，Linux操作系统的内核空间缓冲区可能被多个应用程序所共享，操作系统有可能会将用户空间缓冲区地址映射到内核空间缓存区中。当应用程序需要对共享的数据进行修改的时候，才需要真正地拷贝数据到应用程序的用户空间缓冲区中，并且对自己用户空间的缓冲区的数据进行修改不会影响到其他共享数据的应用程序。所以，如果应用程序不需要对数据进行任何修改的话，就不会存在数据从系统内核空间缓冲区拷贝到用户空间缓冲区的操作。</a>
+</h3>
+<h3 class="topic">
+<a name="6hftsn8ve1rarqhqhm0a4d1pa5">&nbsp;&nbsp;&nbsp;将用户空间缓冲区地址映射到内核空间缓存区中
+
+当修改时,在复制到用户控件缓冲区</a>
+</h3>
+<h3 class="topic">
+<a name="1ifolsa91u365pdhs8hqt4c2iq">&nbsp;场景案例</a>
+</h3>
+<h3 class="topic">
+<a name="4pa1gdmta2jom8s2jcpsduls0h">&nbsp;&nbsp;将系统中的文件发送到远端(该流程涉及：
+磁盘上文件 &mdash;&mdash;&gt; 内存(字节数组) &mdash;&mdash;&gt; 传输给用户/网络)来详细展开传统I/O操作和通过零拷贝来实现的I/O操</a>
+</h3>
+<h3 class="topic">
+<a name="03b0dl1ipjmcpk3puo2s3kajqq">&nbsp;&nbsp;传统IO</a>
+</h3>
+<h3 class="topic">
+<a name="6q6aj43a7p2rpdrshkiiounull">&nbsp;&nbsp;&nbsp;① 发出read系统调用：导致用户空间到内核空间的上下文切换(第一次上下文切换)。通过DMA引擎将文件中的数据从磁盘上读取到内核空间缓冲区(第一次拷贝: hard drive &mdash;&mdash;&gt; kernel buffer)。</a>
+</h3>
+<h3 class="topic">
+<a name="36c3ne27mekpsq5dkt68gtrikt">&nbsp;&nbsp;&nbsp; ② 将内核空间缓冲区的数据拷贝到用户空间缓冲区(第二次拷贝: kernel buffer &mdash;&mdash;&gt; user buffer)，然后read系统调用返回。而系统调用的返回又会导致一次内核空间到用户空间的上下文切换(第二次上下文切换)。</a>
+</h3>
+<h3 class="topic">
+<a name="434taqsrpg37nralthn6070foa">&nbsp;&nbsp;&nbsp; ③ 发出write系统调用：导致用户空间到内核空间的上下文切换(第三次上下文切换)。将用户空间缓冲区中的数据拷贝到内核空间中与socket相关联的缓冲区中(即，第②步中从内核空间缓冲区拷贝而来的数据原封不动的再次拷贝到内核空间的socket缓冲区中。)(第三次拷贝: user buffer &mdash;&mdash;&gt; socket buffer)。</a>
+</h3>
+<h3 class="topic">
+<a name="4kmg59ttutk9c38q4p4q9l4pac">&nbsp;&nbsp;&nbsp; ④ write系统调用返回，导致内核空间到用户空间的再次上下文切换(第四次上下文切换)。通过DMA引擎将内核缓冲区中的数据传递到协议引擎(第四次拷贝: socket buffer &mdash;&mdash;&gt; protocol engine)，这次拷贝是一个独立且异步的过程。</a>
+</h3>
+<h3 class="topic">
+<a name="5nk8k9ginlet98kde95a2lfb4v">&nbsp;&nbsp;&nbsp;总结 read-&gt; 磁盘到内核缓冲区. -&gt; 用户缓冲区,   write 用户缓冲区-&gt; socket缓冲区-&gt; 网卡驱动</a>
+</h3>
+<h3 class="topic">
+<a name="1qch7ub6d7j6ug6a12kvk29ctq">&nbsp;&nbsp;&nbsp;传统的I/O操作进行了4次用户空间与内核空间的上下文切换，以及4次数据拷贝。其中4次数据拷贝中包括了2次DMA拷贝和2次CPU拷贝。</a>
+</h3>
+<h3 class="topic">
+<a name="2c7r6g8m8sgekq41q6ibuvf50l">&nbsp;&nbsp;&nbsp;tip   内核缓冲区-到磁盘和网卡或者反向 都是 DMA 可以做的, 在用户缓冲区和内核缓冲区都是内存带宽和cpu 消耗</a>
+</h3>
+<h3 class="topic">
+<a name="7npe63k9bb9pej4eg85gpgolp1">&nbsp;&nbsp;传统IO问题</a>
+</h3>
+<h3 class="topic">
+<a name="2d7hq6pouf2idpkjjccnmmbps9">&nbsp;&nbsp;&nbsp; 传统I/O模式为什么将数据从磁盘读取到内核空间缓冲区，然后再将数据从内核空间缓冲区拷贝到用户空间缓冲区了？为什么不直接将数据从磁盘读取到用户空间缓冲区就好？</a>
+</h3>
+<h3 class="topic">
+<a name="71nuugk9jtrdv7aqdh7i40btoq">&nbsp;&nbsp;&nbsp;&nbsp;传统I/O模式之所以将数据从磁盘读取到内核空间缓冲区而不是直接读取到用户空间缓冲区，是为了减少磁盘I/O操作以此来提高性能。因为OS会根据局部性原理在一次read()系统调用的时候预读取更多的文件数据到内核空间缓冲区中，这样当下一次read()系统调用的时候发现要读取的数据已经存在于内核空间缓冲区中的时候只要直接拷贝数据到用户空间缓冲区中即可，无需再进行一次低效的磁盘I/O操作(注意：磁盘I/O操作的速度比直接访问内存慢了好几个数量级)。</a>
+</h3>
+<h3 class="topic">
+<a name="3pr5i0lktgi39u4pmfhiecc5cc">&nbsp;&nbsp;&nbsp;&nbsp;自我总结: read系统调用可以从磁盘中预取一部分数据到内核缓冲区.避免多次随机磁盘读取(局部性原理)</a>
+</h3>
+<h3 class="topic">
+<a name="01gp5q41nfm9l9fhe3k20mu5j2">&nbsp;&nbsp;&nbsp;既然系统内核缓冲区能够减少磁盘I/O操作，那么我们经常使用的BufferedInputStream缓冲区又是用来干啥的？</a>
+</h3>
+<h3 class="topic">
+<a name="61dtqusdk7eoc3pbqp78aba98f">&nbsp;&nbsp;&nbsp;&nbsp; A: BufferedInputStream的作用是会根据情况自动为我们预取更多的数据到它自己维护的一个内部字节数据缓冲区中，这样做能够减少系统调用的次数以此来提供性能。</a>
+</h3>
+<h3 class="topic">
+<a name="6ik3jbf5m7rfufdcfpnat3cpr0">&nbsp;&nbsp;&nbsp;总的来说内核空间缓冲区的一大用处是为了减少磁盘I/O操作，因为它会从磁盘中预读更多的数据到缓冲区中。而BufferedInputStream的用处是减少&ldquo;系统调用&rdquo;。</a>
+</h3>
+<p class="labelsAndMarkers">
+<img class="marker" src="%E9%9B%B6%E6%8B%B7%E8%B4%9D&amp; mmap_files/images/priority_1.png"></p>
+<h3 class="topic">
+<a name="66d6vbp2mbdkng4h7phda14p01">&nbsp;DMA</a>
+</h3>
+<h3 class="topic">
+<a name="3o03ct4ggbqmjdorffplgbu636">&nbsp;&nbsp; DMA(Direct Memory Access) &mdash;&mdash;&mdash;&mdash; 直接内存访问 ：DMA是允许外设组件将I/O数据直接传送到主存储器中并且传输不需要CPU的参与，以此将CPU解放出来去完成其他的事情。</a>
+</h3>
+<h3 class="topic">
+<a name="61fcgp3uulhl8c3sa8vhrd0hf2">&nbsp;&nbsp; 而用户空间与内核空间之间的数据传输并没有类似DMA这种可以不需要CPU参与的传输工具，因此用户空间与内核空间之间的数据传输是需要CPU全程参与的。所有也就有了通过零拷贝技术来减少和避免不必要的CPU数据拷贝过程。</a>
+</h3>
+<h3 class="topic">
+<a name="2gqudlif11fhicopvgrqfscbps">&nbsp;&nbsp;思考: 外设例如磁盘网卡显卡均允许 和内存直接的直接IO,解放 CPU ,但是内存之间的数据拷贝 只能 CPU自己来干</a>
+</h3>
+<h3 class="topic">
+<a name="4stn857ou0djukt45r2n3r59b9">&nbsp;通过sendfile实现的零拷贝I/O</a>
+</h3>
+<h3 class="topic">
+<a name="0nan3roiaen302c5l245u6mmdc">&nbsp;&nbsp;① 发出sendfile系统调用，导致用户空间到内核空间的上下文切换(第一次上下文切换)。通过DMA引擎将磁盘文件中的内容拷贝到内核空间缓冲区中(第一次拷贝: hard drive &mdash;&mdash;&gt; kernel buffer)。然后再将数据从内核空间缓冲区拷贝到内核中与socket相关的缓冲区中(第二次拷贝: kernel buffer &mdash;&mdash;&gt; socket buffer)。</a>
+</h3>
+<h3 class="topic">
+<a name="53bi8c396t1bl5d8ndonrdknk9">&nbsp;&nbsp; ② sendfile系统调用返回，导致内核空间到用户空间的上下文切换(第二次上下文切换)。通过DMA引擎将内核空间socket缓冲区中的数据传递到协议引擎(第三次拷贝: socket buffer &mdash;&mdash;&gt; protocol engine)</a>
+</h3>
+<h3 class="topic">
+<a name="25rd1q9b954vct450vflbqigtr">&nbsp;&nbsp;通过sendfile实现的零拷贝I/O只使用了2次用户空间与内核空间的上下文切换，以及3次数据的拷贝。其中3次数据拷贝中包括了2次DMA拷贝和1次CPU拷贝。</a>
+</h3>
+<h3 class="topic">
+<a name="0oouu030nto7ppjtldjgpsf07d">&nbsp;&nbsp;但通过是这里还是存在着一次CPU拷贝操作，即，kernel buffer &mdash;&mdash;&gt; socket buffer。是否有办法将该拷贝操作也取消掉了？</a>
+</h3>
+<h3 class="topic">
+<a name="43os9srj2kvmrgiuc4kt8po6rs">&nbsp;&nbsp;&nbsp;需要底层操作系统的支持。从Linux 2.4版本开始，操作系统底层提供了scatter/gather这种DMA的方式来从内核空间缓冲区中将数据直接读取到协议引擎中，而无需将内核空间缓冲区中的数据再拷贝一份到内核空间socket相关联的缓冲区中</a>
+</h3>
+<h3 class="topic">
+<a name="5e6rqcm90ar3t6v5jbnaptsp13">&nbsp;&nbsp;可以通过操作系统支持, 通过外设将数据 DMA传输到内核缓冲区,然后再从内核缓冲区-&gt; 到另一个外设的中, 两次 DMA即可</a>
+</h3>
+<h3 class="topic">
+<a name="1h8qtovci3bbhtq9u08j9la7qe">&nbsp;&nbsp;sendfile()系统调用也会引起用户态到内核态的切换，与内存映射方式不同的是，用户空间此时是无法看到或修改数据内容，也就是说这是一次完全意义上的数据传输过程。</a>
+</h3>
+<p class="labelsAndMarkers">
+<img class="marker" src="%E9%9B%B6%E6%8B%B7%E8%B4%9D&amp; mmap_files/images/priority_1.png"> <img class="marker" src="%E9%9B%B6%E6%8B%B7%E8%B4%9D&amp; mmap_files/images/progress_done.png"></p>
+<h3 class="topic">
+<a name="2l6gqniisdq0ugnik4g9in94c6">&nbsp;&nbsp;&nbsp;mmap 是通过将磁盘文件映射到内存, 对内存的修改将写会文件. 可以加速读写文件, 可以实现进程间共享</a>
+</h3>
+<h3 class="topic">
+<a name="6qah54kbap1jtbqftka5epe3md">&nbsp;带有DMA收集拷贝功能的sendfile实现的I/O</a>
+</h3>
+<h3 class="topic">
+<a name="4kdkcd754dcbnu0lufdqb1tkrq">&nbsp;&nbsp;Linux 2.4版本开始，操作系统底层提供了带有scatter/gather的DMA来从内核空间缓冲区中将数据读取到协议引擎中。这样一来待传输的数据可以分散在存储的不同位置上，而不需要在连续存储中存放。那么从文件中读出的数据就根本不需要被拷贝到socket缓冲区中去，只是需要将缓冲区描述符添加到socket缓冲区中去，DMA收集操作会根据缓冲区描述符中的信息将内核空间中的数据直接拷贝到协议引擎</a>
+</h3>
+<h3 class="topic">
+<a name="4m1mpi32jpki0onr3lk846aj57">&nbsp;&nbsp;过程</a>
+</h3>
+<h3 class="topic">
+<a name="2f0ufrialfmf6mccgmh83db28u">&nbsp;&nbsp;&nbsp;① 发出sendfile系统调用，导致用户空间到内核空间的上下文切换(第一次上下文切换)。通过DMA引擎将磁盘文件中的内容拷贝到内核空间缓冲区中(第一次拷贝: hard drive &mdash;&mdash;&gt; kernel buffer)。</a>
+</h3>
+<h3 class="topic">
+<a name="24vs2osfjujcknqi159pvpruhn">&nbsp;&nbsp;&nbsp; ② 没有数据拷贝到socket缓冲区。取而代之的是只有相应的描述符信息会被拷贝到相应的socket缓冲区当中。该描述符包含了两方面的信息：a)kernel buffer的内存地址；b)kernel buffer的偏移量。</a>
+</h3>
+<h3 class="topic">
+<a name="7vm43v8afluhl5csdgvm0ffui2">&nbsp;&nbsp;&nbsp; ③ sendfile系统调用返回，导致内核空间到用户空间的上下文切换(第二次上下文切换)。DMA gather copy根据socket缓冲区中描述符提供的位置和偏移量信息直接将内核空间缓冲区中的数据拷贝到协议引擎上(第二次拷贝: kernel buffer &mdash;&mdash;&gt; protocol engine)，这样就避免了最后一次CPU数据拷贝。</a>
+</h3>
+<h3 class="topic">
+<a name="264k2la1sc1v9k8id0kbubvcbn">&nbsp;&nbsp;&nbsp;总结</a>
+</h3>
+<h3 class="topic">
+<a name="4g738oq4muartvr3e8tn7mj1tr">&nbsp;&nbsp;&nbsp;&nbsp;带有DMA收集拷贝功能的sendfile实现的I/O只使用了2次用户空间与内核空间的上下文切换，以及2次数据的拷贝，而且这2次的数据拷贝都是非CPU拷贝。这样一来我们就实现了最理想的零拷贝I/O传输了，不需要任何一次的CPU拷贝，以及最少的上下文切换</a>
+</h3>
+<h3 class="topic">
+<a name="5k91qgchol22gmkirkj008p2q5">&nbsp;&nbsp;&nbsp;&nbsp;通过将内核缓冲区 的描述符拷贝到 socket缓冲区, 这样dma 可以直接访问到对应内核缓冲区的数据,减少了最后一次 CPU io拷贝</a>
+</h3>
+<h3 class="topic">
+<a name="73rbngqi7c1sqbt0e74d391bi8">&nbsp;&nbsp;Linux 2.6之后,支持文件-&gt; 文件, 文件到 socket 的数据传输, 即使文件到文件也需要到内核缓冲区做中转</a>
+</h3>
+<h3 class="topic">
+<a name="6og8v8313amglcl62ckb6ka284">&nbsp;比较</a>
+</h3>
+<h3 class="topic">
+<a name="2df1hkp55ufda8sd4leoslph5s">&nbsp;&nbsp;"传统I/O&rdquo; VS &ldquo;sendfile零拷贝I/O&rdquo;</a>
+</h3>
+<h3 class="topic">
+<a name="5ghslalq6q8db14fpr03lgljht">&nbsp;&nbsp;传统I/O通过两条系统指令read、write来完成数据的读取和传输操作，以至于产生了4次用户空间与内核空间的上下文切换的开销；而sendfile只使用了一条指令就完成了数据的读写操作，所以只产生了2次用户空间与内核空间的上下文切换。</a>
+</h3>
+<h3 class="topic">
+<a name="0mh9se78loqimneeo8n216hb0n">&nbsp;&nbsp;传统I/O产生了2次无用的CPU拷贝，即内核空间缓存中数据与用户空间缓冲区间数据的拷贝；而sendfile最多只产出了一次CPU拷贝，即内核空间内之间的数据拷贝，甚至在底层操作体系支持的情况下，sendfile可以实现零CPU拷贝的I/O。</a>
+</h3>
+<h3 class="topic">
+<a name="3gu0l9pgb426s4gdmm76i3d7qi">&nbsp;&nbsp;因传统I/O用户空间缓冲区中存有数据，因此应用程序能够对此数据进行修改等操作；而sendfile零拷贝消除了所有内核空间缓冲区与用户空间缓冲区之间的数据拷贝过程，因此sendfile零拷贝I/O的实现是完成在内核空间中完成的，这对于应用程序来说就无法对数据进行操作了。</a>
+</h3>
+<h3 class="topic">
+<a name="7stkutj0hr9961bpouo3uiab7f">&nbsp;通过mmap实现的零拷贝I/O</a>
+</h3>
+<h3 class="topic">
+<a name="7trl8eq0nmth0k5lr20u3tcn09">&nbsp;&nbsp;过程</a>
+</h3>
+<h3 class="topic">
+<a name="5dg3sm89reekt1p8mrss61h9mp">&nbsp;&nbsp;&nbsp;① 发出mmap系统调用，导致用户空间到内核空间的上下文切换(第一次上下文切换)。通过DMA引擎将磁盘文件中的内容拷贝到内核空间缓冲区中(第一次拷贝: hard drive &mdash;&mdash;&gt; kernel buffer)。</a>
+</h3>
+<h3 class="topic">
+<a name="3i1fghtg9s9g52p8k9vvk2tp07">&nbsp;&nbsp;&nbsp; ② mmap系统调用返回，导致内核空间到用户空间的上下文切换(第二次上下文切换)。接着用户空间和内核空间共享这个缓冲区，而不需要将数据从内核空间拷贝到用户空间。因为用户空间和内核空间共享了这个缓冲区数据，所以用户空间就可以像在操作自己缓冲区中数据一般操作这个由内核空间共享的缓冲区数据。</a>
+</h3>
+<h3 class="topic">
+<a name="2gh2iq7qsldord17uuso9i2k5p">&nbsp;&nbsp;&nbsp; ③ 发出write系统调用，导致用户空间到内核空间的上下文切换(第三次上下文切换)。将数据从内核空间缓冲区拷贝到内核空间socket相关联的缓冲区(第二次拷贝: kernel buffer &mdash;&mdash;&gt; socket buffer)。</a>
+</h3>
+<h3 class="topic">
+<a name="4v70mv5do7hnq0clacqhf4u3ku">&nbsp;&nbsp;&nbsp; ④ write系统调用返回，导致内核空间到用户空间的上下文切换(第四次上下文切换)。通过DMA引擎将内核空间socket缓冲区中的数据传递到协议引擎(第三次拷贝: socket buffer &mdash;&mdash;&gt; protocol engine)</a>
+</h3>
+<h3 class="topic">
+<a name="7ttr0aa2fv0ib8nmgmi3utsdlm">&nbsp;&nbsp;&nbsp;通过mmap实现的零拷贝I/O进行了4次用户空间与内核空间的上下文切换，以及3次数据拷贝。其中3次数据拷贝中包括了2次DMA拷贝和1次CPU拷贝</a>
+</h3>
+<h2 class="topic">
+<a name="209nu7u8jlre2jkoh4beqhf83d">buffer io/ direct io</a>
+</h2>
+<h3 class="topic">
+<a name="00l8qr5dvm5u0142vcmled9pmr">&nbsp;buffer IO</a>
+</h3>
+<h3 class="topic">
+<a name="3n1m54kvm9nua1248fq1gvsvcs">&nbsp;&nbsp;大多数文件系统的默认 I/O 操作都是缓存 I/O</a>
+</h3>
+<h3 class="topic">
+<a name="2i02ogb1d1727f9oafejrepnnc">&nbsp;&nbsp;步骤</a>
+</h3>
+<h3 class="topic">
+<a name="2etd1cq9cdsm9vu0bh990quqlh">&nbsp;&nbsp;&nbsp;磁盘DMA 读取数据到内核缓冲区 也就是page cache</a>
+</h3>
+<h3 class="topic">
+<a name="6mq7eqvh524gp2rmoekdv6fcqb">&nbsp;&nbsp;&nbsp;操作系统内核的缓冲区拷贝到应用程序的地址空间</a>
+</h3>
+<h3 class="topic">
+<a name="0icj7vtf8m7ct09t1j1iav6j9r">&nbsp;&nbsp;&nbsp;用户态库使用这些数据(对实际应用代码可能还会提供缓存)</a>
+</h3>
+<h3 class="topic">
+<a name="3sg4eui53gqksk1gbbnilca9dk">&nbsp;&nbsp;好处</a>
+</h3>
+<h3 class="topic">
+<a name="05rr5mglmnrijih7c93qtguo9r">&nbsp;&nbsp;&nbsp;缓存 I/O 使用了操作系统内核缓冲区，在一定程度上分离了应用程序空间和实际的物理设备。</a>
+</h3>
+<h3 class="topic">
+<a name="0pdekks9s1ihuon433loa0ip8h">&nbsp;&nbsp;&nbsp;缓存 I/O 可以减少读盘的次数，从而提高性能。</a>
+</h3>
+<h2 class="topic">
+<a name="26icbfq1podrvpe6satdo2gsd5">mmap</a>
+</h2>
+<h3 class="topic">
+<a name="08jver4drr7ruoag7onr8ugu2u">&nbsp;概述</a>
+</h3>
+<h3 class="topic">
+<a name="4ns8tmm53qmrqhf7nhjb7ss1tt">&nbsp;&nbsp;将文件的一部分映射到调用进程的虚拟内存中.</a>
+</h3>
+<h3 class="topic">
+<a name="4ug11qug209bq3k6tdu8mga08o">&nbsp;&nbsp;&nbsp;实际是将进程虚拟地址映射到page cache物理映射</a>
+</h3>
+<h3 class="topic">
+<a name="29raq5jng53a275j5rvipn6716">&nbsp;&nbsp;&nbsp;也可以使用匿名映射,不指定文件</a>
+</h3>
+<h3 class="topic">
+<a name="72uirpit0h7k2ikhfida4r8rj3">&nbsp;&nbsp;进程共享内存的一种方式</a>
+</h3>
+<h3 class="topic">
+<a name="5n69nb1de28euiaavqkqnat1o1">&nbsp;私有映射</a>
+</h3>
+<h3 class="topic">
+<a name="14065ne1ej57g6nbrl50a8fn99">&nbsp;&nbsp;映射的内容对其他进程不可见</a>
+</h3>
+<h3 class="topic">
+<a name="36jno6aun6nbk00lvkv8e9t602">&nbsp;&nbsp;文件映射的话, 修改也不会变更到文件, 即使 多个进程使用私有映射, 初始时共享了此块内存, 但是后续变更也不会对其他进程可见, linux使用了写时复制技术, 对于变更的修改,会重新分配内存</a>
+</h3>
+<h3 class="topic">
+<a name="0eb3v4mtd68snf1o4srrflfla8">&nbsp;&nbsp;私有匿名映射:常用来分配一块零初始化内存</a>
+</h3>
+<h3 class="topic">
+<a name="02902ini5l8ik6ks4qnk89rqr1">&nbsp;&nbsp;私有文件映射,常用于可执行文件或共享库的初始化数据端. 既可以将文件内容映射到内存,修改变更又不会同步到文件</a>
+</h3>
+<h3 class="topic">
+<a name="6g2uolpt4o0acvl5vsg6qvueq3">&nbsp;共享映射</a>
+</h3>
+<h3 class="topic">
+<a name="36stcrchifnsgc1stk9h866anc">&nbsp;&nbsp;对其他进程可见, 也会修改到文件.</a>
+</h3>
+<h3 class="topic">
+<a name="5r4thqt7dkggbu6mfn6cbp5avd">&nbsp;&nbsp;匿名映射: 子进程在fork时,会继承这个映射,在父子进程之间实现内存共享</a>
+</h3>
+<h3 class="topic">
+<a name="69mtc4monqs2gtf60srad3j48m">&nbsp;API介绍</a>
+</h3>
+<h3 class="topic">
+<a name="6770cld2bknn6qgm1ci84p49rq">&nbsp;&nbsp;创建映射</a>
+</h3>
+<h3 class="topic">
+<a name="6u5rp0m8imgj5bppof8j8c4c7o">&nbsp;&nbsp;&nbsp;可以指定映射的首地址(虚拟空间地址, 常常设置null,让内核来分配),该其实地址会进行分页地址对齐</a>
+</h3>
+<h3 class="topic">
+<a name="28k5arbepvicfha7qj723si0gf">&nbsp;&nbsp;&nbsp;指定offset, length可以指定文件的哪一块内存被映射</a>
+</h3>
+<h3 class="topic">
+<a name="2rba26epgudbp23dnenrmqut4q">&nbsp;&nbsp;解除映射</a>
+</h3>
+<h3 class="topic">
+<a name="4fov7fs0dfkr256trda3p37ron">&nbsp;&nbsp;&nbsp;munmap</a>
+</h3>
+<h3 class="topic">
+<a name="5hchlp6b7m3eibt172q10akk31">&nbsp;&nbsp;&nbsp;&nbsp;只需要传入内存映射的地址</a>
+</h3>
+<h3 class="topic">
+<a name="02i9ie3ut5ujg82p0f5pq6hg4l">&nbsp;&nbsp;&nbsp;解除映射后mlock 对内存的锁定(要求常驻内存)将会失效.</a>
+</h3>
+<h3 class="topic">
+<a name="1adq29fop4tjmrr8ku7jg0an3b">&nbsp;&nbsp;&nbsp;exec之后,进程原有的内存映射全部失效</a>
+</h3>
+<h3 class="topic">
+<a name="3sp81qbk9v41ifucfdn2mcjv2d">&nbsp;&nbsp;&nbsp;为了确保解除映射前,文件修改全部写入底层文件, 要调用msync刷新page cache</a>
+</h3>
+<h3 class="topic">
+<a name="1khndom2m6d2t36ecn4bd4es79">&nbsp;&nbsp;参数</a>
+</h3>
+<h3 class="topic">
+<a name="2kucjb12plm6qrik487cu37lfg">&nbsp;&nbsp;&nbsp;默认按照mlock 锁定内存页</a>
+</h3>
+<h3 class="topic">
+<a name="547o9p44rr0feup47sh209j4dh">&nbsp;&nbsp;&nbsp;超前读取. 后续对映射内容的访问,不会出现分页缺陷.(linux 读取时才会从文件中加载进缓存)</a>
+</h3>
+<h3 class="topic">
+<a name="6emam9ccdiunjvtgi6ri8g0huk">&nbsp;&nbsp;mremap可重新映射</a>
+</h3>
+<h3 class="topic">
+<a name="5flcdhjum9mvevoa5musk42nn3">&nbsp;内存映射IO</a>
+</h3>
+<h3 class="topic">
+<a name="5hjbaabigeb6vdgk959905ubei">&nbsp;&nbsp;常用于 文件IO优化, 适合于大量随机访问的场景. 可以不使用read, write的方式访问内存.</a>
+</h3>
+<h3 class="topic">
+<a name="3fg4vigcjmj6hns1qus7go0e26">&nbsp;&nbsp;&nbsp;减少一次内核态到用户态数据的访问.</a>
+</h3>
+<h3 class="topic">
+<a name="4lhgvk9oajrpjunob8n9o5rgra">&nbsp;&nbsp;&nbsp;小数据量IO 由于映射, 分页故障, 解除映射,等.消耗会相比性能提升更费性能.得不偿失了.</a>
+</h3>
+<h3 class="topic">
+<a name="1imigkv2fhf75ojii504lqeki2">&nbsp;边界场景</a>
+</h3>
+<h3 class="topic">
+<a name="46tulm4jq6od9iqotphp31j9m6">&nbsp;&nbsp;当映射数组,小于文件长度,但是却访问了数组的越界部分,则会出现内存错误, 实际是内核发送SIGSEGV,默认是终止进程,core dump</a>
+</h3>
+<h3 class="topic">
+<a name="1dtlgmp9b06ondcgq9jpba9cj2">&nbsp;&nbsp;当映射数组大于文件, 访问无法映射到文件的部分时, 即使修改了,相关修改也不会被映射到文件.</a>
+</h3>
+<h3 class="topic">
+<a name="6tntrkr9bvsqjddeqpa86s2ku6">&nbsp;&nbsp;&nbsp;没有被映射到文件,也不会被共享</a>
+</h3>
+<h3 class="topic">
+<a name="4jjhq6tlknr99srpsm0746pq43">&nbsp;&nbsp;&nbsp;可以使用ftruncate增大文件大小,就可以使用映射了</a>
+</h3>
+<h3 class="topic">
+<a name="4fpc1652si9985j8tj4g1aqqft">&nbsp;msync</a>
+</h3>
+<h3 class="topic">
+<a name="799m85p9e9gcfd0vt9nnmvosf4">&nbsp;&nbsp;刷新page cache到磁盘</a>
+</h3>
+<h3 class="topic">
+<a name="03gfifdrobifmqe2k32dabuq0r">&nbsp;&nbsp;可同步刷盘, 也可以异步刷盘(由pflush负责)</a>
+</h3>
+<h3 class="topic">
+<a name="3lcfddcv71e0urio8v6micfgd1">&nbsp;oom杀手</a>
+</h3>
+<h3 class="topic">
+<a name="1flvqvdbqfgbec6b9gvn1m6ocp">&nbsp;&nbsp;内核会尝试杀死缓解内存消耗状况的最佳进程</a>
+</h3>
+<h3 class="topic">
+<a name="2j6tujuh297r048i1c1bu7ovev">&nbsp;&nbsp;一般不会杀死一下进程</a>
+</h3>
+<h3 class="topic">
+<a name="6ultj1oiuf7gcn3j9feoaq2u2p">&nbsp;&nbsp;&nbsp;特权进程</a>
+</h3>
+<h3 class="topic">
+<a name="2f7seu8vi37uo124akeevpvr1j">&nbsp;&nbsp;&nbsp;正在访问裸设备的进程</a>
+</h3>
+<h3 class="topic">
+<a name="6hf0lun4q1fj6jp7tc3k5vdgq6">&nbsp;&nbsp;&nbsp;已经运行了很长时间,消耗大量cpu的进程.因为杀死他们,会丢失很多工作</a>
+</h3>
+<h3 class="topic">
+<a name="53p882ppl09p1pn9rjssfd08jd">&nbsp;&nbsp;发送SIGKILL信号</a>
+</h3>
+<h3 class="topic">
+<a name="31ucmubtu8ci40m9nm4drhqtr3">&nbsp;&nbsp;&nbsp;子主题 1</a>
+</h3>
+<h2 class="topic">
+<a name="0iqd0nrttn6h4si5mg70tlebun">虚拟内存操作</a>
+</h2>
+<h3 class="topic">
+<a name="0k6dptcesf6mfsu5vtvfifcf2p">&nbsp;mprotect</a>
+</h3>
+<h3 class="topic">
+<a name="1is0193v13a618s1hjlq6kg5f6">&nbsp;&nbsp;修改内存保护位</a>
+</h3>
+<h3 class="topic">
+<a name="405k9scjio0hc4avejgh0sg9qu">&nbsp;mlock</a>
+</h3>
+<h3 class="topic">
+<a name="5me4nsubpvd6ag3l4c05hltrr8">&nbsp;&nbsp;可以保证内存页不被换出</a>
+</h3>
+<h3 class="topic">
+<a name="7s5e639m6gp4apqkk1dmshoslu">&nbsp;&nbsp;&nbsp;对于低延迟的程序,为了避免出现陡然的io延迟</a>
+</h3>
+<h3 class="topic">
+<a name="2593mj5utf6hp7rrp5ttk5k15p">&nbsp;&nbsp;&nbsp;保证敏感信息不被替换到磁盘</a>
+</h3>
+<h3 class="topic">
+<a name="4k0akpn17vgt68huam6dr2q5tl">&nbsp;&nbsp;特权级进程锁住的内存数量没有限制</a>
+</h3>
+<h3 class="topic">
+<a name="6qau93h7jrgli3s1jtnq3ukqdt">&nbsp;&nbsp;接受传入的内存地址,会进行分页对齐</a>
+</h3>
+<h3 class="topic">
+<a name="2i09fmmhe861tr8nlt7q92eig3">&nbsp;&nbsp;内存锁不会再单个进程上叠加. </a>
+</h3>
+<h3 class="topic">
+<a name="1eb137i6cllesdre2libbbbh5u">&nbsp;&nbsp;不会被fork继承</a>
+</h3>
+<h3 class="topic">
+<a name="0s9teug0abqmp04855hinmvg5l">&nbsp;mincore</a>
+</h3>
+<h3 class="topic">
+<a name="2rrvkt049o777ifm5mg9jvtpon">&nbsp;&nbsp;确定内存分页是否在内存中</a>
+</h3>
+<h3 class="topic">
+<a name="3kefusnhv0d9al4460c23pve7q">&nbsp;madvise</a>
+</h3>
+<h3 class="topic">
+<a name="37mucu78geo4327ift5778paim">&nbsp;&nbsp;建议内核后续的内存使用方式, 决定内核是否需要 预先读, 是否会常驻内存, 是不是只会访问一次</a>
+</h3>
+<h3 class="topic">
+<a name="3ju1e0atdahvaglg93m47sf5t0">&nbsp;shmctl</a>
+</h3>
+<h3 class="topic">
+<a name="10685odg1j6j8b6dqtf7ir21eg">&nbsp;&nbsp;只会当内存页发生缺页故障,才会加载进内存,并且被锁住.</a>
+</h3>
+<h3 class="topic">
+<a name="4m64tme0mr9hvnf9s5qiigjatc">&nbsp;&nbsp;即使锁住的进程退出也不会导致该内存页解锁.</a>
+</h3>
+<h3 class="topic">
+<a name="1jg2udrek94rhm3tvqfopfqsev">&nbsp;&nbsp;这个锁和mlock不同, mlock是进程级别的锁. shmctl是系统级的锁.</a>
+</h3>
+<h3 class="topic">
+<a name="2n3sevtjcdg5glsvtnr5rpcta8">&nbsp;可支持将之前所有映射的内存加锁, 也支持后续待分配的映射加锁. 也支持所有都加锁</a>
+</h3>
+</body>
+</html>
