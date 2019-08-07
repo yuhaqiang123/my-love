@@ -1,37 +1,36 @@
 [![HitCount](http://hits.dwyl.io/yuhaiqiang/https://githubcom/yuhaqiang123/my-love.svg)](http://hits.dwyl.io/yuhaiqiang/https://githubcom/yuhaqiang123/my-love)
-<details><summary>�</summary><img src="�"  alt="" /></details>
-<details><summary>j</summary><img src="j"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
-<details><summary>i</summary><img src="i"  alt="" /></details>
+<details><summary>并发编程总结.pic_hd</summary><img src="并发编程总结.pic_hd.jpg"  alt="并发编程总结.pic_hd" /></details>
+<details><summary>AQS</summary><img src="img/AQS.png"  alt="AQS" /></details>
+<details><summary>如何快速融入团队</summary><img src="img/如何快速融入团队.png"  alt="如何快速融入团队" /></details>
+<details><summary>架构-微服务</summary><img src="img/架构-微服务.png"  alt="架构-微服务" /></details>
+<details><summary>Dubbo</summary><img src="img/Dubbo.png"  alt="Dubbo" /></details>
+<details><summary>IO 多路复用</summary><img src="img/IO 多路复用.png"  alt="IO 多路复用" /></details>
+<details><summary>系统编程& 进程线程管理</summary><img src="img/系统编程& 进程线程管理.png"  alt="系统编程& 进程线程管理" /></details>
+<details><summary>CompletableFuture</summary><img src="img/CompletableFuture.png"  alt="CompletableFuture" /></details>
+<details><summary>信号& 中断</summary><img src="img/信号& 中断.png"  alt="信号& 中断" /></details>
+<details><summary>线程池 的其他使用</summary><img src="img/线程池 的其他使用.png"  alt="线程池 的其他使用" /></details>
+<details><summary>进程管理与调度算法</summary><img src="img/进程管理与调度算法.png"  alt="进程管理与调度算法" /></details>
+<details><summary>gc</summary><img src="img/gc.png"  alt="gc" /></details>
+<details><summary>管道&FIFO</summary><img src="img/管道&FIFO.png"  alt="管道&FIFO" /></details>
+<details><summary>文件IO   内存管理</summary><img src="img/文件IO   内存管理.png"  alt="文件IO   内存管理" /></details>
+<details><summary>分布式&&zookeeper</summary><img src="img/分布式&&zookeeper.png"  alt="分布式&&zookeeper" /></details>
+<details><summary>Spring</summary><img src="img/Spring.png"  alt="Spring" /></details>
+<details><summary>web socket</summary><img src="img/web socket.png"  alt="web socket" /></details>
+<details><summary>如何设计一个服务框架</summary><img src="img/如何设计一个服务框架.png"  alt="如何设计一个服务框架" /></details>
+<details><summary>Java 锁和线程</summary><img src="img/Java 锁和线程.png"  alt="Java 锁和线程" /></details>
+<details><summary>通用</summary><img src="img/通用.png"  alt="通用" /></details>
+<details><summary>nginx</summary><img src="img/nginx.png"  alt="nginx" /></details>
+<details><summary>零拷贝& mmap</summary><img src="img/零拷贝& mmap.png"  alt="零拷贝& mmap" /></details>
+<details><summary>tcp</summary><img src="img/tcp.png"  alt="tcp" /></details>
+<details><summary>分布式事务</summary><img src="img/分布式事务.png"  alt="分布式事务" /></details>
+<details><summary>Iinux</summary><img src="img/Iinux.png"  alt="Iinux" /></details>
+<details><summary>CMS</summary><img src="img/CMS.png"  alt="CMS" /></details>
+<details><summary>多线程</summary><img src="img/多线程.png"  alt="多线程" /></details>
+<details><summary>秒杀架构</summary><img src="img/秒杀架构.png"  alt="秒杀架构" /></details>
+<details><summary>算法</summary><img src="img/算法.png"  alt="算法" /></details>
+<details><summary>kafka</summary><img src="img/kafka.png"  alt="kafka" /></details>
+<details><summary>API设计</summary><img src="img/API设计.png"  alt="API设计" /></details>
+<details><summary>Java队列</summary><img src="img/Java队列.png"  alt="Java队列" /></details>
 
 
  在我准备面试的过程中,深刻的思考了如何才能更好更快速的做知识积累.我本人是个记忆力不强的人,看过的东西很容易忘,倒不是理解能力差,而是记住了,看懂了,过了一段时间对于一些细节模糊了, 以至于慢慢的只能对这些曾经熟悉精通的知识成为路人. 我把这种现象称为: 熟悉的陌生知识.
