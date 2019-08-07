@@ -1,5 +1,7 @@
 [![HitCount](http://hits.dwyl.io/yuhaiqiang/https://githubcom/yuhaqiang123/my-love.svg)](http://hits.dwyl.io/yuhaiqiang/https://githubcom/yuhaqiang123/my-love)
-<details><summary>并发编程总结.pic_hd</summary><img src="并发编程总结.pic_hd.jpg"  alt="并发编程总结.pic_hd" /></details>
+
+ 以下为知识总结的图片格式
+<details><summary>java/并发编程总结.pic_hd</summary><img src="java/并发编程总结.pic_hd.jpg"  alt="java/并发编程总结.pic_hd" /></details>
 <details><summary>AQS</summary><img src="img/AQS.png"  alt="AQS" /></details>
 <details><summary>如何快速融入团队</summary><img src="img/如何快速融入团队.png"  alt="如何快速融入团队" /></details>
 <details><summary>架构-微服务</summary><img src="img/架构-微服务.png"  alt="架构-微服务" /></details>
