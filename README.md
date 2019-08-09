@@ -2,15 +2,15 @@
 
  以下为知识总结的图片格式
 <details><summary>java/并发编程总结.pic_hd</summary><img src="java/并发编程总结.pic_hd.jpg"  alt="java/并发编程总结.pic_hd" /></details>
-<details><summary>多线程</summary><img src="img/多线程.png"  alt="多线程" /></details>
-<details><summary>kafka</summary><img src="img/kafka.png"  alt="kafka" /></details>
-<details><summary>nginx</summary><img src="img/nginx.png"  alt="nginx" /></details>
-<details><summary>Java 锁和线程</summary><img src="img/Java 锁和线程.png"  alt="Java 锁和线程" /></details>
-<details><summary>零拷贝& mmap</summary><img src="img/零拷贝& mmap.png"  alt="零拷贝& mmap" /></details>
-<details><summary>文件IO   内存管理</summary><img src="img/文件IO   内存管理.png"  alt="文件IO   内存管理" /></details>
-<details><summary>IO 多路复用</summary><img src="img/IO 多路复用.png"  alt="IO 多路复用" /></details>
-<details><summary>系统编程& 进程线程管理</summary><img src="img/系统编程& 进程线程管理.png"  alt="系统编程& 进程线程管理" /></details>
-<details><summary>进程管理与调度算法</summary><img src="img/进程管理与调度算法.png"  alt="进程管理与调度算法" /></details>
+<img src="img/多线程.png"  alt="多线程" />
+<img src="img/kafka.png"  alt="kafka" />
+<img src="img/nginx.png"  alt="nginx" />
+<img src="img/Java 锁和线程.png"  alt="Java 锁和线程" />
+<img src="img/零拷贝& mmap.png"  alt="零拷贝& mmap" />
+<img src="img/文件IO   内存管理.png"  alt="文件IO   内存管理" />
+<img src="img/IO 多路复用.png"  alt="IO 多路复用" />
+<img src="img/系统编程& 进程线程管理.png"  alt="系统编程& 进程线程管理" />
+<img src="img/进程管理与调度算法.png"  alt="进程管理与调度算法" />
 <details><summary>AQS</summary><img src="img/AQS.png"  alt="AQS" /></details>
 <details><summary>如何快速融入团队</summary><img src="img/如何快速融入团队.png"  alt="如何快速融入团队" /></details>
 <details><summary>架构-微服务</summary><img src="img/架构-微服务.png"  alt="架构-微服务" /></details>
