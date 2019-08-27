@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">API设计</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">基本特性</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">平台独立性</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">向客户端屏蔽后台实现的细节</title>
+								</item>
+								<item type="dict">
+									<title type="str">无论API如何在内部实施，任何客户端都应该能够调用API。这需要使用标准协议，并且具有客户端和Web服务可以就要交换的数据格式达成一致的机制</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">服务发展</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">Web API应该能够独立于客户端应用程序进化和添加功能。随着API的发展，现有的客户端应用程序应该继续运行而无需修改。应该可以发现所有功能，以便客户端应用程序可以完全使用它</title>
+								</item>
+								<item type="dict">
+									<title type="str">API设计要考虑向后兼容性</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">RestAPI 设计</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">设计原则</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">围绕资源设计</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">任何类型的对象，数据或服务</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">资源具有标识符</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">该标识符是唯一标识该资源的URI</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">客户端通过某种交换协议来标识资源</title>
+								</item>
+								<item type="dict">
+									<title type="str">使用统一的接口</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">PUT,DELETE, POST,ADD</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">使用无状态请求模型</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">每个请求是原子的</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">由表示中包含的超媒体链接驱动</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">例如某个资源的详情中,包括修改该资源的链接</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">注意</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">资源URI应基于名词（资源）而不是动词（资源上的操作）</title>
+								</item>
+								<item type="dict">
+									<title type="str">资源不必基于单个物理数据项</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">API设计不要和数据库表关联上</title>
+										</item>
+										<item type="dict">
+											<title type="str">Web API不需要将每个表公开为资源集合</title>
+										</item>
+										<item type="dict">
+											<title type="str">避免在Web API和底层数据源之间引入依赖关系</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">对引用集合的URI使用复数名词</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">/customers是客户集合/customers/5的路径，是ID等于5的客户的路径</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">考虑不同类型资源之间的关系以及如何公开这些关联</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">每个HTTP GET请求应返回通过响应中包含的超链接查找与请求对象直接相关的资源所需的信息，并且还应提供描述每个资源上可用操作的信息</title>
+										</item>
+										<item type="dict">
+											<title type="str">&quot;orderID&quot;:3,
+  &quot;productID&quot;:2,
+  &quot;quantity&quot;:4,
+  &quot;orderValue&quot;:16.60,
+  &quot;links&quot;:[
+    {
+      &quot;rel&quot;:&quot;customer&quot;,
+      &quot;href&quot;:&quot;https://adventure-works.com/customers/3&quot;,
+      &quot;action&quot;:&quot;GET&quot;,
+      &quot;types&quot;:[&quot;text/xml&quot;,&quot;application/json&quot;]
+    },
+    {
+      &quot;rel&quot;:&quot;customer&quot;,
+      &quot;href&quot;:&quot;https://adventure-works.com/customers/3&quot;,
+      &quot;action&quot;:&quot;PUT&quot;,
+      &quot;types&quot;:[&quot;application/x-www-form-urlencoded&quot;]
+    }]</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">动作</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">GET在指定的URI处检索资源的表示。响应消息的正文包含所请求资源的详细信息。</title>
+								</item>
+								<item type="dict">
+									<title type="str">POST在指定的URI处创建新资源。请求消息的主体提供新资源的详细信息。请注意，POST也可用于触发实际不创建资源的操作。</title>
+								</item>
+								<item type="dict">
+									<title type="str">PUT可以在指定的URI处创建或替换资源。请求消息的主体指定要创建或更新的资源。</title>
+								</item>
+								<item type="dict">
+									<title type="str">PATCH执行资源的部分更新。请求正文指定要应用于资源的更改集。</title>
+								</item>
+								<item type="dict">
+									<title type="str">DELETE删除指定URI处的资源。</title>
+								</item>
+								<item type="dict">
+									<title type="str">POST，PUT和PATCH之间的区别</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">POST请求创建资源</title>
+										</item>
+										<item type="dict">
+											<title type="str">PUT请求创建资源或更新现有资源</title>
+										</item>
+										<item type="dict">
+											<title type="str">PATCH请求对现有资源执行部分更新</title>
+										</item>
+										<item type="dict">
+											<title type="str">PUT请求必须是幂等的, POST,PATCH不一定幂等</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>

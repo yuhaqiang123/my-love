@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">CMS</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">特性</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">老年代	</title>
+						</item>
+						<item type="dict">
+							<title type="str">并发 追求低延迟</title>
+						</item>
+						<item type="dict">
+							<title type="str">标记清除算法</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">指定参数可以压缩</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">分支主题 3</title>
+				</item>
+				<item type="dict">
+					<title type="str">过程</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">初步标记</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">STW;   </title>
+								</item>
+								<item type="dict">
+									<title type="str">标记老年代中所有的GC Roots对象</title>
+								</item>
+								<item type="dict">
+									<title type="str">标记年轻代中活着的对象引用到的老年代的对象</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">只标记老年代的</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">[Image]</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">并发标记</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">不会STW</title>
+								</item>
+								<item type="dict">
+									<title type="str">初始标记节点只是会找到部分存活对象,这部分存活对象和gc roots 关联</title>
+								</item>
+								<item type="dict">
+									<title type="str">从初始标记阶段 标记的存活对象开始继续在老年代中找存活的对象</title>
+								</item>
+								<item type="dict">
+									<title type="str">[Image]</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">再次标记 STW</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">标记整个堆的对象,新生代对象也会被当做 GC roots</title>
+								</item>
+								<item type="dict">
+									<title type="str">重新标记存活对象,包括已经改变引用的存活的脏对象.  </title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">并发清理</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">可以和用户线程并行</title>
+								</item>
+								<item type="dict">
+									<title type="str">这个期间还是会产生垃圾对象,即与gc root 失去联系</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">并发重置</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">重置gc 算法需要的数据结构</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">Note</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">CMS gc 不是Full GC,只是老年代的 GC 算法</title>
+						</item>
+						<item type="dict">
+							<title type="str">如果再次标记阶段比较耗时可以尝试添加 -XX:+CMSScavengeBeforeRemark
+收集前清理一次 eden</title>
+						</item>
+						<item type="dict">
+							<title type="str">内存碎片</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">CMS是标记清除算法,会导致内存碎片问题</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>

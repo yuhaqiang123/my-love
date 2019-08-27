@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">spring  cloud</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">常见组件</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">Euraka 服务注册发现组件</title>
+						</item>
+						<item type="dict">
+							<title type="str">Feign 服务调用Rpc框架</title>
+						</item>
+						<item type="dict">
+							<title type="str">Ribbon 服务调用的负载均衡</title>
+						</item>
+						<item type="dict">
+							<title type="str">Hystrix 断路器熔断</title>
+						</item>
+						<item type="dict">
+							<title type="str">Zuul 服务网关</title>
+						</item>
+					</topics>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>

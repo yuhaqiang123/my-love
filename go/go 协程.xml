@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">go 协程</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">Go的调度器结构</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">M:代表真正的内核OS线程，和POSIX里的thread差不多，真正干活的人
+G:代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度。
+P:代表调度的上下文，可以把它看做一个局部的调度器，使go代码在一个线程上跑，它是实现从N:1到N:M映射的关键。</title>
+							<image type="dict">
+								<src type="str">xap:resources/3bbc4145fac1e73e45dd5150f57561e5ab23745b14ab4a17ba9295306f272ed4.png</src>
+								<align type="str">top</align>
+								<width type="int">301</width>
+								<height type="int">295</height>
+							</image>
+						</item>
+						<item type="dict">
+							<title type="str">P的数量可以通过GOMAXPROCS()来设置，它其实也就代表了真正的并发度，即有多少个goroutine可以同时运行。</title>
+							<makers type="list">
+								<item type="str">star-red</item>
+							</makers>
+						</item>
+						<item type="dict">
+							<title type="str">为何要维护多个上下文P</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">当一个OS线程M0陷入阻塞时，P转而在OS线程M1上运行。调度器保证有足够的线程来运行所以的context P。
+因为当一个OS线程被阻塞时，P可以转而投奔另一个OS线程！</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">另一个os线程也是由go进程创建的，如果不够则新建一个内核线程，如果有空闲的线程则</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str"/>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">分支主题 2</title>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>

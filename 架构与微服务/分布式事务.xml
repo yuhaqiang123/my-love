@@ -1,0 +1,683 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">分布式事务</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">示例</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">售票</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">避免购买同一个票</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">银行转账</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">避免出现A-B  两个账户转账不一致</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">交易系统</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">库存,订单,发货,优惠券,积分库存,变化一致</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">CAP</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">一致性</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">数据是否在多个副本之间能否保持一致</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">可用性</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">系统服务一直处于可用状态.(总能在有限时间内返回结果)</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">分区容错性</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">分布式系统在遇到任何网络分区故障的时候，仍然需要能够保证对外提供满足一致性和可用性的服务，除非是整个网络环境都发生了故障。</title>
+								</item>
+								<item type="dict">
+									<title type="str">要保证分区容错, 就只能在一致性和可用性之间 选择一个,如果选择可用性,则数据会不一致,如果保证 数据一致,则不可用.</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">不能同时保证</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">CA	放弃分区容错性，加强一致性和可用性，其实就是传统的单机数据库的选择</title>
+								</item>
+								<item type="dict">
+									<title type="str">AP	放弃一致性（这里说的一致性是强一致性），追求分区容错性和可用性，这是很多分布式系统设计时的选择，例如很多NoSQL系统就是如此</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">很多NOSQL都是异步复制.一致性很弱</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">CP	放弃可用性，追求一致性和分区容错性，基本不会选择，网络问题会直接让整个系统不可用</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">zk是放弃可用性</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">其他</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">网络分区容错性: 当系统出现分区, 出现多个网络分区,分区间网络不可达, 要保证能访问数据,就一定需要保证数据冗余多副本保存.所以网络分区容错可以理解为 数据副本冗余. 即使因为网络或者其他原因,某些节点退出,分布式系统也能恢复(要求数据冗余). 即使分布式系统内部不需要互相访问,也要考虑 节点挂掉的影响.</title>
+									<makers type="list">
+										<item type="str">priority-1</item>
+										<item type="str">task-done</item>
+									</makers>
+								</item>
+								<item type="dict">
+									<title type="str">分区容错性是一个最基本的要求。因为既然是一个分布式系统，那么分布式系统中的组件必然需要被部署到不同的节点，否则也就无所谓分布式系统了，因此必然出现子网络。而对于分布式系统而言，网络问题又是一个必定会出现的异常情况，因此分区容错性也就成为了一个分布式系统必然需要面对和解决的问题。因此系统架构师往往需要把精力花在如何根据业务特点在C（一致性）和A（可用性）之间寻求平衡</title>
+								</item>
+								<item type="dict">
+									<title type="str">一个分布式系统里面，节点组成的网络本来应该是连通的。然而可能因为一些故障，使得有些节点之间不连通了，整个网络就分成了几块区域。数据就散布在了这些不连通的区域中。这就叫分区。当你一个数据项只在一个节点中保存，那么分区出现后，和这个节点不连通的部分就访问不到这个数据了。这时分区就是无法容忍的。提高分区容忍性的办法就是一个数据项复制到多个节点上，那么出现分区之后，这一数据项就可能分布到各个区里。容忍性就提高了。然而，要把数据复制到多个节点，就会带来一致性的问题，就是多个节点上面的数据可能是不一致的。要保证一致，每次写操作就都要等待全部节点写成功，而这等待又会带来可用性的问题。总的来说就是，数据存在的节点越多，分区容忍性越高，但要复制更新的数据就越多，一致性就越难保证。为了保证一致性，更新所有节点数据所需要的时间就越长，可用性就会降低。</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">一致性级别</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">数据冗余副本背景</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">在分布式环境下保障 系统可用性,会有数据冗余.存在数据拷贝</title>
+								</item>
+								<item type="dict">
+									<title type="str">可以使用负载均衡,优化读性能</title>
+								</item>
+								<item type="dict">
+									<title type="str">问题: 不同副本数据不一致.</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">可以使用同步复制解决</title>
+										</item>
+										<item type="dict">
+											<title type="str">同步复制性能下降</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">级别</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">强一致性</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">写什么,读什么. 和单机没区别. 性能是问题</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">弱一致性</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">尽可能在某个时间级别达到一致性</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">最终一致性</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">弱一致性的特例, 保证在一个时间内, 达到数据一致性.</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">问题</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">通信异常</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">网络抖动, 超时等</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">网络分区</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">例如机房tor 交换机损坏,导致网络分区出现两个小集群</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">三态</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">失败,成功, 超时等.</title>
+								</item>
+								<item type="dict">
+									<title type="str">超时</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">（1）由于网络原因，该请求并没有被成功地发送到接收方，而是在发送过程中就发生了消息丢失现象</title>
+										</item>
+										<item type="dict">
+											<title type="str">（2）该请求成功地被接收方接收后，进行了处理，但是在将响应反馈给发送方的过程中，发生了消息丢失现象</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">宕机问题</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">三阶段提交</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">和二阶段的区别</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">1、引入超时机制。同时在协调者和参与者中都引入超时机制。</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">这样当协调者宕机后,参与者可以回滚事务</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">2、在第一阶段和第二阶段中插入一个准备阶段。保证了在最后提交阶段之前各参与节点的状态是一致的</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">阶段</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">CanCommit阶段</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">3PC的CanCommit阶段其实和2PC的准备阶段很像。协调者向参与者发送commit请求，参与者如果可以提交就返回Yes响应，否则返回No响应。</title>
+										</item>
+										<item type="dict">
+											<title type="str">1.事务询问 协调者向参与者发送CanCommit请求。询问是否可以执行事务提交操作。然后开始等待参与者的响应。</title>
+										</item>
+										<item type="dict">
+											<title type="str">2.响应反馈 参与者接到CanCommit请求之后，正常情况下，如果其自身认为可以顺利执行事务，则返回Yes响应，并进入预备状态。否则反馈No</title>
+										</item>
+										<item type="dict">
+											<title type="str">类似于prepare .执行事务,但是不提交</title>
+										</item>
+										<item type="dict">
+											<title type="str">协调者根据参与者的反应情况来决定是否可以记性事务的PreCommit操作</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">假如协调者从所有的参与者获得的反馈都是Yes响应，那么就会执行事务的预执行。</title>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">实际上本阶段并不会真正的执行事务,只是征求一下意见,一般用来做事务性检测.例如 SQL错误,之类的.</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">PreCommit阶段</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">正向</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">1.发送预提交请求 协调者向参与者发送PreCommit请求，并进入Prepared阶段。</title>
+												</item>
+												<item type="dict">
+													<title type="str">2.事务预提交 参与者接收到PreCommit请求后，会执行事务操作，并将undo和redo信息记录到事务日志中。</title>
+												</item>
+												<item type="dict">
+													<title type="str">3.响应反馈 如果参与者成功的执行了事务操作，则返回ACK响应，同时开始等待最终指令。</title>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">反向</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">1.发送中断请求 协调者向所有参与者发送abort请求。</title>
+												</item>
+												<item type="dict">
+													<title type="str">2.中断事务 参与者收到来自协调者的abort请求之后（或超时之后，仍未收到协调者的请求），执行事务的中断</title>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">何时执行终止,也即是反向动作</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">有任何一个参与者向协调者发送了No响应</title>
+												</item>
+												<item type="dict">
+													<title type="str">等待超时之后，协调者都没有接到参与者的响应，那么就执行事务的中断。</title>
+												</item>
+												<item type="dict">
+													<title type="str">超时之后，参与者仍未收到协调者的请求</title>
+													<topics type="list">
+														<item type="dict">
+															<title type="str">为了防止协调者宕机</title>
+														</item>
+													</topics>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">通过一个 PreCommit这个阶段. 让所有的参与者都知道事务可以执行了,其他节点都已经 OK 了.这样即使后续协调者挂了,也可以继续执行最终提交</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">doCommit</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">执行提交</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">1.发送提交请求 协调接收到参与者发送的ACK响应，那么他将从预提交状态进入到提交状态。并向所有参与者发送doCommit请求。</title>
+												</item>
+												<item type="dict">
+													<title type="str">2.事务提交 参与者接收到doCommit请求之后，执行正式的事务提交。并在完成事务提交之后释放所有事务资源。</title>
+												</item>
+												<item type="dict">
+													<title type="str">3.响应反馈 事务提交完之后，向协调者发送Ack响应。</title>
+												</item>
+												<item type="dict">
+													<title type="str">4.完成事务 协调者接收到所有参与者的ack响应之后，完成事务</title>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">中断事务</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">1.发送中断请求 协调者向所有参与者发送abort请求</title>
+												</item>
+												<item type="dict">
+													<title type="str">2.事务回滚 参与者接收到abort请求之后，利用其在阶段二记录的undo信息来执行事务的回滚操作，并在完成回滚之后释放所有的事务资源。</title>
+												</item>
+												<item type="dict">
+													<title type="str">3.反馈结果 参与者完成事务回滚之后，向协调者发送ACK消息</title>
+												</item>
+												<item type="dict">
+													<title type="str">4.中断事务 协调者接收到参与者反馈的ACK消息之后，执行事务的中断</title>
+												</item>
+											</topics>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">三阶段增加一个 CanCommit的意义</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">二阶段提交 当参与者接收到 prepare 并响应后,就进入了 commit 阶段,在该阶段 需要面临提交任务还是终止的问题.出了错误,只能终止.  </title>
+										</item>
+										<item type="dict">
+											<title type="str">如果在二阶段,部分结果接收到了 Commit,其他节点没有接受到,就更为致命,commit后不能 rollback. 所以会导致数据错乱. 如何减少这种情况的发生呢?</title>
+										</item>
+										<item type="dict">
+											<title type="str">如果引入了can commit,也就是在事务执行前, 加一个校验环节. can commit 后, 参与者接收到 preCommit .执行事务, 而后,进入 commit阶段.此时如果出现问题, 参与者已经知道了其他参与者均已 OK.(接受到 PreCommit就说明 OK了).此时如果超时(协调者挂了)就可以直接选择提交. 提高了准确率.  </title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">不会出现 部分 commit的现象. 因为只要有一个节点 commit了,就其他节点也一定会 commit(即使超时).因为只有所有的节点全部接收到 PreCommit(意味着都can commit 了),才可能进入到 commit.</title>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">如果在 PreCommit阶段出现了部分节点 PreCommit现象, 则可以直接超时,终止 rollback事务.(二阶段提交阶段也是这样,只要是 PreCommit阶段,部分 PreCommit,均可以 rollback)</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">二阶段提交</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">准备阶段</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">步骤</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">1）协调者节点向所有参与者节点询问是否可以执行提交操作(vote)，并开始等待各参与者节点的响应。</title>
+										</item>
+										<item type="dict">
+											<title type="str">2）参与者节点执行询问发起为止的所有事务操作，并将Undo信息和Redo信息写入日志。（注意：若成功这里其实每个参与者已经执行了事务操作）</title>
+										</item>
+										<item type="dict">
+											<title type="str">3）各参与者节点响应协调者节点发起的询问。如果参与者节点的事务操作实际执行成功，则它返回一个”同意”消息；如果参与者节点的事务操作实际执行失败，则它返回一个”中止”消息。</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">执行事务,但是不提交</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">提交阶段</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">如果协调者收到了参与者的失败消息或者超时，直接给每个参与者发送回滚(Rollback)消息；否则，发送提交(Commit)消息；参与者根据协调者的指令执行提交或者回滚操作，释放所有事务处理过程中使用的锁资源。(注意:必须在最后阶段释放锁资源)</title>
+								</item>
+								<item type="dict">
+									<title type="str">完成的步骤</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">1）协调者节点向所有参与者节点发出”正式提交(commit)”的请求。</title>
+										</item>
+										<item type="dict">
+											<title type="str">2）参与者节点正式完成操作，并释放在整个事务期间内占用的资源。</title>
+										</item>
+										<item type="dict">
+											<title type="str">3）参与者节点向协调者节点发送”完成”消息。</title>
+										</item>
+										<item type="dict">
+											<title type="str">4）协调者节点受到所有参与者节点反馈的”完成”消息后，完成事务。</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">取消的步骤</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">1）协调者节点向所有参与者节点发出”回滚操作(rollback)”的请求。</title>
+										</item>
+										<item type="dict">
+											<title type="str">2）参与者节点利用之前写入的Undo信息执行回滚，并释放在整个事务期间内占用的资源。</title>
+										</item>
+										<item type="dict">
+											<title type="str">3）参与者节点向协调者节点发送”回滚完成”消息。</title>
+										</item>
+										<item type="dict">
+											<title type="str">4）协调者节点受到所有参与者节点反馈的”回滚完成”消息后，取消事务。</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">缺点</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">1、同步阻塞问题。执行过程中，所有参与节点都是事务阻塞型的。当参与者占有公共资源时，其他第三方节点访问公共资源不得不处于阻塞状态。</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">tcc并不会锁定该条记录. tcc 的 try, confirm 是两个数据库事务</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">2、单点故障。由于协调者的重要性，一旦协调者发生故障。参与者会一直阻塞下去。尤其在第二阶段，协调者发生故障，那么所有的参与者还都处于锁定事务资源的状态中，而无法继续完成事务操作。（如果是协调者挂掉，可以重新选举一个协调者，但是无法解决因为协调者宕机导致的参与者处于阻塞状态的问题）</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">事务管理器宕机后, commit 得不到执行.</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">3、数据不一致。在二阶段提交的阶段二中，当协调者向参与者发送commit请求之后，发生了局部网络异常或者在发送commit请求过程中协调者发生了故障，这回导致只有一部分参与者接受到了commit请求。而在这部分参与者接到commit请求之后就会执行commit操作。但是其他部分未接到commit请求的机器则无法执行事务提交。于是整个分布式系统便出现了数据部一致性的现象。</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">部分结果被 commit了</title>
+										</item>
+										<item type="dict">
+											<title type="str">zab 协议要求只有部分结果 commit 才会最终 commit;</title>
+										</item>
+										<item type="dict">
+											<title type="str">并且zab 中 commit 的是同一份数据, 分布式协议中,是不通的事务,不同的提交</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">4、二阶段无法解决的问题：协调者再发出commit消息之后宕机，而唯一接收到这条消息的参与者同时也宕机了。那么即使协调者通过选举协议产生了新的协调者，这条事务的状态也是不确定的，没人知道事务是否被已经提交。</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">TCC事务</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">过程</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">try</title>
+								</item>
+								<item type="dict">
+									<title type="str">confirm/rollback</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="null"/>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">https://juejin.im/post/5bf201f7f265da610f63528a</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">tcc改造示例</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">https://www.bytesoft.org/</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">tcc思考</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">https://www.ibm.com/developerworks/cn/java/j-lo-jta/</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">jta</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">接口改造</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">先是服务调用链路依次执行Try逻辑</title>
+								</item>
+								<item type="dict">
+									<title type="str">如果都正常的话，TCC分布式事务框架推进执行Confirm逻辑，完成整个事务</title>
+								</item>
+								<item type="dict">
+									<title type="str">如果某个服务的Try逻辑有问题，TCC分布式事务框架感知到之后就会推进执行各个服务的Cancel逻辑，撤销之前执行的各种操作</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">如何保证无状态</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">tcc 事务框架 记录一些分布式事务的活动日志. 可以在数据库中或者磁盘日志文件中记录</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">和二阶段提交的区别</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">2PC机制需要RM提供底层支持（一般是兼容XA），而TCC机制则不需要</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">需要特殊的web容器,数据库支持</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">二阶段事务处理</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">在全局事务决定提交时，a）逐个向RM发送prepare请求；b）若所有RM都返回OK，则逐个发送commit请求最终提交事务；否则，逐个发送rollback请求来回滚事务；</title>
+										</item>
+										<item type="dict">
+											<title type="str">2、 在全局事务决定回滚时，直接逐个发送rollback请求即可，不必分阶段。</title>
+										</item>
+										<item type="dict">
+											<title type="str">不太关注prepare 前的业务逻辑</title>
+										</item>
+										<item type="dict">
+											<title type="str">begin -&gt; 业务逻辑 -&gt; prepare -&gt; commit。</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">TCC事务处理</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">begin -&gt; 业务逻辑(try业务) -&gt; commit(comfirm业务)。</title>
+										</item>
+										<item type="dict">
+											<title type="str">1、 在全局事务决定提交时，调用与try业务逻辑相对应的confirm业务逻辑；</title>
+										</item>
+										<item type="dict">
+											<title type="str">2、 在全局事务决定回滚时，调用与try业务逻辑相对应的cancel业务逻辑。</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">对比</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">1、 2PC机制的业务阶段 等价于 TCC机制的try业务阶段；</title>
+										</item>
+										<item type="dict">
+											<title type="str">2、 2PC机制的提交阶段（prepare &amp; commit） 等价于 TCC机制的提交阶段（confirm）；</title>
+										</item>
+										<item type="dict">
+											<title type="str">3、 2PC机制的回滚阶段（rollback） 等价于 TCC机制的回滚阶段（cancel）。</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">tcc 的思考</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">要么调用confirm业务逻辑，要么调用cancel逻辑。这里为什么没有提到try业务逻辑呢？因为try逻辑与全局事务处理无关</title>
+										</item>
+										<item type="dict">
+											<title type="str">TCC机制将传统事务机制中的业务逻辑一分为二，拆分后保留的部分即为初步操作（Try）；而分离出的部分即为确认操作（Confirm），被延迟到事务提交阶段执行</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">bytetcc实现</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">BASE理论</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">Basically Available（基本可用）、Soft state（软状态）和Eventually consistent（最终一致性</title>
+						</item>
+						<item type="dict">
+							<title type="str">基本可用</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">响应时间增长.但不会失败</title>
+								</item>
+								<item type="dict">
+									<title type="str">系统功能上的损失</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">部分功能不可用</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">最终一致性</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">所有的数据副本，在经过一段时间的同步之后，最终都能够达到一个一致的状态</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">软状态</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">软状态指允许系统中的数据存在中间状态，并认为该中间状态的存在不会影响系统的整体可用性，即允许系统在不同节点的数据副本之间进行数据同步的过程存在延时</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">完全不同于ACID的强一致性模型，而是通过牺牲强一致性来获得可用性，并允许数据在一段时间内是不一致的，但最终达到一致状态</title>
+							<makers type="list">
+								<item type="str">priority-1</item>
+								<item type="str">task-done</item>
+								<item type="str">flag-red</item>
+							</makers>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">本质</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">涉及到操作多个数据库的事务。其实就是将对同一库事务的概念扩大到了对多个库的事务。目的是为了保证分布式系统中的数据一致性。分布式事务处理的关键是必须有一种方法可以知道事务在任何地方所做的所有动作，提交或回滚事务的决定必须产生统一的结果（全部提交或全部回滚)</title>
+						</item>
+					</topics>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>

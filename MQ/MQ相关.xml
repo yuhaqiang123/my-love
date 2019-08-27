@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">MQ</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">可靠性的保障</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">rabbitmq</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">[Image]</title>
+								</item>
+								<item type="dict">
+									<title type="str">生产者如何保障</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">事务</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">吞吐量会下来，因为太耗性能。</title>
+												</item>
+												<item type="dict">
+													<title type="str">生产者发送数据之前开启 RabbitMQ 事务channel.txSelect，然后发送消息，如果消息没有成功被 RabbitMQ 接收到，那么生产者会收到异常报错，此时就可以回滚事务channel.txRollback，然后重试发送消息；如果收到了消息，那么可以提交事务channel.txCommit</title>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">confirm模式</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">可以开启confirm模式，在生产者那里设置开启confirm模式之后，你每次写的消息都会分配一个唯一的 id</title>
+													<topics type="list">
+														<item type="dict">
+															<title type="str">如果写入了 RabbitMQ 中，RabbitMQ 会给你回传一个ack消息</title>
+														</item>
+														<item type="dict">
+															<title type="str">如果 RabbitMQ 没能处理这个消息，会回调你一个nack接口，告诉你这个消息接收失败，你可以重试</title>
+														</item>
+														<item type="dict">
+															<title type="str">可以结合这个机制自己在内存里维护每个消息 id 的状态，如果超过一定时间还没接收到这个消息的回调，那么你可以重发。</title>
+															<makers type="list">
+																<item type="str">priority-1</item>
+																<item type="str">flag-red</item>
+																<item type="str">task-done</item>
+															</makers>
+														</item>
+													</topics>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">消息路由失败时</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">当mandatory标志位设置为true时，如果exchange根据自身类型和消息routingKey无法找到一个合适的queue存储消息，那么broker会调用basic.return方法将消息返还给生产者;
+
+当mandatory设置为false时，出现上述情况broker会直接将消息丢弃;
+
+通俗的讲，mandatory标志告诉broker代理服务器至少将消息route到一个队列中，否则就将消息return给发送者;</title>
+												</item>
+												<item type="dict">
+													<title type="str">mendatory true时, 会调用basic.return</title>
+												</item>
+											</topics>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">RabbitMQ 弄丢了数据</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">开启 RabbitMQ 的持久化</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">创建 queue 的时候将其设置为持久化</title>
+													<topics type="list">
+														<item type="dict">
+															<title type="str">这样就可以保证 RabbitMQ 持久化 queue 的元数据，但是不会持久化 queue 里的数据。</title>
+															<makers type="list">
+																<item type="str">priority-1</item>
+																<item type="str">task-done</item>
+															</makers>
+														</item>
+													</topics>
+												</item>
+												<item type="dict">
+													<title type="str">发送消息的时候将消息的 deliveryMode 设置为 2</title>
+													<topics type="list">
+														<item type="dict">
+															<title type="str">将消息设置为持久化</title>
+														</item>
+														<item type="dict">
+															<title type="str">只有消息被持久化.rabbitmq才会 给生产者 ack</title>
+														</item>
+													</topics>
+												</item>
+											</topics>
+										</item>
+										<item type="dict">
+											<title type="str">设置持久化</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">1.交换机持久化 在声明时指定durable为true</title>
+												</item>
+												<item type="dict">
+													<title type="str">2.队列持久化 在声明时指定durable为true</title>
+												</item>
+												<item type="dict">
+													<title type="str">3.消息持久化 在声明时指定delivery_mode为2</title>
+												</item>
+											</topics>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">消费端弄丢了数据</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">关闭自动 ack,每次消息处理完给其 ack.</title>
+										</item>
+										<item type="dict">
+											<title type="str">当 channel关闭时,rabbitmq会自动给没有nack 的消息重发</title>
+										</item>
+										<item type="dict">
+											<title type="str">basic.qos方法可以限制 channel上未确认消息的数量</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">当channel存在多个消费者时,由于存在多个消费者协调.所以会降低性能</title>
+												</item>
+												<item type="dict">
+													<title type="str">考虑使用单个 channel单个消费者</title>
+												</item>
+											</topics>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">kafka</title>
+						</item>
+						<item type="dict">
+							<title type="str">MQ本身存储的可靠性</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">数据持久化存储</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">何时将数据从内存刷新到磁盘,如何设计缓存</title>
+										</item>
+										<item type="dict">
+											<title type="str">写入磁盘如何实现, 只写一个文件,还是采用索引或其他方式, 文件的组织方式,元数据</title>
+										</item>
+										<item type="dict">
+											<title type="str">思考kfaka 的底层文件存储原理</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">数据的分布式存储</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">如何更好的分片? 一致性Hash ?</title>
+										</item>
+										<item type="dict">
+											<title type="str">如何支持自动扩缩容, 如何保证数据的负载均衡漂移? 可伸缩的架构设计</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">高可用架构宕机场景</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">如何实现多副本冗余设计,读写分离,或者主从架构?</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="null"/>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>

@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">架构-微服务</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">特点</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">服务粒度要小，而每个服务是针对一个单一职责的业务能力的封装，专注做好一件事情</title>
+						</item>
+						<item type="dict">
+							<title type="str">每个服务能够独立被部署并运行在一个进程内。这种运行和部署方式能够赋予系统灵活的代码组织方式和发布节奏，使得快速交付和应对变化成为可能</title>
+						</item>
+						<item type="dict">
+							<title type="str">技术选型灵活，不受遗留系统技术约束。合适的业务问题选择合适的技术可以独立演化。服务与服务之间采取与语言无关的API进行集成。相对单体架构，微服务架构是更面向业务创新的一种架构模式。</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">技术可以不断更新迭代</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">团队对服务的整个生命周期负责，工作在独立的上下文中，自己决策自己治理，而不需要统一的指挥中心。团队和团队之间通过松散的社区部落进行衔接</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">目的</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">&quot;让我们的系统尽可能快地响应变化&quot; - Rebecca Parson </title>
+						</item>
+						<item type="dict">
+							<title type="str">将功能分解到离散的各个服务当中，从而降低系统的耦合性，并提供更加灵活的服务支持。</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">API Gateway</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">设计要素</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">•Version </title>
+								</item>
+								<item type="dict">
+									<title type="str">•RequstID </title>
+								</item>
+								<item type="dict">
+									<title type="str">•Auth&amp;Signature </title>
+								</item>
+								<item type="dict">
+									<title type="str">•RateLimit </title>
+								</item>
+								<item type="dict">
+									<title type="str">•Docs </title>
+								</item>
+								<item type="dict">
+									<title type="str">•ErrorCode&amp;Message</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">优势</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">减少客户端和服务间的往来</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">微服务架构 设计模式</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">聚合器微服务设计模式</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">[Image]</title>
+								</item>
+								<item type="dict">
+									<title type="str">聚合器调用多个服务实现应用程序所需的功能。它可以是一个简单的Web页面，将检索到的数据进行处理展示。它也可以是一个更高层次的组合微服务，对检索到的数据增加业务逻辑后进一步发布成一个新的微服务，这符合DRY原则。另外，每个服务都有自己的缓存和数据库。如果聚合器是一个组合服务，那么它也有自己的缓存和数据库。聚合器可以沿X轴和Z轴独立扩展。</title>
+								</item>
+								<item type="dict">
+									<title type="str">一个服务通过聚合多个服务 ,对外提供服务. 本身可以有库,可以没有.可以缓存,也可以没有</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">链式微服务设计模式</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">[Image]</title>
+								</item>
+								<item type="dict">
+									<title type="str">在这种情况下，服务A接收到请求后会与服务B进行通信，类似地，服务B会同服务C进行通信。所有服务都使用同步消息传递。在整个链式调用完成之前，客户端会一直阻塞。</title>
+								</item>
+								<item type="dict">
+									<title type="str">一般复杂微服务,都会出现链式调用,需要配套的 监控及 trace 系统</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">数据共享微服务</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">[Image]</title>
+								</item>
+								<item type="dict">
+									<title type="str">自治是微服务的设计原则之一，就是说微服务是全栈式服务。但在重构现有的“单体应用（monolithic application）”时，SQL数据库反规范化可能会导致数据重复和不一致。
+因此，在单体应用到微服务架构的过渡阶段，可以使用这种设计模式，如下图所示：</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">异步消息传递微服务设计</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">[Image]</title>
+								</item>
+								<item type="dict">
+									<title type="str">虽然REST设计模式非常流行，但它是同步的，会造成阻塞。因此部分基于微服务的架构可能会选择使用消息队列代替REST请求/响应，如下图所示：</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">反模式</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">内聚混乱</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">背景</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">没有针对功能上相互隔离的问题采取治理措施。如果一个有影响力的服务消费者要求将不相关的逻辑添加到这个服务中，理由是减少往返，那么毫无疑问，那个功能就遭到了破坏。也许网关或 BPM 层可以避免这种情况的出现，但我们没有时间那样做……仅有匆匆构建另一个业务功能点的时间。</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">抑制与服务不相关的业务功能。服务必须清楚地与业务能力保持一致，不应该试图做一些超出范围的事。功能隔离问题对架构治理而言至关重要，否则，它会破坏敏捷性、性能和可扩展性，最后创建了一个松耦合的架构，导致交付熵和内聚混乱。</title>
+								</item>
+								<item type="dict">
+									<title type="str">上游系统已各种理由强加功能</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">我们还需依赖另外一个服务</title>
+										</item>
+										<item type="dict">
+											<title type="str">时间来不及了.你加个功能,掉一下就行]</title>
+										</item>
+										<item type="dict">
+											<title type="str">这个功能其他团队不负责,你们来做好了</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">不顾扩展性, 为了省事,就加功能</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">服务架构分层</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">团队主要关注技术层面的内聚，而不是功能相关的重用</title>
+								</item>
+								<item type="dict">
+									<title type="str">不要根据技术上关切的问题隔离服务，一定要根据业务功能来隔离</title>
+								</item>
+								<item type="dict">
+									<title type="str">背景</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">多个服务充当数据访问层（ORM），将表暴露为服务；他们认为该服务有很高的重用性。这样，他们就创建了一个由横向团队管理的人造物理层，导致交付依赖。创建的任何服务都应该是高度自治的——就是彼此独立。</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">组成</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">日志和审计，主要是日志的汇总，分类和查询</title>
+						</item>
+						<item type="dict">
+							<title type="str">监控和告警，主要是监控每个服务的状态，必要时产生告警</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">网关监控</title>
+								</item>
+								<item type="dict">
+									<title type="str">服务监控</title>
+								</item>
+								<item type="dict">
+									<title type="str">日志监控</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">消息总线，轻量级的MQ或HTTP</title>
+						</item>
+						<item type="dict">
+							<title type="str">注册发现</title>
+						</item>
+						<item type="dict">
+							<title type="str">负载均衡</title>
+						</item>
+						<item type="dict">
+							<title type="str">事件调度机制</title>
+						</item>
+						<item type="dict">
+							<title type="str">资源管理，如：底层的虚拟机，物理机和网络管理</title>
+						</item>
+						<item type="dict">
+							<title type="str">认证和鉴权</title>
+						</item>
+						<item type="dict">
+							<title type="str">微服务统一代码框架，支持多种编程语言</title>
+						</item>
+						<item type="dict">
+							<title type="str">统一服务构建和打包</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">部署和升级</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">统一服务测试</title>
+						</item>
+						<item type="dict">
+							<title type="str">服务依赖关系管理</title>
+						</item>
+						<item type="dict">
+							<title type="str">统一问题跟踪调试框架，俗称调用链</title>
+						</item>
+						<item type="dict">
+							<title type="str">灰度发布</title>
+						</item>
+						<item type="dict">
+							<title type="str">蓝绿部署</title>
+						</item>
+						<item type="dict">
+							<title type="str">降级和限流</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">SOA的区别</title>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>

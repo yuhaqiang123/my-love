@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">Iinux</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">BIOS中断</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">中断向量表</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">每个向量四字节,包括中断处理例程的段基地址,段内偏移地址</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">子主题 1</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">中断号是中断例程在向量表中的数组下表</title>
+								</item>
+								<item type="dict">
+									<title type="str">cpu支持,并且负责创建的</title>
+								</item>
+								<item type="dict">
+									<title type="str">外设中断例程更多由硬件厂商编写</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">BIOS</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">从0x0000 启动, 需要向中断向量表中添加中断例程</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">可以通过内存映射的方式访即问外设,内存的物理地址的固定区域用来做内存映射,BIOS  会访问该区域, 具体代码区域会已魔术开头,检测到即开始执行硬件初始化代码和注册中断向量表</title>
+										</item>
+										<item type="dict">
+											<title type="str">也可以通过端口访问,即cpu 可以访问挂在总线上的所有外设的寄存器,可以读写寄存器(硬件会提供读写寄存器的规则,或者提供驱动)</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">运行在实模式</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">Linux 中断处理是在保护模式</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">使用中段描述符表,该表由操作系统负责建立,在实模式运行int 会自动访问中断向量表,在保护模式自动访问中断描述符表</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">可执行文件编译链接加载</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">可执行文件分段</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">不同的段具有不同的读写可执行属性,具体读写保护由 cpu 支持</title>
+								</item>
+								<item type="dict">
+									<title type="str">在保护模式之下,cpu 的访问都是经过段描述符的,段描述符中具有该段的读写属性, 操作系统加载或者连接器链接(可执行文件)时会将相同属性的节 section,合并为segment段.(code, data) </title>
+								</item>
+								<item type="dict">
+									<title type="str">段描述符由操作系统在cpu 进入保护模式之前,准备好的(或者写到固定的物理地址,或者使用单独的寄存器保存该段描述符表的起始地址)</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">内存</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">物理地址,虚拟地址</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">为了避免程序链接阶段写死物理地址,这样导致程序之间争抢物理地址,同时程序可移植性较差.</title>
+								</item>
+								<item type="dict">
+									<title type="str">保护模式下可以开启分页功能,才支持虚拟地址,实际cpu 中有单独的mmu 部件专门做虚拟地址映射</title>
+								</item>
+								<item type="dict">
+									<title type="str">每一个进程都会有单独的页表用来保存该进程私有地址空间到物理空间的映射,(该页表也使用寄存器存放起始地址,cpu 可访问,内核可修改)  同时这种机制可以让共享底层代码物理页更加方便</title>
+								</item>
+								<item type="dict">
+									<title type="str">实模式之下都是使用的实际物理地址</title>
+								</item>
+								<item type="dict">
+									<title type="str">实际代码区中的内存地址段内偏移量,实际的内存地址还要加上段基地址,不同的段的基地址放在不同的段寄存器中</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">虚拟地址映射</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">内核页表中的内容为所有进程共享</title>
+								</item>
+								<item type="dict">
+									<title type="str">每个进程都有自己的“进程页表”</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">用户态</title>
+										</item>
+										<item type="dict">
+											<title type="str">内核态</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">内核态地址对应的相关页表项，对于所有进程来说都是相同的(因为内核空间对所有进程来说都是共享的)，而这部分页表内容其实就来源于“内核页表”，即每个进程的“进程页表”中内核态地址相关的页表项都是“内核页表”的一个拷贝。</title>
+												</item>
+												<item type="dict">
+													<title type="str">线性映射区</title>
+													<topics type="list">
+														<item type="dict">
+															<title type="str">线性映射区即通过TASK_SIZE偏移进行映射的区域，对32系统来说就是0-896M这部分区域，映射对应的虚拟地址区域为TASK_SIZE-TASK_SIZE+896M。</title>
+														</item>
+														<item type="dict">
+															<title type="str">这部分区域在内核初始化时就已经完成映射，并创建好相应的页表，即这部分虚拟内存区域不会发生page fault</title>
+														</item>
+													</topics>
+												</item>
+												<item type="dict">
+													<title type="str">vmalloc区</title>
+													<topics type="list">
+														<item type="dict">
+															<title type="str">这部分区域对应的线性地址在内核使用vmalloc分配内存时，其实就已经分配了相应的物理内存，并做了相应的映射，建立了相应的页表项，</title>
+														</item>
+														<item type="dict">
+															<title type="str">相关页表项仅写入了“内核页表”，并没有实时更新到“进程页表中”，内核在这里使用了“延迟更新”的策略，将“进程页表”真正更新推迟到第一次访问相关线性地址，发生page fault时，此时在page fault的处理流程中进行“进程页表”的更新</title>
+														</item>
+													</topics>
+												</item>
+											</topics>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">魔数的作用</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">BIOS识别 被映射到内存的外设代码段时,用到了魔术</title>
+						</item>
+						<item type="dict">
+							<title type="str">os识别 文件系统,删去的第二块标识了该磁盘的文件系统,等信息,其中包括魔数</title>
+						</item>
+						<item type="dict">
+							<title type="str">可执行文件,或者 java字节码文件 (可执行文件开头 #!就是魔数,后边标识执行脚本地址)</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">cpu</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">pc</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">只是一个概念,代表cpu 要执行的下一条指令的地址,实际上就是控制cpu执行完当前指令,下一步执行什么,就能控制程序执行</title>
+								</item>
+								<item type="dict">
+									<title type="str">x86体系结构下,使用cs:ip 两个寄存器分别表示段地址和偏移地址共同组成pc,但是没有提供修改cs:ip 寄存器的指令,而是通过jmp,call, int,ret 等间接控制,但是amd 公司确实使用一个寄存器pc, 存放下一条指令地址,并且提可以使用mov 指令修改</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">指令集与微架构</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">指令是规范,例如mov  操作数顺序作用, 对应机器嘛等等,指令集代表cpu 可支持的指令的集合</title>
+								</item>
+								<item type="dict">
+									<title type="str">不同的 cpu也可以使用相同的指令集</title>
+								</item>
+								<item type="dict">
+									<title type="str">一种 cpu可同时支持多个指令集</title>
+								</item>
+								<item type="dict">
+									<title type="str">微架构是指令集的实现方式</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">代码段</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">CPU是无法区分代码段和数据段的,pc 指向哪里,它就去执行哪里</title>
+								</item>
+								<item type="dict">
+									<title type="str">代码段其实只是机器码和操作码的连续序列,并且没有分隔符, 因为具体的操作数就能决定本条指令的字节数,所以cs:ip 可以自动计算出来,当然也是可以通过jmp, call 转移, 所以代码段没有间隔,但是cpu 执行的指令顺序并不一定是顺序的,只要逻辑连续即可,不需要物理连续</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">实模式保护模式</title>
+						</item>
+						<item type="dict">
+							<title type="str">执行顺序</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">1.控制单元读取cs:ip 下一条指令地址
+2.此地址送上地址总线,拿到指令,放到指令寄存器中
+3.译码器确定操作码,操作数类型,决定从内存中还是寄存器中取操作数
+4.操作控制器给运算单元下命令,执行具体的指令
+5.ip 寄存器被加上当前指令大小.</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">启动顺序</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">BIOS </title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">主板上的小程序,受限于主板存储空间,代码量很少,其他工作交给后边的流程</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">MBR 主引导记录</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">主要是为了寻找次引导记录,也就是内核加载程序</title>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">OBR OS boot record</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">该扇区会在分区表中被标记为活动分区( MBR  才能找到)</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">小技巧与总结</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">底层编程中的数据结构 都是固定长度的.例如一个 struct会占用固定的长度,所以知道该结构体起始地址,就能访问任何一个字段的值</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">分支主题 8</title>
+				</item>
+				<item type="dict">
+					<title type="str">shell</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">ulimit</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">数据段长度：ulimit -d unlimited</title>
+								</item>
+								<item type="dict">
+									<title type="str">     最大内存大小：ulimit -m unlimited</title>
+								</item>
+								<item type="dict">
+									<title type="str">     堆栈大小：ulimit -s unlimited</title>
+								</item>
+								<item type="dict">
+									<title type="str">     CPU 时间：ulimit -t unlimited</title>
+								</item>
+								<item type="dict">
+									<title type="str">     虚拟内存：ulimit -v unlimited(可以为数字,unlimited代表不限制)</title>
+								</item>
+								<item type="dict">
+									<title type="str">  ulimit -n 每个进程的文件数目</title>
+								</item>
+								<item type="dict">
+									<title type="str">ulimit -u 每个用户打开的最大进程数</title>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>
