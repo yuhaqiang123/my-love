@@ -1,0 +1,5 @@
+echo `pwd`
+python ./bin/generate_xml.py
+git add */*.xml
+git add */*/*.xml
+git add *.xml
