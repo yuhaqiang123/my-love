@@ -176,6 +176,9 @@ clean :
 						</item>
 					</topics>
 				</item>
+				<item type="dict">
+					<title type="str">测试</title>
+				</item>
 			</topics>
 		</topic>
 		<structure type="str">org.xmind.ui.map.unbalanced</structure>
