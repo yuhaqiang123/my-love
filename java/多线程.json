@@ -1,0 +1,519 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "多线程",
+      "topics": [
+        {
+          "title": "ForkJoinPool",
+          "topics": [
+            {
+              "title": "实现了Executor和ExecutorService接口。它使用了一个无限队列来保存需要执行的任务"
+            },
+            {
+              "title": "可以在Task 中继续 fork 子任务并行执行"
+            },
+            {
+              "title": "使用join会等待子任务的处理结果,汇总后,返回自己的处理结果,是分治法的体现",
+              "topics": [
+                {
+                  "title": "会使用一个内部队列来对需要执行的任务以及子任务进行操作来保证它们的执行顺序。"
+                },
+                {
+                  "title": "使用数量有限的线程来完成非常多的具有父子关系的任务"
+                }
+              ]
+            },
+            {
+              "title": "ThreadPoolExecutor中的Thread无法选择优先执行子任务,每一个任务都是对等的,而ForkJoin适合可分割处理的任务"
+            }
+          ]
+        },
+        {
+          "title": "Future",
+          "topics": [
+            {
+              "title": "CompleatbleFuture"
+            },
+            {
+              "title": "Future可以实现任务的同步异步处理,如果异步处理,那么发完请求丢弃Future就可以了,如果关系的话,可以同步阻塞调用get处理结果,但是实现了非阻塞的发送请求,至于何时 处理结果,主线程可以自己决定"
+            }
+          ]
+        },
+        {
+          "title": "CompleteableFuture",
+          "topics": [
+            {
+              "title": "anyOf 接受一组CompleteableFuture,只要有一个返回,该Future 即返回"
+            },
+            {
+              "title": "allOf 接受一组CF, 等所有的 Future返回,任务结束"
+            },
+            {
+              "title": "Task 协同",
+              "topics": [
+                {
+                  "title": "并行最后合并结果",
+                  "topics": [
+                    {
+                      "title": "thenCombine"
+                    }
+                  ]
+                },
+                {
+                  "title": "任务前后依赖",
+                  "topics": [
+                    {
+                      "title": "thenCompose"
+                    }
+                  ]
+                },
+                {
+                  "title": "任务完成时后置执行某任务",
+                  "topics": [
+                    {
+                      "title": "thenAccept"
+                    },
+                    {
+                      "title": "可接受之前future 的参数"
+                    }
+                  ]
+                },
+                {
+                  "title": "either方法一般接受一个future, 哪一个future 先准备好,就使用哪个 Future的返回值"
+                },
+                {
+                  "title": "supplyAsync",
+                  "topics": [
+                    {
+                      "title": "异步执行一个 Task, 返回的 Future保存 task的执行结果"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "使用顺序",
+              "topics": [
+                {
+                  "title": "任务的协同关系生成 allof, thenCombine,threnCompose"
+                },
+                {
+                  "title": "thenApply对任务的结果再次处理生成新的结果, exceptionally负责异常处理"
+                },
+                {
+                  "title": "对任务的结果进行处理,但是不生成新的结果"
+                },
+                {
+                  "title": "对结果不关系,也不输出结果"
+                },
+                {
+                  "title": "thenComplete最终结束"
+                },
+                {
+                  "title": "没个过程都可以异步"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "线程工作内存",
+          "topics": [
+            {
+              "title": "cpu缓存",
+              "topics": [
+                {
+                  "title": "分行存储的，最小处理单位是一个行 一般63字节",
+                  "topics": [
+                    {
+                      "title": "Linux 查看缓存行大小 cat /sys/devices/system/cpu/cpu0/cache/index0/coherency_line_size   "
+                    }
+                  ]
+                },
+                {
+                  "title": "三个级别: L1, L2, L3. 级别越小越接近CPU, 所以速度也更快, 同时也代表着容量越小",
+                  "topics": [
+                    {
+                      "title": "[Image]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "volitile",
+              "topics": [
+                {
+                  "title": "对volitile 变量的读 比前边所有的写都晚"
+                },
+                {
+                  "title": "对volitile 变量的写 早于 后边所有的读"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "错误",
+          "topics": [
+            {
+              "title": "创建线程",
+              "topics": [
+                {
+                  "title": "最大线程数",
+                  "topics": [
+                    {
+                      "title": "(MaxProcessMemory - JVMMemory – ReservedOsMemory) / (ThreadStackSize) = Number of threads",
+                      "topics": [
+                        {
+                          "title": "MaxProcessMemory : 进程的最大寻址空间"
+                        },
+                        {
+                          "title": "JVMMemory : JVM内存"
+                        },
+                        {
+                          "title": "ReservedOsMemory : 保留的操作系统内存，如Native heap，JNI之类，一般100多M"
+                        },
+                        {
+                          "title": "ThreadStackSize : 线程栈的大小，jvm启动时由Xss指定"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "通过进程最大内存, jvm 内存, 线程栈内存判断"
+                    },
+                    {
+                      "title": "java中线程占用的大小并不是分配在堆上.每个线程都有自己的私有栈,该空间大小可以使用xss 指定,但总的可创建线程数由操作系统最大虚拟内存, jvm保留内存等决定"
+                    },
+                    {
+                      "title": "ulimit -u 设置最大可创建进程数也会影响线程数"
+                    }
+                  ]
+                },
+                {
+                  "title": "java.lang.OutOfMemoryError: Unable to create new native thread ",
+                  "topics": [
+                    {
+                      "title": "过程",
+                      "topics": [
+                        {
+                          "title": "Java程序向JVM请求创建一个新的Java线程;"
+                        },
+                        {
+                          "title": "JVM本地代码(native code)代理该请求, 尝试创建一个操作系统级别的 native thread(原生线程);"
+                        },
+                        {
+                          "title": "操作系统尝试创建一个新的native thread, 需要同时分配一些内存给该线程;"
+                        },
+                        {
+                          "title": "如果操作系统的虚拟内存已耗尽, 或者是受到32位进程的地址空间限制(约2-4GB), OS就会拒绝本地内存分配;"
+                        },
+                        {
+                          "title": "JVM抛出 java.lang.OutOfMemoryError: Unable to create new native thread 错误。"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "原因",
+                      "topics": [
+                        {
+                          "title": "程序中出现了bug 导致创建线程过多"
+                        },
+                        {
+                          "title": "ulimit 改变操作系统最大句柄数"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "分析",
+                      "topics": [
+                        {
+                          "title": "可以使用jstack 分析线程堆栈"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "阻塞队列",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "[Image]"
+            }
+          ]
+        },
+        {
+          "title": "线程池",
+          "topics": [
+            {
+              "title": "重要参数",
+              "topics": [
+                {
+                  "title": "corePoolSize：核心线程数",
+                  "topics": [
+                    {
+                      "title": "核心线程会一直存活，及时没有任务需要执行"
+                    },
+                    {
+                      "title": "当线程数小于核心线程数时，即使有线程空闲，线程池也会优先创建新线程处理"
+                    },
+                    {
+                      "title": "设置allowCoreThreadTimeout=true（默认false）时，核心线程会超时关闭"
+                    }
+                  ]
+                },
+                {
+                  "title": "maxPoolSize：最大线程数",
+                  "topics": [
+                    {
+                      "title": "当线程数>=corePoolSize，且任务队列已满时。线程池会创建新线程来处理任务"
+                    },
+                    {
+                      "title": "当线程数=maxPoolSize，且任务队列已满时，线程池会拒绝处理任务而抛出异常"
+                    }
+                  ]
+                },
+                {
+                  "title": "keepAliveTime：线程空闲时间",
+                  "topics": [
+                    {
+                      "title": "当线程空闲时间达到keepAliveTime时，线程会退出，直到线程数量=corePoolSize"
+                    },
+                    {
+                      "title": "如果allowCoreThreadTimeout=true，则会直到线程数量=0"
+                    }
+                  ]
+                },
+                {
+                  "title": "allowCoreThreadTimeout：允许核心线程超时",
+                  "topics": [
+                    {
+                      "title": "当指定该字段时,实际发生在getTask 阶段,当没有Task 可以处理时, 会使用poll timeout 等待获取task, 
+该超时时间就是当前keepAliveTime,如果 超时,并且下一次getTask 前,检查workQueue 为空,并且活跃线程>1 ,那么当前线程就可以退出了"
+                    },
+                    {
+                      "title": "在创建线程池时,指定keepAliveTime,该超时时间就是 没有任务时,线程的等待时间, 核心线程和超越核心线程的keepAliveTime相同"
+                    },
+                    {
+                      "title": "当没有指定该值时,例如ScheduleThreadPoolExecutor getTask 时,会根据 当前线程数是否超过核心线程数,如果没有超过,那么 使用take 无限阻塞等待,如果 超过核心线程数,那么则立即销毁,实际使用中,我们可以设置合理的
+keepAliveTime"
+                    }
+                  ]
+                },
+                {
+                  "title": "rejectedExecutionHandler：任务拒绝处理器",
+                  "topics": [
+                    {
+                      "title": "当线程数已经达到maxPoolSize，切队列已满，会拒绝新任务"
+                    },
+                    {
+                      "title": "当线程池被调用shutdown()后，会等待线程池里的任务执行完毕，再shutdown。如果在调用shutdown()和线程池真正shutdown之间提交任务，会拒绝新任务"
+                    },
+                    {
+                      "title": "拒绝策略",
+                      "topics": [
+                        {
+                          "title": "线程池会调用rejectedExecutionHandler来处理这个任务。如果没有设置默认是AbortPolicy，会抛出异常"
+                        },
+                        {
+                          "title": "可选策略",
+                          "topics": [
+                            {
+                              "title": "AbortPolicy 丢弃任务，抛运行时异常"
+                            },
+                            {
+                              "title": "CallerRunsPolicy 执行任务"
+                            },
+                            {
+                              "title": "DiscardPolicy 忽视，什么都不会发生"
+                            },
+                            {
+                              "title": "DiscardOldestPolicy 从队列中踢出最先进入队列（最后一个执行）的任务"
+                            },
+                            {
+                              "title": "实现RejectedExecutionHandler接口，可自定义策略"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "默认值",
+                  "topics": [
+                    {
+                      "title": "corePoolSize=1
+queueCapacity=Integer.MAX_VALUE
+maxPoolSize=Integer.MAX_VALUE
+keepAliveTime=60s
+allowCoreThreadTimeout=false
+rejectedExecutionHandler=AbortPolicy()",
+                      "topics": [
+                        {
+                          "title": "LinkBlockQueue 默认队列容量是int 最大值",
+                          "topics": [
+                            {
+                              "title": "newFixedThreadPool"
+                            },
+                            {
+                              "title": "newSingleThreadExecutor"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "设置参考",
+                  "topics": [
+                    {
+                      "title": "要根据几个值来决定
+tasks ：每秒的任务数，假设为500~1000
+taskcost：每个任务花费时间，假设为0.1s
+responsetime：系统允许容忍的最大响应时间，假设为1s
+"
+                    },
+                    {
+                      "title": "corePoolSize = 每秒需要多少个线程处理？ 
+threadcount = tasks/(1/taskcost) =tasks*taskcout =  (500~1000)*0.1 = 50~100 个线程。corePoolSize设置应该大于50
+根据8020原则，如果80%的每秒任务数小于800，那么corePoolSize设置为80即可"
+                    },
+                    {
+                      "title": "queueCapacity = (coreSizePool/taskcost)*responsetime
+计算可得 queueCapacity = 80/0.1*1 = 800。意思是队列里的线程可以等待1s，超过了的需要新开线程来执行
+切记不能设置为Integer.MAX_VALUE，这样队列会很大，线程数只会保持在corePoolSize大小，当任务陡增时，不能新开线程来执行，响应时间会随之陡增。"
+                    },
+                    {
+                      "title": "maxPoolSize = (max(tasks)- queueCapacity)/(1/taskcost)
+计算可得 maxPoolSize = (1000-80)/10 = 92
+（最大任务数-线程数量）/每个线程每秒处理能力 = 最大线程数
+rejectedExecutionHandler：根据具体情况来决定，任务不重要可丢弃，任务重要则要利用一些缓冲机制来处理
+keepAliveTime和allowCoreThreadTimeout采用默认通常能满足"
+                    },
+                    {
+                      "title": "docker中获取cpu核数都是物理机核数. 设置线程池参数时要注意需要手动指定核数. java,python的线程都是内核原生线程.过多会导致操作系统调度 缓慢"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "创建任务时的执行顺序",
+              "topics": [
+                {
+                  "title": "当线程数小于核心线程数时，创建线程。(创建woker线程发生在execute 时.可以预创建 worker)"
+                },
+                {
+                  "title": "当线程数大于等于核心线程数，且任务队列未满时，将任务放入任务队列。"
+                },
+                {
+                  "title": "当线程数大于等于核心线程数，且任务队列已满",
+                  "topics": [
+                    {
+                      "title": "若线程数小于最大线程数，创建线程"
+                    },
+                    {
+                      "title": "若线程数等于最大线程数，抛出异常，拒绝任务"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "ScheduledThreadPoolExecutor",
+              "topics": [
+                {
+                  "title": "使用DelayWorkQueue和 DelayQueue区别不大"
+                },
+                {
+                  "title": "如果当前getTask 时超时,并且当前线程数>1,queue 为空.那么当前worker就退出,避免忙等.尤其在keepAliveTime 即 worker从 queue中等task 的等待时间为0时.这样可调度的线程池实际上依赖于DelayWorkQueue的延迟策略, 从里面消费 task"
+                }
+              ]
+            },
+            {
+              "title": "原理",
+              "topics": [
+                {
+                  "title": "线程退出",
+                  "topics": [
+                    {
+                      "title": "超过核心线程,超过 keepAliveTime"
+                    },
+                    {
+                      "title": "未超过核心线程,但是允许核心线程 超时, 且 队列为空,线程数大于1"
+                    },
+                    {
+                      "title": "task抛出异常.会导致线程退出.此时会在控制台打印错误输出,可以配置 ThreadFactory重新修改线程的未捕获异常处理器. 不要在未捕获拦截处理器中添加 阻塞操作"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "线程池优雅关闭问题",
+              "topics": [
+                {
+                  "title": "shutdown 和shutdownNow",
+                  "topics": [
+                    {
+                      "title": "shutdown/Now 后再向线程池中提交任务将会抛出异常(execute,submit)
+所以当进程退出时,为了避免提交类任务抛出异常,应该首先做到在shutdown 
+之前在业务上避免继续像线程池提交任务,如果立即shutdown 难免每次上线
+都会抛出异常"
+                    }
+                  ]
+                },
+                {
+                  "title": "线程响应中断的策略"
+                },
+                {
+                  "title": "如果不指定默认拒绝策略,默认的策略是抛出异常"
+                }
+              ]
+            },
+            {
+              "title": "spring async",
+              "topics": [
+                {
+                  "title": "默认线程 core 1, maxSize int max, queueSize int max"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "线程",
+          "topics": [
+            {
+              "title": "守护线程",
+              "topics": [
+                {
+                  "title": " 垃圾回收线程就是一个经典的守护线程，当我们的程序中不再有任何运行的 Thread,程序就不会
+再产生垃圾，垃圾回收器也就无事可做，所以当垃圾回收线程是 JVM 上仅剩的线程时，垃圾回收
+线程会自动离开。它始终在低级别的状态中运行，用于实时监控和管理系统中的可回收资源"
+                }
+              ]
+            },
+            {
+              "title": "[Image]"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

@@ -1,0 +1,764 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "nginx",
+      "topics": [
+        {
+          "title": "虚拟主机",
+          "topics": [
+            {
+              "title": "虚拟主机是指在一台物理主机服务器上划分出多个磁盘空间，每个磁盘空间都是一个虚拟主机，每台虚拟主机都可以对外提供Web服务，并且互不干扰。在外界看来，虚拟主机就是一台独立的服务器主机，这意味着用户能够利用虚拟主机把多个不同域名的网站部署在同一台服务器上",
+              "topics": [
+                {
+                  "title": "http 1.0可以不带host 请求头. 对于http1.1 思考一下. http协议基于tcp 协议,已经建立tcp 连接了, 还需要http 头里声明host 吗?"
+                },
+                {
+                  "title": "答案是需要, 而这也是虚拟主机的由来所在,即 url 的host 和 header host 可以不同. 当请求通过url 建立连接发送到具体的webserver ,还可以通过 header host 作为虚拟主机再次进行路由."
+                }
+              ]
+            },
+            {
+              "title": "Nginx根据请求头信息中的Host字段决定请求应该由哪一台服务器处理，
+如果Host字段的值没有相匹配的服务器或者请求中没有Host字段，那么Nginx会将请求路由至这个端口的默认服务器.",
+              "topics": [
+                {
+                  "title": "server {
+    listen      80;
+    server_name example.org www.example.org;
+ }
+server {
+    listen      80;
+    server_name example.net www.example.net;
+ }
+server {
+    listen      80 default_server;
+    server_name example.net www.example.net;
+ }"
+                },
+                {
+                  "title": "默认服务器使用default_server 标记, 如果不存在default_server, 则选择配置的第一个 server"
+                }
+              ]
+            },
+            {
+              "title": "如果不允许不存在 Host为空的请求,可以直接丢弃",
+              "topics": [
+                {
+                  "title": "server {
+    listen      80;
+    server_name "";
+    return      444;
+}"
+                },
+                {
+                  "title": "返回nginx的非标准返回码444关闭连接。"
+                }
+              ]
+            },
+            {
+              "title": "基于 IP和域名的虚拟主机",
+              "topics": [
+                {
+                  "title": "server {
+    listen      192.168.1.1:80;
+    server_name example.org www.example.org;
+    ...
+}
+
+server {
+    listen      192.168.1.1:80;
+    server_name example.net www.example.net;
+    ...
+}
+
+server {
+    listen      192.168.1.2:80;
+    server_name example.com www.example.com;
+    ...
+}"
+                },
+                {
+                  "title": "nginx首先使用server块的listen指令的配置去测试请求的ip地址以及端口"
+                },
+                {
+                  "title": "然后使用server_name去测试Host字段"
+                },
+                {
+                  "title": "说明:",
+                  "topics": [
+                    {
+                      "title": "同一个服务器可能有多块网卡, 即可能会有多个ip. (可能是暴露的公网ip,也可能是内网ip.内网ip 可能也有多个.)"
+                    },
+                    {
+                      "title": "多一个服务. 即ip:port 可能有不同的入口,即可能通过 domainName1 访问,可能由domainName2 访问, 如何根据不同的domain 作不同的选择呢?",
+                      "topics": [
+                        {
+                          "title": "例如公网入口只开放某个url"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "其他:",
+              "topics": [
+                {
+                  "title": "一个 ng 可配多个 server.",
+                  "topics": [
+                    {
+                      "title": "worker 共用"
+                    }
+                  ]
+                },
+                {
+                  "title": "多个server 可监听同一个端口"
+                },
+                {
+                  "title": "多个 server可监听不同端口"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "location 中的配置",
+          "topics": [
+            {
+              "title": "反向代理"
+            },
+            {
+              "title": "error_page",
+              "topics": [
+                {
+                  "title": "error_page   500 502 503 504  /50x.html;"
+                },
+                {
+                  "title": "error_page  404 http://jspang.com;"
+                }
+              ]
+            },
+            {
+              "title": " 定义根目录",
+              "topics": [
+                {
+                  "title": " location = /50x.html {
+        root   /usr/share/nginx/html;
+    }"
+                }
+              ]
+            },
+            {
+              "title": "默认访问文件",
+              "topics": [
+                {
+                  "title": "index  index.html index.htm;"
+                }
+              ]
+            },
+            {
+              "title": "访问控制"
+            },
+            {
+              "title": "rewrite  内部重定向",
+              "topics": [
+                {
+                  "title": "使用nginx提供的全局变量或自己设置的变量，结合正则表达式和标志位实现url重写以及重定向"
+                },
+                {
+                  "title": "rewrite和location功能有点像，都能实现跳转，主要区别在于rewrite是在同一域名内更改获取资源的路径，而location是对一类路径做控制访问或反向代理"
+                },
+                {
+                  "title": "rewrite 执行顺序",
+                  "topics": [
+                    {
+                      "title": "执行server块的rewrite指令"
+                    },
+                    {
+                      "title": "执行location匹配"
+                    },
+                    {
+                      "title": "执行选定的location中的rewrite指令"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "location 匹配",
+          "topics": [
+            {
+              "title": "匹配顺序",
+              "topics": [
+                {
+                  "title": "首先nginx会查找最明确的location前缀，并非根据配置中所定义的顺序。在上述配置中，"/"是最通用的，能够匹配任何请求，会被作为最后的手段使用。"
+                },
+                {
+                  "title": "然后nginx会按顺序使用配置中的location的正则表达式匹配地址。当匹配成功时，nginx会停止查找并且使用该location。如果请求没有和任何正则表达式匹配成功，那么nginx会使用之前查找到的最明确的location前缀。"
+                },
+                {
+                  "title": "值得注意的是，所有类型的location配置只会和请求的URI部分进行匹配，不包括变量"
+                }
+              ]
+            },
+            {
+              "title": "详细匹配顺序",
+              "topics": [
+                {
+                  "title": "精确名称"
+                },
+                {
+                  "title": "以星号开头的最长通配符名称，例如“ *.example.org”"
+                },
+                {
+                  "title": "以星号结尾的最长通配符名称，例如“ mail.*”"
+                },
+                {
+                  "title": "首先匹配正则表达式（按照出现在配置文件中的顺序）"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "location正则",
+          "topics": [
+            {
+              "title": " ~ 表示之后是使用正则表达式来匹配",
+              "topics": [
+                {
+                  "title": "location ~ \.(gif|jpg|png)$ "
+                }
+              ]
+            },
+            {
+              "title": "=号代表精确匹配，使用了=后是根据其后的模式进行精确匹配"
+            }
+          ]
+        },
+        {
+          "title": "访问控制",
+          "topics": [
+            {
+              "title": "黑白名单控制",
+              "topics": [
+                {
+                  "title": " location / {
+        deny   123.9.51.42;
+        allow  45.76.202.231;
+    }"
+                },
+                {
+                  "title": " location / {
+        allow  45.76.202.231;
+        deny   all;
+    }",
+                  "topics": [
+                    {
+                      "title": "只允许xxx"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "就是在同一个块下的两个权限指令，先出现的设置会覆盖后出现的设置（也就是谁先触发，谁起作用"
+            }
+          ]
+        },
+        {
+          "title": "反向代理",
+          "topics": [
+            {
+              "title": "作用",
+              "topics": [
+                {
+                  "title": "为多个服务器提供负债均衡、缓存等功能"
+                },
+                {
+                  "title": "提供统一的对外入口,保护了真实的web服务器，保证了web服务器的资源安全"
+                },
+                {
+                  "title": "节约了有限的IP地址资源"
+                },
+                {
+                  "title": null,
+                  "topics": [
+                    {
+                      "title": null,
+                      "topics": [
+                        {
+                          "title": "[Image]"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "配置项",
+              "topics": [
+                {
+                  "title": "proxy_set_header :在将客户端请求发送给后端服务器之前，更改来自客户端的请求头信息。"
+                },
+                {
+                  "title": "proxy_connect_timeout:配置Nginx与后端代理服务器尝试建立连接的超时时间。"
+                },
+                {
+                  "title": "proxy_read_timeout : 配置Nginx向后端服务器组发出read请求后，等待相应的超时时间。"
+                },
+                {
+                  "title": "proxy_send_timeout：配置Nginx向后端服务器组发出write请求后，等待相应的超时时间。"
+                },
+                {
+                  "title": "proxy_redirect :用于修改后端服务器返回的响应头中的Location和Refresh。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "http 配置",
+          "topics": [
+            {
+              "title": null
+            },
+            {
+              "title": "keepalive",
+              "topics": [
+                {
+                  "title": "keep-alive是http1.0与http1.1的特性之一，意在提供长效的HTTP会话，以避免客户端频繁建立tcp连接的消耗。"
+                },
+                {
+                  "title": "内存消耗",
+                  "topics": [
+                    {
+                      "title": "   假设keepalive的时间为60s，服务器1分钟内平均在线用户为500，开启keep-Alive后，Apache等服务器的消耗为："
+                    },
+                    {
+                      "title": "[Image]"
+                    }
+                  ]
+                },
+                {
+                  "title": "不建议开启 keepalive",
+                  "topics": [
+                    {
+                      "title": "   在以下的场景，不建议开启keep-alive：服务器提供的是一个接口服务，除了动态内容，几乎没有引用任何静态内容；而建议在服务器提供Web站点服务时(一个页面除了动态内容，还包含非常多的JS、图片、css文件等)开启keep-alive。"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "nginx 配置热替换原理",
+          "topics": [
+            {
+              "title": "master/worker职责划分",
+              "topics": [
+                {
+                  "title": "master",
+                  "topics": [
+                    {
+                      "title": "读取并验证配置信息。"
+                    },
+                    {
+                      "title": "创建，绑定，关闭套接字。",
+                      "makers": [
+                        "star-red",
+                        "priority-1"
+                      ],
+                      "topics": [
+                        {
+                          "title": "负责监听接受请求",
+                          "topics": [
+                            {
+                              "title": "[Image]"
+                            },
+                            {
+                              "title": "fork生成子进程（workers 进程），子进程将继承父进程的 sockfd（socket 文件描述符），之后子进程 accept() 后将创建已连接描述符（connected descriptor）），然后通过已连接描述符来与客户端通信"
+                            },
+                            {
+                              "title": "惊群效应",
+                              "topics": [
+                                {
+                                  "title": "由于所有子进程都继承了父进程的 sockfd，那么当连接进来时，所有子进程都将收到通知并“争着”与它建立连接，这就叫“惊群现象”。大量的进程被激活又挂起，只有一个进程可以accept() 到这个连接，这当然会消耗系统资源"
+                                },
+                                {
+                                  "title": "如何避免精群效应",
+                                  "topics": [
+                                    {
+                                      "title": "在mutex 上加一把锁, 只有先获取到锁,才可以accept."
+                                    },
+                                    {
+                                      "title": "只有一个worker 同时在accept"
+                                    },
+                                    {
+                                      "title": "accept_mutex 默认打开(保守策略)"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "title": "思考: 为什么不用master 来accept 并且分发任务",
+                                  "topics": [
+                                    {
+                                      "title": "简化master. 避免master 负载过重, 提高可用性"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "title": "在高并发场景下, 关闭这个锁性能更高. 实际ng 的 worker并不高, 静群效应有限. 在请求量大的场景下
+开启这个锁,会导致性能下降.因为串行了."
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "title": "启动，终止，维护worker进程的个数。"
+                    }
+                  ]
+                },
+                {
+                  "title": "worker",
+                  "topics": [
+                    {
+                      "title": "worker 负责接收 新的请求吗?",
+                      "topics": [
+                        {
+                          "title": "worker 采用epoll 多路复用的方式监听socket. "
+                        },
+                        {
+                          "title": "当有新请求到来时,会主动的 accept接收请求.(会抢锁), 新接收的请求 注册到epoll 中,继续监听读写事件"
+                        },
+                        {
+                          "title": "[Image]"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "高性能的Nginx采用多线程模型，并且提供了worker进程绑定固定CPU的功能，降低worker进程被调度的损耗，提高了服务器工作性能；"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "过程",
+              "topics": [
+                {
+                  "title": "主进程收到重新加载配置的信号"
+                },
+                {
+                  "title": "检查新配置文件的语法有效性并尝试应用其中提供的配置",
+                  "topics": [
+                    {
+                      "title": "配置不合法, 则回滚使用旧配置"
+                    }
+                  ]
+                },
+                {
+                  "title": "主进程将启动新的工作进程并向旧工作进程发送消息，请求它们关闭"
+                },
+                {
+                  "title": "旧工作进程，接收命令以关闭，停止接受新连接并继续为当前请求提供服务，直到所有此类请求都得到服务。之后，旧工作进程退出"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "控制命令",
+          "topics": [
+            {
+              "title": "立即停止服务 ",
+              "topics": [
+                {
+                  "title": "nginx  -s stop"
+                }
+              ]
+            },
+            {
+              "title": "从容停止服务",
+              "topics": [
+                {
+                  "title": "nginx -s quit"
+                },
+                {
+                  "title": "处理完任务再关闭"
+                }
+              ]
+            },
+            {
+              "title": "systemctl 停止",
+              "topics": [
+                {
+                  "title": "systemctl stop nginx.service"
+                }
+              ]
+            },
+            {
+              "title": "重新载入配置文件",
+              "topics": [
+                {
+                  "title": "nginx -s reload"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "https 配置",
+          "topics": [
+            {
+              "title": "要配置HTTPS服务器，ssl必须在 服务器 块中的 监听套接字 上启用该参数 ，并且应指定 服务器证书 和 私钥 文件的位置 ",
+              "topics": [
+                {
+                  "title": "子主题 1"
+                }
+              ]
+            },
+            {
+              "title": "配置",
+              "topics": [
+                {
+                  "title": "server {
+    listen              443 ssl;
+    server_name         www.example.com;
+    ssl_certificate     www.example.com.crt;
+    ssl_certificate_key www.example.com.key;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+    ...
+}"
+                },
+                {
+                  "title": "配置一个处理HTTP和HTTPS请求的单个服务器",
+                  "topics": [
+                    {
+                      "title": "server {
+    listen              80;
+    listen              443 ssl;
+    server_name         www.example.com;
+    ssl_certificate     www.example.com.crt;
+    ssl_certificate_key www.example.com.key;
+    ...
+}"
+                    }
+                  ]
+                },
+                {
+                  "title": "每个 https server最好配置在不同的ip 上. 如果使用相同的证书可以考虑部署在同一个ip 上",
+                  "topics": [
+                    {
+                      "title": "server {
+    listen          443 ssl;
+    server_name     www.example.com;
+    ssl_certificate www.example.com.crt;
+    ...
+}
+
+server {
+    listen          443 ssl;
+    server_name     www.example.org;
+    ssl_certificate www.example.org.crt;
+    ...
+}"
+                    },
+                    {
+                      "title": "使用此配置，浏览器接收默认服务器的证书，即www.example.com不管所请求的服务器名称如何。这是由SSL协议行为引起的。在浏览器发送HTTP请求之前建立SSL连接，并且nginx不知道请求的服务器的名称。因此，它只能提供默认服务器的证书"
+                    },
+                    {
+                      "title": "建立连接的时候需要使用到证书, 但是不知道此时的server_name, 所以每个ip最好使用相同的证书"
+                    },
+                    {
+                      "title": "ssl_certificate     common.crt;
+ssl_certificate_key common.key;
+
+server {
+    listen          443 ssl;
+    server_name     www.example.com;
+    ...
+}
+
+server {
+    listen          443 ssl;
+    server_name     www.example.org;
+    ...
+}",
+                      "topics": [
+                        {
+                          "title": "使用共同的公钥"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "负载均衡",
+          "topics": [
+            {
+              "title": " round-robin （轮询）—  Nginx以轮询的方式对收到的请求进行分发",
+              "topics": [
+                {
+                  "title": "默认"
+                }
+              ]
+            },
+            {
+              "title": "least-connected（最少连接） — Nginx会把下一个连接分配给具有最小活动连接的服务器",
+              "topics": [
+                {
+                  "title": " upstream myapp1 {//配置服务器群组
+                least_conn;//最小连接机制命令
+                server srv1.example.com;
+                server srv2.example.com;
+                server srv3.example.com;
+}"
+                },
+                {
+                  "title": "可以使用权重"
+                }
+              ]
+            },
+            {
+              "title": "hash",
+              "topics": [
+                {
+                  "title": "       ip-hash  （IP绑定）— 使用hash函数去决定下一个连接应该分配给哪一台服务器（基于客户端的IP地址）",
+                  "topics": [
+                    {
+                      "title": " upstream myapp1 {
+            ip_hash;
+            server srv1.example.com;
+            server srv2.example.com;
+            server srv3.example.com;
+} "
+                    },
+                    {
+                      "title": "可以使用权重"
+                    }
+                  ]
+                },
+                {
+                  "title": "一致性hash",
+                  "topics": [
+                    {
+                      "title": " consistent_hash $remote_addr：可以根据客户端ip映射"
+                    },
+                    {
+                      "title": " consistent_hash $request_uri： 根据客户端请求的uri映射"
+                    },
+                    {
+                      "title": " consistent_hash $args：根据客户端携带的参数进行映射"
+                    },
+                    {
+                      "title": "减少上下线 请求 的漂移"
+                    }
+                  ]
+                },
+                {
+                  "title": "如果有本地缓存, 且本地缓存比较大.可以考虑使用这个优化"
+                }
+              ]
+            },
+            {
+              "title": "fair",
+              "topics": [
+                {
+                  "title": "按后端服务器的响应时间来分配请求，响应时间短的优先分配。与weight分配策略类似",
+                  "topics": [
+                    {
+                      "title": "upstream favresin{
+    server 10.0.0.10:8080;
+    server 10.0.0.11:8080;
+    fair;
+}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "  当为服务器的配置指定权重参数时，权重将会作为负载均衡决策的一部分进行计算",
+              "topics": [
+                {
+                  "title": "upstream myapp1 {
+            server srv1.example.com weight=3;// 为此服务器增加权重
+            server srv2.example.com;
+            server srv3.example.com;
+}"
+                }
+              ]
+            },
+            {
+              "title": "健康检查",
+              "topics": [
+                {
+                  "title": "主动检查模式",
+                  "topics": [
+                    {
+                      "title": "后端服务器需要为这种健康检查专门提供一个低消耗的接口"
+                    },
+                    {
+                      "title": "官方开源版未提供,需要使用第三方模块",
+                      "topics": [
+                        {
+                          "title": "开源版本: nginx_upstream_check_module"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "被动检查",
+                  "topics": [
+                    {
+                      "title": "max_fails",
+                      "topics": [
+                        {
+                          "title": "最大失败次数. 会将该server 视为不可用 默认值 1 次"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "fail_timeout",
+                      "topics": [
+                        {
+                          "title": "默认故障持续时间(默认值 10s)"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "如果某个后端服务器对请求的响应状态在短时间内累计一定失败次数时，Nginx 将会标记该服务器异常。就不会转发流量给该服务器"
+                    },
+                    {
+                      "title": "会造成用户请求部分失败"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "[Image]"
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

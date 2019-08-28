@@ -1,0 +1,624 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "thrift",
+      "topics": [
+        {
+          "title": "淘气三千问",
+          "topics": [
+            {
+              "title": "thrift 对异步超时等待如何处理的, select 等待时间如何设置??? ",
+              "topics": [
+                {
+                  "title": "采用红黑树对所有的请求timeout进行排序, 每次选出来最短的超时,作为select"
+                },
+                {
+                  "title": "那么在select过程中的新来的异步请求 timeout如何处理呢?",
+                  "makers": [
+                    "flag-red",
+                    "task-done",
+                    "priority-1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "数据类型 & IDL 语法 && 使用",
+          "topics": [
+            {
+              "title": "基本类型",
+              "topics": [
+                {
+                  "title": "bool: 布尔类型，true或false，占1字节
+byte: 有符号char
+i16: 16位有符号整数
+i32: 32位有符号整数
+i64: 64位有符号整数
+double: 64位浮点数
+binary: 字符数组
+string: 字符串（比如二进制字符串或者其他编码过的文本）"
+                }
+              ]
+            },
+            {
+              "title": "容器类型",
+              "topics": [
+                {
+                  "title": "list： 元素类型为t1的有序表，允许元素重复；"
+                },
+                {
+                  "title": "set： 元素类型为t1的无序表，不允许元素重复；"
+                },
+                {
+                  "title": "map： 键类型为t1，值类型为t2的kv对，键不容许重复；"
+                }
+              ]
+            },
+            {
+              "title": "结构体类型和异常",
+              "topics": [
+                {
+                  "title": "Thrift结构体类型在概念上类似于C语言中结构体类型，Thrift结构体将会被转换成面向对象语言中的类"
+                },
+                {
+                  "title": "异常在语法和功能上类似于结构体，一个差别是异常使用关键字exception而不是struct来声明。但他们在语义上有明显不同之处：当定义一个RPC服务时，我们可以声明一个远程方法能够抛出一个异常"
+                }
+              ]
+            },
+            {
+              "title": "服务",
+              "topics": [
+                {
+                  "title": "服务的定义方法在语义上等同于面向对象语言中的接口。Thrift编译器会产生执行这些接口的client和server stub。"
+                }
+              ]
+            },
+            {
+              "title": "类型重定义（Typedef)",
+              "topics": [
+                {
+                  "title": "[Image]"
+                }
+              ]
+            },
+            {
+              "title": "枚举",
+              "topics": [
+                {
+                  "title": "[Image]"
+                },
+                {
+                  "title": "每个字段可标识为required或optional；"
+                },
+                {
+                  "title": "如果optional标识的域没有赋值，该域将不会被序列化传输；如果某个optional标识域有缺省值而用户没有重新赋值，则该域的值一直为缺省值"
+                }
+              ]
+            },
+            {
+              "title": "名字空间（Namespacces）",
+              "topics": [
+                {
+                  "title": "Thrift中的命名空间类似于C++中的namespace或者java中的package，命名空间提供了一种组织（隔离）代码的简便方式。命名空间也可以用于防止类型定义中的名字冲突。"
+                },
+                {
+                  "title": "由于每一种语言都有自己的独特命名空间定义方式（如python里是module）, thrift允许我们针对每一种语言定制namespace的写法：　　"
+                },
+                {
+                  "title": "[Image]"
+                }
+              ]
+            },
+            {
+              "title": "文件包含",
+              "topics": [
+                {
+                  "title": "Thrift允许一个IDL文件包含另一个IDL文件，被包含的文件会在当前目录下查找。在使用被包含文件中的类型时要注意通过文件名前缀来访问"
+                }
+              ]
+            },
+            {
+              "title": "常量",
+              "topics": [
+                {
+                  "title": "Thrift允许定义跨语言使用的常量，复杂的类型和结构体可使用JSON形式表示。"
+                }
+              ]
+            },
+            {
+              "title": "服务定义（Defining Services）",
+              "topics": [
+                {
+                  "title": "service Twitter {
+    // 接口定义方式类似于C语言代码，它有一个返回值，参数列表和可选的异常列表
+    // 注意参数列表和异常列表定义的语法与结构体中域定义的语法一致
+    void ping(),                                                             // 1
+    bool postTweet(1:Tweet tweet) throws (1:TwitterUnavailable unavailable), // 2
+    TweetSearchResult searchTweets(1:string query);                          // 3
+
+    // oneway 标识符表明client端仅仅发起一个请求但不等待该请求的响应
+    // oneway接口的返回类型必须是void的
+    oneway void zip()                                                        // 4
+}"
+                },
+                {
+                  "title": "参数列表（异常列表）的定义同结构体完全一致；service支持继承， 一个server可以通过关键字extends继承自另一个service。"
+                }
+              ]
+            },
+            {
+              "title": "产生的文件",
+              "topics": [
+                {
+                  "title": "java",
+                  "topics": [
+                    {
+                      "title": "一个单独的文件（Constants.java）包含所有的常量定义；"
+                    },
+                    {
+                      "title": "每个结构体，枚举或者服务各占一个文件；"
+                    },
+                    {
+                      "title": "- bool: boolean
+- binary: byte[]
+- byte: byte
+- i16: short
+- i32: int
+- i64: long
+- double: double
+- string: String
+- list<t1>: List<t1>
+- set<t1>: Set<t1>
+- map<t1,t2>: Map<t1, t2>"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "版本升级&兼容性",
+              "topics": [
+                {
+                  "title": "绝不要修改thrift idl中已经存在字段的整数编号；"
+                },
+                {
+                  "title": "任何新添加的字段需要设置成optional。这就意味着任何使用你的“旧”消息格式的代码序列化的消息可以被你的新代码所解析，因为它们不会丢掉任何required的元素。你应该为这些元素设置合理的默认值，这样新的代码就能够正确地与老代码生成的消息交互了。类似地，你的新代码创建的消息也能被你的老代码解析（老的二进制程序在解析的时候只是简单地将新字段忽略）。然而，未知的字段是不会被抛弃的，如果之后消息被序列化，未知的字段会随之一起被序列化——所以，如果消息传到了新代码那里，则新的字段仍然可用；
+"
+                },
+                {
+                  "title": "非required字段可以删除，只要它的整数编号不会被其他字段重复使用（更好的做法是重命名该字段，比如名字前面可添加“OBSOLETE_”以防止其他字段使用它的整数编号；
+"
+                },
+                {
+                  "title": "改变默认值通常是没问题的，但需要记着默认值是不会发送到网络对端的。如果你的程序接收到的消息中某一字段没有设置值，你的程序会读取定义在你程序使用的thrift协议版本下的默认值，而不会读取发送端协议版本下的默认值；"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "各种server类型代码示例",
+          "topics": [
+            {
+              "title": "THsHaServer",
+              "topics": [
+                {
+                  "title": "    TNonblockingServerSocket tnbSocketTransport = new TNonblockingServerSocket(ServerConfig.SERVER_PORT);
+    TProcessor tprocessor = new HelloWorldService.Processor<HelloWorldService.Iface>(new HelloWorldServiceImpl());
+    // 半同步半异步
+    THsHaServer.Args thhsArgs = new THsHaServer.Args(tnbSocketTransport);
+    thhsArgs.processor(tprocessor);
+    thhsArgs.transportFactory(new TFramedTransport.Factory());
+    thhsArgs.protocolFactory(new TBinaryProtocol.Factory());
+
+    TServer server = new THsHaServer(thhsArgs);
+    System.out.println("Running HsHa Server");
+    server.serve();
+"
+                },
+                {
+                  "title": "client",
+                  "topics": [
+                    {
+                      "title": "    TTransport transport = new TFramedTransport(new TSocket(ServerConfig.SERVER_IP, ServerConfig.SERVER_PORT, ServerConfig.TIMEOUT));
+    // 协议要和服务端一致
+    TProtocol protocol = new TBinaryProtocol(transport);
+    HelloWorldService.Client client = new HelloWorldService.Client(protocol);
+    transport.open();
+
+    String result = client.say("HsHaClient");
+    System.out.println("Result =: " + result);
+    transport.close();
+"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "TThreadedSelectorServer",
+              "topics": [
+                {
+                  "title": "    TNonblockingServerSocket serverSocket = new TNonblockingServerSocket(ServerConfig.SERVER_PORT);
+    TProcessor processor = new HelloWorldService.Processor<HelloWorldService.Iface>(new HelloWorldServiceImpl());
+    // 多线程半同步半异步
+    TThreadedSelectorServer.Args ttssArgs = new TThreadedSelectorServer.Args(serverSocket);
+    ttssArgs.processor(processor);
+    ttssArgs.protocolFactory(new TBinaryProtocol.Factory());
+    // 使用非阻塞式IO时 服务端和客户端都需要指定数据传输方式为TFramedTransport
+    ttssArgs.transportFactory(new TFramedTransport.Factory());
+
+    // 多线程半同步半异步的服务模型
+    TThreadedSelectorServer server = new TThreadedSelectorServer(ttssArgs);
+    System.out.println("Running ThreadedSelector Server");
+    server.serve();
+"
+                }
+              ]
+            },
+            {
+              "title": "异步调用",
+              "topics": [
+                {
+                  "title": "示例",
+                  "topics": [
+                    {
+                      "title": "service AddService {
+  int add(1:int n1, 2:int n2)
+}
+
+服务端监听
+TNonblockingServerSocket socket = new TNonblockingServerSocket(9090);
+TServer server = new TNonblockingServer(socket, AddServiceImpl);
+server.start();
+
+客户端请求
+TNonblockingTransport socket = new TNonblockingSocket("localhost", 9090);
+AddService.AsyncClient client = new AddService.AsyncClient(socket);
+client.add(1,2,new AsynCallback(this){
+        void onComplete() {
+            ...
+        }
+        void onError(Exception exception) {
+            ...
+        }
+     }
+});"
+                    }
+                  ]
+                },
+                {
+                  "title": "异步调用只是客户端的处理, 服务端不需要修改. "
+                },
+                {
+                  "title": "在方法调用时, 需要传递callback, 由此可见同步接口和异步接口在形式上不相同. dubbo 是在调用结束后,返回future. 而thrift则是选择修改接口, callback方式."
+                },
+                {
+                  "title": "客户端异步调用不会阻塞IO线程.  但是异步callback的执行线程为IO线程, 如果回调中执行耗时动作,最好使用心得工作线程池, 和IO线程池进行隔离"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "传输层",
+          "topics": [
+            {
+              "title": "TTransport负责以字节流方式发送和接收Message，是底层IO模块在Thrift框架中的实现，每一个底层IO模块都会有一个对应TTransport来负责Thrift的字节流(Byte Stream)数据在该IO模块上的传输。例如TSocket对应Socket传输，TFileTransport对应文件传输。
+"
+            },
+            {
+              "title": "TFramedTransport",
+              "topics": [
+                {
+                  "title": "以frame为单位进行传输，非阻塞式服务中使用。"
+                }
+              ]
+            },
+            {
+              "title": "TSocket",
+              "topics": [
+                {
+                  "title": "阻塞式socker"
+                }
+              ]
+            },
+            {
+              "title": "TNonblockingTransport",
+              "topics": [
+                {
+                  "title": "使用非阻塞方式，用于构建异步客户端"
+                }
+              ]
+            },
+            {
+              "title": "TFileTransport",
+              "topics": [
+                {
+                  "title": "以文件形式进行传输。"
+                }
+              ]
+            },
+            {
+              "title": "TMemoryTransport",
+              "topics": [
+                {
+                  "title": "将内存用于I/O. java实现时内部实际使用了简单的ByteArrayOutputStream。"
+                }
+              ]
+            },
+            {
+              "title": "TZlibTransport",
+              "topics": [
+                {
+                  "title": "使用zlib进行压缩， 与其他传输方式联合使用。当前无java实现。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "协议层",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "TProtocol主要负责结构化数据组装成Message，或者从Message结构中读出结构化数据。TProtocol将一个有类型的数据转化为字节流以交给TTransport进行传输，或者从TTransport中读取一定长度的字节数据转化为特定类型的数据。如int32会被TBinaryProtocol Encode为一个四字节的字节数据，或者TBinaryProtocol从TTransport中取出四个字节的数据Decode为int32。",
+              "topics": [
+                {
+                  "title": "序列化/反序列化"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "服务层",
+          "topics": [
+            {
+              "title": "TServer负责接收Client的请求，并将请求转发到Processor进行处理。TServer主要任务就是高效的接受Client的请求，特别是在高并发请求的情况下快速完成请求。
+",
+              "makers": [
+                "task-done",
+                "priority-1",
+                "flag-red"
+              ]
+            },
+            {
+              "title": "TSimpleServer",
+              "topics": [
+                {
+                  "title": "简单的单线程服务模型，常用于测试"
+                }
+              ]
+            },
+            {
+              "title": "TThreadPoolServer	",
+              "topics": [
+                {
+                  "title": "多线程服务模型，使用标准的阻塞式IO。"
+                }
+              ]
+            },
+            {
+              "title": "TNonblockingServer",
+              "topics": [
+                {
+                  "title": "单线程服务器端，使用非阻塞式I/O（需使用TFramedTransport数据传输方式）"
+                },
+                {
+                  "title": "优缺点",
+                  "topics": [
+                    {
+                      "title": "缺点",
+                      "topics": [
+                        {
+                          "title": "TNonblockingServer模式在业务处理上还是采用单线程顺序来完成。在业务处理比较复杂、耗时的时候，例如某些接口函数需要读取数据库执行时间较长，会导致整个服务被阻塞住，此时该模式效率也不高，因为多个调用请求任务依然是顺序一个接一个执行。"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "优点",
+                      "topics": [
+                        {
+                          "title": "相比于TSimpleServer效率提升主要体现在IO多路复用上，TNonblockingServer采用非阻塞IO，对accept/read/write等IO事件进行监控和处理，同时监控多个socket的状态变化。"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "THsHaServer：半同步半异步服务器端，基于非阻塞式IO读写和多线程工作任务处理",
+              "topics": [
+                {
+                  "title": "鉴于TNonblockingServer的缺点，THsHaServer继承于TNonblockingServer，引入了线程池提高了任务处理的并发能力。THsHaServer是半同步半异步(Half-Sync/Half-Async)的处理模式，Half-Aysnc用于IO事件处理(Accept/Read/Write)，Half-Sync用于业务handler对rpc的同步处理上。"
+                },
+                {
+                  "title": "THsHaServer和TNonblockingServer一样，要求底层的传输通道必须使用TFramedTransport"
+                }
+              ]
+            },
+            {
+              "title": "TThreadedSelectorServer",
+              "topics": [
+                {
+                  "title": "read/write 事件注册在另一个IO多路复用器上."
+                },
+                {
+                  "title": "多线程选择器服务器端，ThreadedSelectorServer是对THsHaServer的一种扩充，它将selector中的读写IO事件(read/write)从主线程中分离出来。同时引入worker工作线程池，它也是种Half-Sync/Half-Async的服务模型。"
+                },
+                {
+                  "title": "主要过程",
+                  "topics": [
+                    {
+                      "title": "一个AcceptThread线程对象，专门用于处理监听socket上的新连接。"
+                    },
+                    {
+                      "title": "若干个SelectorThread对象专门用于处理业务socket的网络I/O读写操作，所有网络数据的读写均是有这些线程来完成。"
+                    },
+                    {
+                      "title": "一个负载均衡器SelectorThreadLoadBalancer对象，主要用于AcceptThread线程接收到一个新socket连接请求时，决定将这个新连接请求分配给哪个SelectorThread线程。
+"
+                    },
+                    {
+                      "title": "一个ExecutorService类型的工作线程池，在SelectorThread线程中，监听到有业务socket中有调用请求过来，则将请求数据读取之后，交给ExecutorService线程池中的线程完成此次调用的具体执行。主要用于处理每个rpc请求的handler回调处理(这部分是同步的)。",
+                      "topics": [
+                        {
+                          "title": "rpc调用在收到一个request后,此时socekt上不会再有数据过来. 所以此时直接把请求转发到线程池即可, 如果对于某些socket还会存在后续request到来, 则需要 每次将sockct粘性到具体的线程."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "默认参数",
+                  "topics": [
+                    {
+                      "title": "负责网络IO读写的selector默认线程数(selectorThreads)：2"
+                    },
+                    {
+                      "title": "负责业务处理的默认工作线程数(workerThreads)：5"
+                    },
+                    {
+                      "title": "工作线程池单个线程的任务队列大小(acceptQueueSizePerThread)：4"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": " 处理器层",
+          "topics": [
+            {
+              "title": "Processor(或者TProcessor)负责对Client的请求做出相应，包括RPC请求转发，调用参数解析和用户逻辑调用，返回值写回等处理步骤。Processor是服务器端从Thrift框架转入用户逻辑的关键流程。Processor同时也负责向Message结构中写入数据或者读出数据。"
+            },
+            {
+              "title": "处理流程",
+              "makers": [
+                "flag-red",
+                "task-done",
+                "priority-1"
+              ],
+              "topics": [
+                {
+                  "title": "TServer接收到RPC请求之后，调用TProcessor.process进行处理"
+                },
+                {
+                  "title": "TProcessor.process首先调用TTransport.readMessageBegin接口，读出RPC调用的名称和RPC调用类型。如果RPC调用类型是RPC Call，则调用TProcessor.process_fn继续处理，对于未知的RPC调用类型，则抛出异常。"
+                },
+                {
+                  "title": "TProcessor.process_fn根据RPC调用名称到自己的processMap中查找对应的RPC处理函数。如果存在对应的RPC处理函数，则调用该处理函数继续进行请求响应。不存在则抛出异常。",
+                  "topics": [
+                    {
+                      "title": "a) 在这一步调用的处理函数，并不是最终的用户逻辑。而是对用户逻辑的一个包装。"
+                    },
+                    {
+                      "title": "b)	processMap是一个标准的std::map。Key为RPC名称。Value是对应的RPC处理函数的函数指针。 processMap的初始化是在Processor初始化的时候进行的。Thrift虽然没有提供对processMap做修改的API，但是仍可以通过继承TProcessor来实现运行时对processMap进行修改，以达到打开或关闭某些RPC调用的目的。"
+                    }
+                  ]
+                },
+                {
+                  "title": "RPC处理函数是RPC请求处理的最后一个步骤，它主要完成以下三个步骤",
+                  "topics": [
+                    {
+                      "title": "a)	调用RPC请求参数的解析类，从TProtocol中读入数据完成参数解析。不管RPC调用的参数有多少个，Thrift都会将参数放到一个Struct中去。Thrift会检查读出参数的字段ID和字段类型是否与要求的参数匹配。对于不符合要求的参数都会跳过。这样，RPC接口发生变化之后，旧的处理函数在不做修改的情况，可以通过跳过不认识的参数，来继续提供服务。进而在RPC框架中提供了接口的多Version支持。"
+                    },
+                    {
+                      "title": "b)	参数解析完成之后，调用用户逻辑，完成真正的请求响应。"
+                    },
+                    {
+                      "title": "c)	用户逻辑的返回值使用返回值打包类进行打包，写入TProtocol。"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "客户端的处理",
+              "makers": [
+                "flag-red",
+                "task-done",
+                "priority-1"
+              ],
+              "topics": [
+                {
+                  "title": "ThriftClient跟TProcessor一样都主要操作InputProtocol和OutputProtocol，不同的是ThritClient将RPC调用分为Send和receive两个步骤。",
+                  "topics": [
+                    {
+                      "title": "Send步骤，将用户的调用参数作为一个整体的Struct写入TProcotol，并发送到TServer。"
+                    },
+                    {
+                      "title": "Send结束之后，ThriftClient便立刻进入Receive状态等待TServer的相应。对于TServer返回的响应，使用返回值解析类进行返回值解析，完成RPC调用。"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "thrift 架构图",
+          "topics": [
+            {
+              "title": "[Image]"
+            }
+          ]
+        },
+        {
+          "title": "应用技巧",
+          "topics": [
+            {
+              "title": "为调用加上一个事务ID"
+            },
+            {
+              "title": " 封装返回结果",
+              "topics": [
+                {
+                  "title": "返回结果为null的时候 会造成调用方产生异常,需要特殊处理"
+                }
+              ]
+            },
+            {
+              "title": "Thrift的服务器端和客户端使用的通信方式要一样，否则便无法进行正常通信",
+              "topics": [
+                {
+                  "title": "客户端会报错connection reset"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "profile",
+          "topics": [
+            {
+              "title": "跨语言 通讯框架",
+              "topics": [
+                {
+                  "title": "C++, Java, Python, PHP, Ruby, Erlang, Perl, Haskell, C#, Cocoa, JavaScript, Node.js, Smalltalk, and OCaml"
+                }
+              ]
+            },
+            {
+              "title": "提供最基本的rpc 功能. 没有实现负载均衡,灰度, 服务发现, 熔断等.",
+              "topics": [
+                {
+                  "title": "轻量, 架构可扩展"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

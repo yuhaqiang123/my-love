@@ -1,0 +1,362 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "mysql 高可用",
+      "topics": [
+        {
+          "title": "为什么要高可用",
+          "topics": [
+            {
+              "title": "随着系统应用访问量逐渐增大，单台数据库读写访问压力也随之增大，当读写访问达到一定瓶颈时，将数据库的读写效率骤然下降，甚至不可用；为了解决此类问题，通常会采用mysql集群，当主库宕机后，集群会自动将一个从库升级为主库，继续对外提供服务"
+            }
+          ]
+        },
+        {
+          "title": "mysql 官方文档相当详细",
+          "topics": [
+            {
+              "title": "https://dev.mysql.com/doc/refman/5.7/en/replication.html"
+            }
+          ]
+        },
+        {
+          "title": "复制过程",
+          "topics": [
+            {
+              "title": "Slave 服务器上执行start slave，开启主从复制开关。"
+            },
+            {
+              "title": "此时，Slave 服务器上的 IO 线程会通过 Master 服务器上授权的有复制权限的用户请求连接 Master 服务器，
+并请求从指定 binlog 日志文件的指定位置之后发送 binlog 日志内容。
+（日志文件名和位置就是在配置主从复制任务时执行change master命令时指定的）"
+            },
+            {
+              "title": "Master 服务器接收到来自 Slave 服务器的 IO 线程的请求后，
+Master 服务器上的 IO 线程根据 Slave 服务器的 IO 线程请求的信息，
+读取指定 binlog 日志文件指定位置之后的 binlog 日志信息，然后返回给 Slave 端的 IO 线程。
+返回的信息中除了 binlog 日志内容外，
+还有本次返回日志内容后在 Master 服务器端的新的 binlog 文件名以及在 binlog 中的下一个指定更新位置"
+            },
+            {
+              "title": "当 Slave 服务器的 IO 线程获取来自 Master 服务器上 IO 线程发送的日志内容及日志文件和位置点后，
+将 binlog 日志内容依次写入到 Slave 端自身的 relay log（即中继日志）文件（mysql-relay-bin.xxxxxx）的最末端，
+并将新的 binlog 文件名和位置记录到 master-info 文件中，
+以便下一次读取 Master 端新 binlog 日志时，
+能告诉 Master 服务器需要从新 binlog 日志的哪个文件哪个位置开始请求新的 binlog 日志内容。"
+            },
+            {
+              "title": "Slave 服务器端的 SQL 线程会实时检测本地 relay log 中新增加的日志内容，
+然后及时的把 relay log 文件中的内容解析成在 Master 端曾经执行的 SQL 语句的内容，
+并在自身 Slave 服务器上按语句的顺序执行应用这些 SQL 语句，应用完毕后清理应用过的日志。"
+            },
+            {
+              "title": "经过了上面的过程，就可以确保在 Master 端和 Slave 端执行了同样的 SQL 语句。
+当复制状态正常的情况下，Master 端和 Slave 端的数据是完全一样的"
+            }
+          ]
+        },
+        {
+          "title": "配置过程",
+          "topics": [
+            {
+              "title": "配置master",
+              "topics": [
+                {
+                  "title": "修改my.cnf配置文件，开启bin-log功能，修改server-id",
+                  "topics": [
+                    {
+                      "title": "server-id       = 1
+log-bin=mysql-bin"
+                    }
+                  ]
+                },
+                {
+                  "title": "登录mysql,添加同步用户并检查",
+                  "topics": [
+                    {
+                      "title": "grant replication slave on *.* to 'rep'@'192.168.1.%' identified by '123456';"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "配置mysql-slave",
+              "topics": [
+                {
+                  "title": "①修改/etc/my.cnf配置文件的server-id",
+                  "topics": [
+                    {
+                      "title": "server-id       = 2"
+                    }
+                  ]
+                },
+                {
+                  "title": "登录mysql,配置同步参数",
+                  "topics": [
+                    {
+                      "title": " CHANGE MASTER TO  
+
+    -> MASTER_HOST='192.168.1.11',
+
+    -> MASTER_PORT=3306, 
+
+    -> MASTER_USER='rep', 
+
+    -> MASTER_PASSWORD='123456',
+
+    -> MASTER_LOG_FILE='mysql-bin.000002', 
+
+    -> MASTER_LOG_POS=396; "
+                    }
+                  ]
+                },
+                {
+                  "title": "开启主从同步开关，并查看状态",
+                  "topics": [
+                    {
+                      "title": "start slave;"
+                    },
+                    {
+                      "title": "show slave status\G"
+                    },
+                    {
+                      "title": "system mysql -uroot -p'123456' -e "show slave status\G" |egrep "Slave_IO_Running:|Slave_SQL_Running:|Seconds_Behind_Master:"",
+                      "topics": [
+                        {
+                          "title": "Slave_IO_Running: Yes"
+                        },
+                        {
+                          "title": "Slave_SQL_Running: Yes"
+                        },
+                        {
+                          "title": "Seconds_Behind_Master: 0"
+                        },
+                        {
+                          "title": "两个yes和一个0，证明了配置已经成功了。"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "如果slave和master并不是同时开启的. 需要在slave之前先使用全量备份 初始化slave"
+            }
+          ]
+        },
+        {
+          "title": "master&slave 主从切换方案",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "Keepalived",
+              "topics": [
+                {
+                  "title": "，Master和Slave相互探测对方，时刻询问对方存活状态。当出现网络抖动或者网络出现问题的时候，可能会出现脑裂问题，变成了两主，数据就写错乱了"
+                }
+              ]
+            },
+            {
+              "title": "MMM",
+              "topics": [
+                {
+                  "title": " M1M2互为主备，再加上一个Slave节点做冗余。从图上看，虽然是双主，但该模式下同一时间点下只能有一个节点可以写，当发现这个主写节点出现故障，会将vip切换到另一个主上比。整体看，这种方式比较老，问题比较多。"
+                }
+              ]
+            },
+            {
+              "title": "MHA",
+              "topics": [
+                {
+                  "title": "由复制组与管理节点组成，每个复制组里是由至少三个数据节点组成，数据节点上部署监控agent，定时上报到管理节点，当主节点出现问题时，由管理节点裁决是否切换到从节点"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "半同步复制方案",
+          "topics": [
+            {
+              "title": "MySQL 5.7还支持通过插件实现的半同步复制接口",
+              "topics": [
+                {
+                  "title": "由于从库binlog 串行执行, 所以只要有一个从库返回到master确认落磁盘了,那么就代表两者是一致的,但是这会导致很高的延迟"
+                }
+              ]
+            },
+            {
+              "title": "与同步复制方案比较",
+              "topics": [
+                {
+                  "title": "通过异步复制，主服务器将事件写入其二进制日志，而从服务器在准备就绪时请求它们。无法保证任何事件都能到达任何从库。"
+                },
+                {
+                  "title": "使用完全同步复制时，当主服务器提交事务时，所有的从服务器也将在主服务器返回执行事务的会话之前提交事务。这样做的缺点是完成交易可能会有很多延迟。",
+                  "topics": [
+                    {
+                      "title": "所有从库都落磁盘"
+                    }
+                  ]
+                },
+                {
+                  "title": "半同步复制介于异步和完全同步复制之间。主设备仅等待至少一个从设备接收并记录事件。它不会等待所有从站确认收到，并且它只需要接收，而不是事件已完全执行并在从属端提交。",
+                  "topics": [
+                    {
+                      "title": "至少有一个从库落磁盘即可"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "设置",
+              "topics": [
+                {
+                  "title": "主服务器必须接收的从服务确认的数量可使用rpl_semi_sync_master_wait_for_slave_count 系统变量进行配置 。默认值为1"
+                },
+                {
+                  "title": " rpl_semi_sync_master_wait_point ",
+                  "topics": [
+                    {
+                      "title": "表示何时等待从库的确认, 是在 主库写入存储引擎前,还是写入引擎后"
+                    },
+                    {
+                      "title": "AFTER_SYNC（默认值）：主服务器将每个事务写入其二进制日志和从服务器，并将二进制日志同步到磁盘。主机在同步后等待从机确认事务接收。收到确认后，主服务器将事务提交给存储引擎并将结果返回给客户端，然后客户端可以继续。",
+                      "topics": [
+                        {
+                          "title": "从库的客户端可以看到数据,但是主库客户端还没有返回, 主库其他客户端也看不到数据"
+                        },
+                        {
+                          "title": "如果主站发生故障，则在主站上提交的所有事务都已复制到从站（保存到其中继日志）。主服务器和故障转移到从服务器的崩溃是无损的，因为从服务器是最新的"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "AFTER_COMMIT：主服务器将每个事务写入其二进制日志和从服务器，同步二进制日志，并将事务提交到存储引擎。提交后，主设备等待事务接收的从设备确认。收到确认后，主服务器将结果返回给客户端，然后客户端可以继续。",
+                      "topics": [
+                        {
+                          "title": "虽然客户端没有返回, 但是数据已经提交, 其他事务客户端,是可以看到提交的数据的!!!!!!"
+                        },
+                        {
+                          "title": "如果出现问题导致从设备不处理事务，那么在主设备崩溃和故障转移到从设备的情况下，这些客户端可能会看到相对于他们在主设备上看到的数据丢失。"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "主从延迟问题",
+          "topics": [
+            {
+              "title": "为何会有延迟",
+              "topics": [
+                {
+                  "title": "主从延迟是异步的, 从库需要网络上传输日志, 解析日志, 单线程执行sql, 而主库则是并发写入的"
+                }
+              ]
+            },
+            {
+              "title": "如何解决",
+              "topics": [
+                {
+                  "title": "业务的持久化层的实现采用分库架构，mysql服务可平行扩展，分散压力。",
+                  "topics": [
+                    {
+                      "title": "分库之后binlog 按照库直级别并发执行 ",
+                      "makers": [
+                        "task-done",
+                        "flag-red",
+                        "priority-1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "2. 服务的基础架构在业务和mysql之间加入memcache或者Redis的cache层。降低mysql的读压力；"
+                },
+                {
+                  "title": "3. 使用比主库更好的硬件设备作为slave；"
+                },
+                {
+                  "title": "4. sync_binlog在slave端设置为0；",
+                  "topics": [
+                    {
+                      "title": "binlog的内核缓冲的刷新由文件系统控制"
+                    }
+                  ]
+                },
+                {
+                  "title": "5. –logs-slave-updates 从服务器从主服务器接收到的更新不记入它的二进制日志。"
+                },
+                {
+                  "title": "6. 禁用slave的binlog"
+                },
+                {
+                  "title": "slave端，如果使用的存储引擎是innodb，innodb_flush_log_at_trx_commit =2 或者 1 ",
+                  "topics": [
+                    {
+                      "title": "由文件系统刷新,或者每隔1s刷新一遍"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "并行度",
+              "topics": [
+                {
+                  "title": "MySQL5.6基于库级别并行复制；
+MySQL 5.7基于逻辑时钟并行复制，也就是表级别的并行；
+MySQL8.0则是行级别的并行复制，粒度更细，复制效率更高。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "图解",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "master",
+              "topics": [
+                {
+                  "title": "binlog dump线程：当主库中有数据更新时，那么主库就会根据按照设置的binlog格式，将此次更新的事件类型写入到主库的binlog文件中，此时主库会创建log dump线程通知slave有数据更新，当I/O线程请求日志内容时，会将此时的binlog名称和当前更新的位置同时传给slave的I/O线程。"
+                }
+              ]
+            },
+            {
+              "title": "Slave",
+              "topics": [
+                {
+                  "title": "I/O线程：该线程会连接到master，向log dump线程请求一份指定binlog文件位置的副本，并将请求回来的binlog存到本地的relay log中，relay log和binlog日志一样也是记录了数据更新的事件，它也是按照递增后缀名的方式，产生多个relay log（ host_name-relay-bin.000001）文件，slave会使用一个index文件（ host_name-relay-bin.index）来追踪当前正在使用的relay log文件。"
+                }
+              ]
+            },
+            {
+              "title": "sql线程",
+              "topics": [
+                {
+                  "title": "SQL线程：该线程检测到relay log有更新后，会读取并在本地做redo操作，将发生在主库的事件在本地重新执行一遍，来保证主从数据同步。此外，如果一个relay log文件中的全部事件都执行完毕，那么SQL线程会自动将该relay log 文件删除掉。"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

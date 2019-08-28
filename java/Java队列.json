@@ -1,0 +1,205 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "Java队列",
+      "topics": [
+        {
+          "title": "DelaydQueue",
+          "makers": [
+            "symbol-right"
+          ],
+          "topics": [
+            {
+              "title": "add操作使用reentrantLock同步,内部阻塞等待时,使用条件变量.条件变量必须被锁同步保护,因为条件变量的api 并不是线程安全的"
+            },
+            {
+              "title": "内部队列使用 PriorityQueue 队列. 由于每一次插入 延迟队列的时间复杂度是log(n)"
+            },
+            {
+              "title": "内部队列的调整offer, poll 完全依赖于 PriorityQueue. delayqueue只负责等待队列队列头部的增减和等待队列头部可用. 首先取第一个值,获取超时时间 await,分为 leader,follower线程分别 await.为了减少指定超时的 await"
+            },
+            {
+              "title": "long getDelay(TimeUnit unit);  该接口并不是返回固定值,而是返回 距离该任务的执行时间还有多节,所以调用该接口会得到一个不断减少的值",
+              "makers": [
+                "flag-red"
+              ]
+            },
+            {
+              "title": "非阻塞的poll 操作.直接 peek堆首.如果满足就直接返回,否则返回null"
+            },
+            {
+              "title": "如果当前堆首不大于当前时间,那么使用信号条件变量等待,最大等待时间为当前堆首距离当前时间的间隔.这样如果等待期间如果有更早的任务,则 可以通知当前线程处理"
+            }
+          ]
+        },
+        {
+          "title": "PriorityQueue",
+          "topics": [
+            {
+              "title": "offer 使用小顶堆堆排序.每一次插入都涉及到一次调整,时间复杂度 log(n)"
+            },
+            {
+              "title": "有序列表,按照key 排序"
+            },
+            {
+              "title": "非线程安全"
+            }
+          ]
+        },
+        {
+          "title": "queue",
+          "topics": [
+            {
+              "title": "LinkedList"
+            },
+            {
+              "title": "ConcurrentLinkedQueue",
+              "makers": [
+                "symbol-question"
+              ],
+              "topics": [
+                {
+                  "title": "基于链接节点的、线程安全的队列。并发访问不需要同步。因为它在队列的尾部添加元素并从头部
+删除它们，所以只要不需要知道队列的大 小,ConcurrentLinkedQueue 对公共集合的共享访问就
+可以工作得很好。收集关于队列大小的信息会很慢，需要遍历队列。"
+                },
+                {
+                  "title": "线程安全, 链表结构"
+                }
+              ]
+            },
+            {
+              "title": "BlockingQueue",
+              "topics": [
+                {
+                  "title": "ArrayBlockingQueue",
+                  "topics": [
+                    {
+                      "title": "有界队列"
+                    },
+                    {
+                      "title": "读写操作需要先获得可重入锁.同时使用空,满两个条件变量 作为通知条件,分别在读写时,等待条件满足或通知条件满足(条件变量必须使用可重入锁保护, 因为posix的条件变量实现都没有考虑线程安全性问题, 一句话,条件变量是用来 等待或通知的,并不是线程安全的)"
+                    }
+                  ]
+                },
+                {
+                  "title": "LinkedBlockingQueue",
+                  "topics": [
+                    {
+                      "title": "可以指定最大容量, 当使用默认值时,其最大值为2*32 .相当于无界队列"
+                    }
+                  ]
+                },
+                {
+                  "title": "PriorityBlockingQueue",
+                  "topics": [
+                    {
+                      "title": "基于堆的无界优先级队列"
+                    },
+                    {
+                      "title": "无界队列, 小顶堆,基于数组(完全二叉树)"
+                    },
+                    {
+                      "title": "使用ReentrantLock 作同步"
+                    }
+                  ]
+                },
+                {
+                  "title": "DelayQueue",
+                  "topics": [
+                    {
+                      "title": "基于堆,基于延迟的队列"
+                    }
+                  ]
+                },
+                {
+                  "title": "SynchronousQueue",
+                  "topics": [
+                    {
+                      "title": "内部没有队列,写线程生产一个任务,必须等待消费者消费才会返回, 读操作也一样,只有读到一个任务才会返回"
+                    },
+                    {
+                      "title": "peek固定返回null,不可被遍历,仅仅用于生产者和消费者的同步"
+                    },
+                    {
+                      "title": "可以指定公平/非公平模式, 公平模式下读写线程会分别排队."
+                    },
+                    {
+                      "title": "SynchronousQueue使用两个队列（一个用于正在等待的生产者、另一个用于正在等待的消费者）和一个用来保护两个队列的锁"
+                    },
+                    {
+                      "title": "在ScheduledThreadPoolExecutor使用较多"
+                    }
+                  ]
+                },
+                {
+                  "title": "TransferQueue",
+                  "topics": [
+                    {
+                      "title": "LinkedTransferQueue",
+                      "topics": [
+                        {
+                          "title": "ConcurrentLinkedQueue、SynchronousQueue（公平模式）和LinkedBlockingQueue的超集"
+                        },
+                        {
+                          "title": "使用CAS无锁实现"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "生产者会一直阻塞直到所添加到队列的元素被某一个消费者所消费（不仅仅是添加到队列里就完事）"
+                    },
+                    {
+                      "title": "和之前的BlockQueue相比, 只有当 queue为空或者full 时才会可能发生阻塞"
+                    },
+                    {
+                      "title": "有效地实现了元素在线程之间的传递,类似于go 语言中的channe,在多个协程中实现了通讯"
+                    },
+                    {
+                      "title": "可以使用 TransferQueue 在 threadpool中替换 workqueue. 可以比SynchronousQueue提升性能"
+                    }
+                  ]
+                },
+                {
+                  "title": "思考",
+                  "topics": [
+                    {
+                      "title": "面向生产者消费者模式. "
+                    },
+                    {
+                      "title": "take方法是无限阻塞, poll 可选择等待时间"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "deque",
+              "topics": [
+                {
+                  "title": "双端队列.可以实现栈和队列"
+                },
+                {
+                  "title": "LinkedList"
+                },
+                {
+                  "title": "ArrayDeque"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "LinkedHashMap",
+          "topics": [
+            {
+              "title": "需要重写 removeEldestEntry 方法才能支持 有限数组的 LRU"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

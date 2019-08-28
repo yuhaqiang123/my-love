@@ -1,0 +1,255 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "要成为出色工程师的男人",
+      "topics": [
+        {
+          "title": "spring boot 原理",
+          "makers": [
+            "priority-2"
+          ]
+        },
+        {
+          "title": "Java",
+          "topics": [
+            {
+              "title": "基础",
+              "makers": [
+                "task-done"
+              ]
+            },
+            {
+              "title": "GC",
+              "makers": [
+                "priority-5"
+              ]
+            },
+            {
+              "title": "Netty",
+              "makers": [
+                "priority-5"
+              ]
+            },
+            {
+              "title": "Spring mvc 源码"
+            },
+            {
+              "title": "java 线程池,并发",
+              "makers": [
+                "task-done"
+              ]
+            },
+            {
+              "title": "lamada 表达式"
+            }
+          ]
+        },
+        {
+          "title": "GO",
+          "makers": [
+            "priority-5"
+          ],
+          "topics": [
+            {
+              "title": "借助于Docke理解go 程序的常见思路"
+            }
+          ]
+        },
+        {
+          "title": "分布式服务框架& 服务治理",
+          "topics": [
+            {
+              "title": "dubbo 使用及原理",
+              "makers": [
+                "priority-2"
+              ]
+            },
+            {
+              "title": "thrift 原理",
+              "makers": [
+                "priority-1"
+              ]
+            },
+            {
+              "title": "gRpc 原理"
+            },
+            {
+              "title": "服务治理",
+              "makers": [
+                "priority-2"
+              ],
+              "topics": [
+                {
+                  "title": "服务依赖实时监控"
+                },
+                {
+                  "title": "服务依赖拓扑图"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "flink",
+          "makers": [
+            "priority-5"
+          ]
+        },
+        {
+          "title": "优先级线程池队列"
+        },
+        {
+          "title": "mq",
+          "topics": [
+            {
+              "title": "kafka",
+              "makers": [
+                "priority-3"
+              ]
+            },
+            {
+              "title": "rabbitmq",
+              "makers": [
+                "task-done"
+              ]
+            },
+            {
+              "title": "rocketmq"
+            }
+          ]
+        },
+        {
+          "title": "Python",
+          "makers": [
+            "priority-5"
+          ],
+          "topics": [
+            {
+              "title": " nosetest 框架"
+            }
+          ]
+        },
+        {
+          "title": "缓存+Redis",
+          "topics": [
+            {
+              "title": "redssion",
+              "makers": [
+                "priority-1"
+              ],
+              "topics": [
+                {
+                  "title": "基本使用"
+                },
+                {
+                  "title": "分布式锁"
+                }
+              ]
+            },
+            {
+              "title": "高可用&高性能",
+              "makers": [
+                "priority-5"
+              ]
+            },
+            {
+              "title": "Jedis",
+              "makers": [
+                "priority-1"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "ZK 原理+分布式锁",
+          "makers": [
+            "task-done"
+          ],
+          "topics": [
+            {
+              "title": "zk协议",
+              "makers": [
+                "task-done"
+              ]
+            },
+            {
+              "title": "raft",
+              "makers": [
+                "priority-5"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "操作系统原理",
+          "makers": [
+            "priority-2"
+          ],
+          "topics": [
+            {
+              "title": "现在操作系统"
+            },
+            {
+              "title": "操作系统内幕"
+            }
+          ]
+        },
+        {
+          "title": "Docker",
+          "makers": [
+            "priority-3"
+          ],
+          "topics": [
+            {
+              "title": "熟悉docker 源码"
+            },
+            {
+              "title": "底层原理"
+            }
+          ]
+        },
+        {
+          "title": "小程序版探探",
+          "makers": [
+            "priority-5"
+          ],
+          "topics": [
+            {
+              "title": "Vue+python"
+            }
+          ]
+        },
+        {
+          "title": "程序员的自我修养(3遍)",
+          "makers": [
+            "priority-3"
+          ]
+        },
+        {
+          "title": "service mesh",
+          "makers": [
+            "priority-3"
+          ],
+          "topics": [
+            {
+              "title": "对微服务架构的影响"
+            }
+          ]
+        },
+        {
+          "title": "mongodb"
+        },
+        {
+          "title": "OS 及系统编程",
+          "topics": [
+            {
+              "title": "多进程编程, 通信"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

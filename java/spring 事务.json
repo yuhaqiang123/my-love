@@ -1,0 +1,269 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "spring 事务",
+      "topics": [
+        {
+          "title": "淘气三千问",
+          "topics": [
+            {
+              "title": "事务失效的 场景有哪些?"
+            },
+            {
+              "title": "如何控制数据库和缓存的一致性. 保证事务回滚之后, 缓存可以及时清理?或者只有数据库成功, 缓存才会成功.",
+              "makers": [
+                "task-done",
+                "flag-red"
+              ],
+              "topics": [
+                {
+                  "title": "可以使用两个方法, 外层调用数据库事务方法,成功后再调用缓存更新,有没有更优雅的做法",
+                  "makers": [
+                    "priority-1",
+                    "task-done",
+                    "flag-red"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "为什么spring 建议事务注解应用于类上",
+              "topics": [
+                {
+                  "title": "因为当设置 proxy_target_class=true, 或者mode=aspectj 接口上的配置将会被忽略."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "一些默认配置",
+          "topics": [
+            {
+              "title": "proxy-target-class="false"  "
+            },
+            {
+              "title": "transactional 默认只会在RuntimeException 中 回滚,其他受检查异常会被忽略."
+            },
+            {
+              "title": "单一数据源会被默认配置事务管理器"
+            }
+          ]
+        },
+        {
+          "title": "transaction 不生效的场景",
+          "topics": [
+            {
+              "title": "表必须是 innodb"
+            },
+            {
+              "title": "bean 被spring 托管"
+            },
+            {
+              "title": "Public 方法"
+            },
+            {
+              "title": "EnableTransactionManagement && transactional 注解"
+            },
+            {
+              "title": "是否是自调用.即被调用的方法是注解方法, 但是调用者是同一个对象的其他方法."
+            },
+            {
+              "title": "所用数据源是否加载了事务管理器",
+              "topics": [
+                {
+                  "title": "在SpringBoot项目中，如果是单数据源，那么系统会默认为单数据源配置事务管理器DataSourceTransactionManager。"
+                },
+                {
+                  "title": "在SpringBoot项目中，如果是多数据源，则一定确保所有的数据源都配置了事务管理器。"
+                },
+                {
+                  "title": "在transactional中配置事务管理器,使用相关的bean"
+                }
+              ]
+            },
+            {
+              "title": "Transactional的扩展配置propagation是否正确",
+              "topics": [
+                {
+                  "title": "以下 propagation属性会导致事务不会触发"
+                },
+                {
+                  "title": "SUPPORTS: 如果存在事务，则进入事务；否则，以非事务方式运行。"
+                },
+                {
+                  "title": "NOT_SUPPORTED: 如果存在事务，则挂起事务，并以非事务方式运行。"
+                },
+                {
+                  "title": "NEVER: 以非事务形式运行，如果存在事务，则抛出异常。"
+                }
+              ]
+            },
+            {
+              "title": "可选配置",
+              "topics": [
+                {
+                  "title": "Springboot配置文件的rollback-on-commit-failure属性：
+
+# yaml配置
+spring:
+  transaction:
+    rollback-on-commit-failure: true"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "坑点",
+          "topics": [
+            {
+              "title": "多数据源情况下没有显示配置事务管理器, 事务一直不生效"
+            },
+            {
+              "title": "事务处理中, 在读写的事务中, 读操作使用读库的数据源 ,导致读不到数据. ",
+              "topics": [
+                {
+                  "title": "如何根据事务或者其他机制自动的切换读写数据源"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "事务处理大致流程",
+          "topics": [
+            {
+              "title": "当@Transactional注解的方法被类外部的代码调用时，Spring在运行时为方法所在类生成一个AOP代理对象。
+代理对象根据@Transactional的属性，决定是否由事务拦截器TransactionInterceptor对此方法进行事务拦截。
+在进行事务拦截时，会先开启事务，然后执行业务代码，根据执行是否出现异常，通过抽象事务管理器AbstractPlatformTransactionManager来进行rollback或者commit。"
+            },
+            {
+              "title": "在事务进行 commit 前后 有额外的扩展点",
+              "topics": [
+                {
+                  "title": "TransactionSynchronization 事务同步接口 有before commit , after commit , afterComplete(无论成功还是失败都会调用.)"
+                },
+                {
+                  "title": "例如缓村的使用接口",
+                  "topics": [
+                    {
+                      "title": " if (TransactionSynchronizationManager.isSynchronizationActive()) {
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+                public void afterCommit() {
+                    TransactionAwareCacheDecorator.this.targetCache.put(key, value);
+                }
+            });
+        } else {
+            this.targetCache.put(key, value);
+        }"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "transactional 注解",
+          "topics": [
+            {
+              "title": "子主题 1"
+            },
+            {
+              "title": "设置事务 的隔离级别",
+              "topics": [
+                {
+                  "title": "Transactional (isolation=Isolation.READ_COMMITTED)"
+                },
+                {
+                  "title": "默认使用数据库的隔离级别"
+                },
+                {
+                  "title": "其他隔离级别",
+                  "topics": [
+                    {
+                      "title": "READ_COMMITTED"
+                    },
+                    {
+                      "title": "READ_UNCOMMITTED"
+                    },
+                    {
+                      "title": "REPEATABLE_READ"
+                    },
+                    {
+                      "title": "SERIALIZABLE"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "transactionManager",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "spring 提供了在各个持久层框架的之上抽象的事务管理器, 不同的持久层框架的事务管理的实现不同但是接口相同"
+            },
+            {
+              "title": "jpa",
+              "topics": [
+                {
+                  "title": "JpaTransactionManager"
+                }
+              ]
+            },
+            {
+              "title": "jdbc",
+              "topics": [
+                {
+                  "title": "DataSourceTransactionManager",
+                  "topics": [
+                    {
+                      "title": "只需要data source"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "hibernate",
+              "topics": [
+                {
+                  "title": "HibernateTransactionManager",
+                  "topics": [
+                    {
+                      "title": "需要 EntityManagerFactory 及 dataSource"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "jta",
+              "topics": [
+                {
+                  "title": "JtaTransactionManager"
+                }
+              ]
+            },
+            {
+              "title": "jms",
+              "topics": [
+                {
+                  "title": "JmsTransactionManager"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

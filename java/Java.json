@@ -1,0 +1,219 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "Java",
+      "topics": [
+        {
+          "title": "NIO",
+          "topics": [
+            {
+              "title": "JavaNIO中的Channel（通道）就相当于操作系统中的内核缓冲区，有可能是读缓冲区，也有可能是网络缓冲区，而Buffer就相当于操作系统中的用户缓冲区"
+            },
+            {
+              "title": "NIO中的FileChannel.map()方法其实就是采用了操作系统中的内存映射方式，将内核缓冲区的内存和用户缓冲区的内存做了一个地址映射。"
+            },
+            {
+              "title": "代码实例",
+              "topics": [
+                {
+                  "title": "File file = new File("test.zip");
+RandomAccessFile raf = new RandomAccessFile(file, "rw");
+FileChannel fileChannel = raf.getChannel();
+MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_ONLY, 0, fileChannel.size());
+
+processData();
+// 数据处理完成以后，打卡一个SocketChannel
+SocketChannel socketChannel = SocketChannel.open(new InetSocketAddress("", 1234));
+// 这时依旧需要CPU将内核缓冲区的内容拷贝到网络缓冲区
+socketChannel.write(buffer);"
+                },
+                {
+                  "title": "使用map 创建一个内核缓冲区, 用户进程可以直接访问"
+                }
+              ]
+            },
+            {
+              "title": "真正零拷贝",
+              "topics": [
+                {
+                  "title": "代码实例",
+                  "topics": [
+                    {
+                      "title": " File file = new File("test.zip");
+        RandomAccessFile raf = new RandomAccessFile(file, "rw");
+        FileChannel fileChannel = raf.getChannel();
+        SocketChannel socketChannel = SocketChannel.open(new InetSocketAddress("", 1234));
+        // 直接使用了transferTo()进行通道间的数据传输
+        fileChannel.transferTo(0, fileChannel.size(), socketChannel);"
+                    }
+                  ]
+                },
+                {
+                  "title": "transferTo()方法直接将当前通道内容传输到另一个通道，没有涉及到Buffer的任何操作，NIO中的Buffer是JVM堆或者堆外内存，但不论如何他们都是操作系统内核空间的内存。也就是说这种方式不会有内核缓冲区到用户缓冲区的读写问题。"
+                },
+                {
+                  "title": "transferTo()的实现方式就是通过系统调用sendfile()（当然这是Linux中的系统调用），根据我们上面所写说这个过程是效率远高于从内核缓冲区到用户缓冲区的读写的"
+                },
+                {
+                  "title": "主要是DMA 写入内核缓冲区,然后内核缓冲区的描述符写进 socket 缓冲区.然后dma将 socket缓冲区写进网卡"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "HashMap ",
+          "topics": [
+            {
+              "title": "hash算法",
+              "topics": [
+                {
+                  "title": "static final int hash(Object key) {
+    int h;
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+}"
+                },
+                {
+                  "title": "之所以这样做 是因为 大部分情况下,都是用的 低 16 位,虽然 Hash函数可以保证整体是随机hash的,但是不保证低 16 位一直都是随机的,所以加上高 16 位做一个 混乱.(算是一个优化)"
+                },
+                {
+                  "title": "这样通过 table.length-1 进行& 操作时,就能直接使用 混乱后的 低 16 位进行 index of"
+                }
+              ]
+            },
+            {
+              "title": "扩容",
+              "topics": [
+                {
+                  "title": "由于数组大小是 2的幂,所以扩容后, 旧元素在原位置或者原位置+原数组长度位置"
+                },
+                {
+                  "title": "不需要重新计算 hash."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "单元测试",
+          "topics": [
+            {
+              "title": "mockito",
+              "topics": [
+                {
+                  "title": "mock 和spy 的区别",
+                  "topics": [
+                    {
+                      "title": "mock使用class 创建, spy 使用对象实例"
+                    },
+                    {
+                      "title": "mock不会调用实际的方法, spy 能执行实际的方法",
+                      "topics": [
+                        {
+                          "title": "spy 一旦被监视,例如doReturn.when().getId 就一直会返回这个值
+但是如果对id 进行set,是会对实际的对象进行修改. 直到 reset这个对象. 依然是可以是
+可以看到set 之后的值得"
+                        },
+                        {
+                          "title": "spy 若没有特别配置的话, 对这个新对象的所有方法调用, 都会委派给实际的 Java 对象"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "reset重置该mock/spy 对象"
+                },
+                {
+                  "title": "doReturn.when.getId 可以不实际执行具体的方法. 比when(getId).doReturn 要安全"
+                },
+                {
+                  "title": "verify",
+                  "topics": [
+                    {
+                      "title": "Mockito 会追踪 Mock 对象的所用方法调用和调用方法时所传递的参数. 我们可以通过 verify() 静态方法来来校验指定的方法调用是否满足断言"
+                    },
+                    {
+                      "title": "例子",
+                      "topics": [
+                        {
+                          "title": "verify(mockedList, atLeastOnce()).add("one");"
+                        },
+                        {
+                          "title": "verify(mockedList, times(1)).add("two");"
+                        },
+                        {
+                          "title": "verify(mockedList, times(3)).add("three times");"
+                        },
+                        {
+                          "title": "verify(mockedList, never()).isEmpty();"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "参数捕捉",
+                  "topics": [
+                    {
+                      "title": "例子",
+                      "topics": [
+                        {
+                          "title": " List<String> list = Arrays.asList("1", "2");
+    List mockedList = mock(List.class);
+    ArgumentCaptor<List> argument = ArgumentCaptor.forClass(List.class);
+    mockedList.addAll(list);
+    verify(mockedList).addAll(argument.capture());
+
+    Assert.assertEquals(2, argument.getValue().size());
+    Assert.assertEquals(list, argument.getValue());"
+                        },
+                        {
+                          "title": "通过verify 使用argument.capture 获取到该方法的入参"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "doXXX",
+                  "topics": [
+                    {
+                      "title": "doAnswer",
+                      "topics": [
+                        {
+                          "title": "[Image]"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "doThrow",
+                      "topics": [
+                        {
+                          "title": "返回异常"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "doNothing",
+                      "topics": [
+                        {
+                          "title": "只有void 类型才可以调用"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "InjectMocks 如果此注解声明的变量需要用到mock对象，mockito会自动注入mock或spy成员"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

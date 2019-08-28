@@ -1,0 +1,31 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "spring  cloud",
+      "topics": [
+        {
+          "title": "常见组件",
+          "topics": [
+            {
+              "title": "Euraka 服务注册发现组件"
+            },
+            {
+              "title": "Feign 服务调用Rpc框架"
+            },
+            {
+              "title": "Ribbon 服务调用的负载均衡"
+            },
+            {
+              "title": "Hystrix 断路器熔断"
+            },
+            {
+              "title": "Zuul 服务网关"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

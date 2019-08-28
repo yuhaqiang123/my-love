@@ -1,0 +1,192 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "MQ",
+      "topics": [
+        {
+          "title": "可靠性的保障",
+          "topics": [
+            {
+              "title": "rabbitmq",
+              "topics": [
+                {
+                  "title": "[Image]"
+                },
+                {
+                  "title": "生产者如何保障",
+                  "topics": [
+                    {
+                      "title": "事务",
+                      "topics": [
+                        {
+                          "title": "吞吐量会下来，因为太耗性能。"
+                        },
+                        {
+                          "title": "生产者发送数据之前开启 RabbitMQ 事务channel.txSelect，然后发送消息，如果消息没有成功被 RabbitMQ 接收到，那么生产者会收到异常报错，此时就可以回滚事务channel.txRollback，然后重试发送消息；如果收到了消息，那么可以提交事务channel.txCommit"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "confirm模式",
+                      "topics": [
+                        {
+                          "title": "可以开启confirm模式，在生产者那里设置开启confirm模式之后，你每次写的消息都会分配一个唯一的 id",
+                          "topics": [
+                            {
+                              "title": "如果写入了 RabbitMQ 中，RabbitMQ 会给你回传一个ack消息"
+                            },
+                            {
+                              "title": "如果 RabbitMQ 没能处理这个消息，会回调你一个nack接口，告诉你这个消息接收失败，你可以重试"
+                            },
+                            {
+                              "title": "可以结合这个机制自己在内存里维护每个消息 id 的状态，如果超过一定时间还没接收到这个消息的回调，那么你可以重发。",
+                              "makers": [
+                                "priority-1",
+                                "flag-red",
+                                "task-done"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "title": "消息路由失败时",
+                      "topics": [
+                        {
+                          "title": "当mandatory标志位设置为true时，如果exchange根据自身类型和消息routingKey无法找到一个合适的queue存储消息，那么broker会调用basic.return方法将消息返还给生产者;
+
+当mandatory设置为false时，出现上述情况broker会直接将消息丢弃;
+
+通俗的讲，mandatory标志告诉broker代理服务器至少将消息route到一个队列中，否则就将消息return给发送者;"
+                        },
+                        {
+                          "title": "mendatory true时, 会调用basic.return"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "RabbitMQ 弄丢了数据",
+                  "topics": [
+                    {
+                      "title": "开启 RabbitMQ 的持久化",
+                      "topics": [
+                        {
+                          "title": "创建 queue 的时候将其设置为持久化",
+                          "topics": [
+                            {
+                              "title": "这样就可以保证 RabbitMQ 持久化 queue 的元数据，但是不会持久化 queue 里的数据。",
+                              "makers": [
+                                "priority-1",
+                                "task-done"
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "title": "发送消息的时候将消息的 deliveryMode 设置为 2",
+                          "topics": [
+                            {
+                              "title": "将消息设置为持久化"
+                            },
+                            {
+                              "title": "只有消息被持久化.rabbitmq才会 给生产者 ack"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "title": "设置持久化",
+                      "topics": [
+                        {
+                          "title": "1.交换机持久化 在声明时指定durable为true"
+                        },
+                        {
+                          "title": "2.队列持久化 在声明时指定durable为true"
+                        },
+                        {
+                          "title": "3.消息持久化 在声明时指定delivery_mode为2"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "消费端弄丢了数据",
+                  "topics": [
+                    {
+                      "title": "关闭自动 ack,每次消息处理完给其 ack."
+                    },
+                    {
+                      "title": "当 channel关闭时,rabbitmq会自动给没有nack 的消息重发"
+                    },
+                    {
+                      "title": "basic.qos方法可以限制 channel上未确认消息的数量",
+                      "topics": [
+                        {
+                          "title": "当channel存在多个消费者时,由于存在多个消费者协调.所以会降低性能"
+                        },
+                        {
+                          "title": "考虑使用单个 channel单个消费者"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "kafka"
+            },
+            {
+              "title": "MQ本身存储的可靠性",
+              "topics": [
+                {
+                  "title": "数据持久化存储",
+                  "topics": [
+                    {
+                      "title": "何时将数据从内存刷新到磁盘,如何设计缓存"
+                    },
+                    {
+                      "title": "写入磁盘如何实现, 只写一个文件,还是采用索引或其他方式, 文件的组织方式,元数据"
+                    },
+                    {
+                      "title": "思考kfaka 的底层文件存储原理"
+                    }
+                  ]
+                },
+                {
+                  "title": "数据的分布式存储",
+                  "topics": [
+                    {
+                      "title": "如何更好的分片? 一致性Hash ?"
+                    },
+                    {
+                      "title": "如何支持自动扩缩容, 如何保证数据的负载均衡漂移? 可伸缩的架构设计"
+                    }
+                  ]
+                },
+                {
+                  "title": "高可用架构宕机场景",
+                  "topics": [
+                    {
+                      "title": "如何实现多副本冗余设计,读写分离,或者主从架构?"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": null
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

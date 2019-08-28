@@ -1,0 +1,92 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "Elastic-Search使用",
+      "topics": [
+        {
+          "title": "tip 提示",
+          "topics": [
+            {
+              "title": "term 查询是包含查询, 并不是严格相等查询, 如果一个字分词了, 即使完全匹配可能也可能查不出来, 因为没有命中任何一个分词."
+            }
+          ]
+        },
+        {
+          "title": "结构化搜索",
+          "topics": [
+            {
+              "title": "范围",
+              "topics": [
+                {
+                  "title": "range ",
+                  "topics": [
+                    {
+                      "title": ""range" : {
+ 	"price" : {
+        "gte" : 20,
+        "lte" : 40
+    }
+}"
+                    }
+                  ]
+                },
+                {
+                  "title": "日期范围",
+                  "topics": [
+                    {
+                      "title": " "gt" : "now-1h""
+                    },
+                    {
+                      "title": ""gt" : "2014-01-01 00:00:00",
+ "lt" : "2014-01-01 00:00:00||+1M" "
+                    },
+                    {
+                      "title": "支持一些计算"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "精确值查找",
+              "topics": [
+                {
+                  "title": "处理数字（numbers）、布尔值（Booleans）、日期（dates"
+                },
+                {
+                  "title": "term 查询",
+                  "topics": [
+                    {
+                      "title": ""term" : { 
+                    "price" : 20
+                }"
+                    },
+                    {
+                      "title": "使用倒排索引方式查询, 对于数字, 日期,bool 能精确匹配,对于 文本由于文本会分词, 非精确匹配"
+                    },
+                    {
+                      "title": "如果想使用对text 使用精确匹配,必须对 text在创建索引时 ,指定不进行分词",
+                      "topics": [
+                        {
+                          "title": "  "productID" : {
+                    "type" : "string",
+                    "index" : "not_analyzed" 
+                }"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "全文搜索"
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

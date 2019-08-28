@@ -1,0 +1,448 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "dubbo in action",
+      "topics": [
+        {
+          "title": "启动时检查",
+          "topics": [
+            {
+              "title": "消费者需要配置 dubbo:reference check=true "
+            },
+            {
+              "title": "默认打开依赖检查, 避免上线发现provider 不可用."
+            },
+            {
+              "title": "关闭所有的依赖检查",
+              "topics": [
+                {
+                  "title": "<dubbo:consumer check="false"/>"
+                }
+              ]
+            },
+            {
+              "title": "关闭注册中心依赖检查",
+              "topics": [
+                {
+                  "title": "<dubbo:registry check="false"/>"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "集群容错",
+          "topics": [
+            {
+              "title": "[Image]",
+              "topics": [
+                {
+                  "title": "cluster 实际是对多个invoker 的抽象."
+                }
+              ]
+            },
+            {
+              "title": "这里的Invoker是Provider的一个可调用Service的抽象，Invoker封装了Provider地址及Service接口信息。"
+            },
+            {
+              "title": "Directory代表多个Invoker，可以把它看成List<Invoker>，但与List不同的是，它的值可能是动态变化的，比如注册中心推送变更。"
+            },
+            {
+              "title": "Cluster将Directory中的多个Invoker伪装成一个Invoker，对上层透明，伪装过程包含了容错逻辑，调用失败后，重试另一个。"
+            },
+            {
+              "title": "Router负责从多个Invoker中按路由规则选出子集，比如读写分离，应用隔离等。"
+            },
+            {
+              "title": "LoadBalance负责从多个Invoker中选出具体的一个用于本次调用，选的过程包含了负载均衡算法，调用失败后，需要重选。"
+            },
+            {
+              "title": "<dubbo:reference cluster="failsafe" id="testService" interface="org.yuequan.dubbo.demo.TestService" check="false" version="1.0.0" />"
+            },
+            {
+              "title": "针对 消费者端, 指定 cluster 字段容错 特性"
+            }
+          ]
+        },
+        {
+          "title": "测试环境",
+          "topics": [
+            {
+              "title": "可以配置直连 provider. dubbo:reference url=dubbo://localhost:20890"
+            }
+          ]
+        },
+        {
+          "title": "扩展点机制",
+          "topics": [
+            {
+              "title": "Fillter",
+              "topics": [
+                {
+                  "title": "用途",
+                  "topics": [
+                    {
+                      "title": "1、dubbo有超时重试机制，可以使用Filter来实现幂等操作，防止重复操作带来的脏数据"
+                    },
+                    {
+                      "title": "2、统一异常处理"
+                    },
+                    {
+                      "title": "3、前面文章中提到的调用链的使用接入"
+                    }
+                  ]
+                },
+                {
+                  "title": "使用",
+                  "topics": [
+                    {
+                      "title": "配置",
+                      "topics": [
+                        {
+                          "title": "配置Filter范围",
+                          "topics": [
+                            {
+                              "title": "<dubbo:reference filter="xxx,yyy" /> <!-- 消费方调用过程拦截 -->"
+                            },
+                            {
+                              "title": "<dubbo:consumer filter="xxx,yyy"/> <!-- 消费方调用过程缺省拦截器，将拦截所有reference -->"
+                            },
+                            {
+                              "title": "<dubbo:service filter="xxx,yyy" /> <!-- 提供方调用过程拦截 -->"
+                            },
+                            {
+                              "title": "<dubbo:provider filter="xxx,yyy"/> <!-- 提供方调用过程缺省拦截器，将拦截所有service -->"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "使用注解配置",
+                          "topics": [
+                            {
+                              "title": "Activate"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "title": "发现 Filter",
+                      "topics": [
+                        {
+                          "title": "在resource/META-INF/dubbo/com.alibaba.dubbo.rpc.Filter文件里面写配置xxx=com.xxx.XxxFilter"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Protocol"
+            },
+            {
+              "title": "实现原理",
+              "topics": [
+                {
+                  "title": "静态配置 扩展点",
+                  "topics": [
+                    {
+                      "title": "注解或xml()"
+                    }
+                  ]
+                },
+                {
+                  "title": "运行时 选择时机的扩展点具体类",
+                  "topics": [
+                    {
+                      "title": "url-我们知道dubbo的RPC调用相关信息都是通过URL形式保存的，因此url参数即是当前的某个服务调用"
+                    },
+                    {
+                      "title": "group-用来处理@Activate注解的方式配置扩展"
+                    }
+                  ]
+                },
+                {
+                  "title": "ExtentionLoader 根据不同的 扩展接口(Filter) 返回不同的loader"
+                },
+                {
+                  "title": "不同的loader根据filter name, 找到 Filter list "
+                },
+                {
+                  "title": "将 list封装进 Invoker中. 过滤式执行"
+                },
+                {
+                  "title": "Filter只是示例说明,其他扩展点也是类似的"
+                }
+              ]
+            },
+            {
+              "title": "如何使用spring 发现 Filter 集成进 ExtentionLoader,目前extentionloader 实际可以脱离 spring存在."
+            }
+          ]
+        },
+        {
+          "title": "配置线程池模型",
+          "topics": [
+            {
+              "title": "<dubbo:protocolname="dubbo"dispatcher="all"threadpool="fixed"threads="100"/>"
+            },
+            {
+              "title": "dispatcher",
+              "topics": [
+                {
+                  "title": "all 所有消息都派发到线程池，包括请求，响应，连接事件，断开事件，心跳等。"
+                },
+                {
+                  "title": "direct 所有消息都不派发到线程池，全部在IO线程上直接执行。"
+                },
+                {
+                  "title": "message 只有请求响应消息派发到线程池，其它连接断开事件，心跳等消息，直接在IO线程上执行。"
+                },
+                {
+                  "title": "execution 只请求消息派发到线程池，不含响应，响应和其它连接断开事件，心跳等消息，直接在IO线程上执行。"
+                },
+                {
+                  "title": "connection 在IO线程上，将连接断开事件放入队列，有序逐个执行，其它消息派发到线程池。"
+                }
+              ]
+            },
+            {
+              "title": "threadpool",
+              "topics": [
+                {
+                  "title": "fixed 固定大小线程池，启动时建立线程，不关闭，一直持有。(缺省)"
+                },
+                {
+                  "title": "cached 缓存线程池，空闲一分钟自动删除，需要时重建。"
+                },
+                {
+                  "title": "limited 可伸缩线程池，但池中的线程数只会增长不会收缩。(为避免收缩时突然来了大流量引起的性能问题)。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "多协议",
+          "topics": [
+            {
+              "title": "不同服务不同协议",
+              "topics": [
+                {
+                  "title": " <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:protocol name="rmi" port="1099" />
+ 
+    <!-- 使用dubbo协议暴露服务 -->
+    <dubbo:service interface="com.alibaba.hello.api.HelloService" version="1.0.0" ref="helloService" protocol="dubbo" />
+    <!-- 使用rmi协议暴露服务 -->
+    <dubbo:service interface="com.alibaba.hello.api.DemoService" version="1.0.0" ref="demoService" protocol="rmi" />"
+                }
+              ]
+            },
+            {
+              "title": "同一个服务多个协议",
+              "topics": [
+                {
+                  "title": " <!-- 多协议配置 -->
+    <dubbo:protocol name="dubbo" port="20880" />
+    <dubbo:protocol name="hessian" port="8080" />
+ 
+    <!-- 使用多个协议暴露服务 -->
+    <dubbo:service id="helloService" interface="com.alibaba.hello.api.HelloService" 
+version="1.0.0" protocol="dubbo,hessian" />"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "多注册中心",
+          "topics": [
+            {
+              "title": "添加注册中心",
+              "topics": [
+                {
+                  "title": "    <dubbo:registry id="hangzhouRegistry" address="10.20.141.150:9090" />"
+                }
+              ]
+            },
+            {
+              "title": "同一个服务可注册到多个注册中心"
+            },
+            {
+              "title": "不同服务可注册到不同的注册中心"
+            },
+            {
+              "title": "可引用不同注册中心的同一类型服务"
+            }
+          ]
+        },
+        {
+          "title": "服务分组",
+          "topics": [
+            {
+              "title": "当一个服务有多个实现时,,可以将其分组, 消费者可引用不同分组的服务(和多个注册中心的不同)"
+            },
+            {
+              "title": "实例",
+              "topics": [
+                {
+                  "title": "<dubbo:service group="feedback" interface="com.xxx.IndexService" />
+<dubbo:service group="member" interface="com.xxx.IndexService"/>"
+                },
+                {
+                  "title": "<dubbo:reference id="feedbackIndexService" group="feedback" interface="com.xxx.IndexService"/>
+<dubbo:reference id="memberIndexService" group="member" interface="com.xxx.IndexService"/>"
+                }
+              ]
+            },
+            {
+              "title": "可以在消费端 合并分组的结果.  "
+            }
+          ]
+        },
+        {
+          "title": "多版本",
+          "topics": [
+            {
+              "title": "同一个服务可以发布同步的版本,引用时有根据 版本引用"
+            }
+          ]
+        },
+        {
+          "title": "降级",
+          "topics": [
+            {
+              "title": "配置reference 中的 mock当调用失败时, 会选择使用 mock提供的类处理该消息"
+            }
+          ]
+        },
+        {
+          "title": "服务路由规则",
+          "topics": [
+            {
+              "title": "路由规格在invoker 获取 Directory 下的 Invoker list后的再处理阶段"
+            },
+            {
+              "title": "类型",
+              "topics": [
+                {
+                  "title": "条件路由规则和脚本路由规则"
+                }
+              ]
+            },
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "具体的规则",
+              "topics": [
+                {
+                  "title": "registry.register(URL.valueOf("condition://0.0.0.0/com.foo.BarService?category=routers&dynamic=false&rule=" + URL.encode("host = 10.20.153.10 => host = 10.20.153.11")));"
+                },
+                {
+                  "title": "condition:// 表示路由规则的类型，支持条件路由规则和脚本路由规则，可扩展，必填。
+0.0.0.0 表示对所有 IP 地址生效，如果只想对某个 IP 的生效，请填入具体 IP，必填。
+com.foo.BarService 表示只对指定服务生效，必填。
+group=foo 对指定服务的指定group生效，不填表示对未配置group的指定服务生效
+version=1.0对指定服务的指定version生效，不填表示对未配置version的指定服务生效
+category=routers 表示该数据为动态配置类型，必填。
+dynamic=false 表示该数据为持久数据，当注册方退出时，数据依然保存在注册中心，必填。
+enabled=true 覆盖规则是否生效，可不填，缺省生效。
+force=false 当路由结果为空时，是否强制执行，如果不强制执行，路由结果为空的路由规则将自动失效，可不填，缺省为 false。
+runtime=false 是否在每次调用时执行路由规则，否则只在提供者地址列表变更时预先执行并缓存结果，调用时直接从缓存中获取路由结果。如果用了参数路由，必须设为 true，需要注意设置会影响调用的性能，可不填，缺省为 false。
+priority=1 路由规则的优先级，用于排序，优先级越大越靠前执行，可不填，缺省为 0。
+rule=URL.encode(“host = 10.20.153.10 => host = 10.20.153.11”) 表示路由规则的内容，必填。"
+                }
+              ]
+            },
+            {
+              "title": "条件路由规则",
+              "topics": [
+                {
+                  "title": "基于条件表达式的路由规则，如：host = 10.20.153.10 => host = 10.20.153.11",
+                  "topics": [
+                    {
+                      "title": "=> 之前的为消费者匹配条件，所有参数和消费者的 URL 进行对比，当消费者满足匹配条件时，对该消费者执行后面的过滤规则。"
+                    },
+                    {
+                      "title": "=> 之后为提供者地址列表的过滤条件，所有参数和提供者的 URL 进行对比，消费者最终只拿到过滤后的地址列表。"
+                    },
+                    {
+                      "title": "如果匹配条件为空，表示对所有消费方应用，如：=> host != 10.20.153.11"
+                    },
+                    {
+                      "title": "如果过滤条件为空，表示禁止访问，如：host = 10.20.153.10 =>"
+                    }
+                  ]
+                },
+                {
+                  "title": "表达式",
+                  "topics": [
+                    {
+                      "title": "参数支持：
+服务调用信息，如：method, argument 等，暂不支持参数路由
+URL 本身的字段，如：protocol, host, port 等
+以及 URL 上的所有参数，如：application, organization 等
+条件支持：
+等号 = 表示"匹配"，如：host = 10.20.153.10
+不等号 != 表示"不匹配"，如：host != 10.20.153.10
+值支持：
+以逗号 , 分隔多个值，如：host != 10.20.153.10,10.20.153.11
+以星号 * 结尾，表示通配，如：host != 10.20.*
+以美元符 $ 开头，表示引用消费者参数，如：host = $host"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "脚本路由规则",
+              "topics": [
+                {
+                  "title": ""script://0.0.0.0/com.foo.BarService?category=routers&dynamic=false&rule=" + URL.encode("（function route(invokers) { ... } (invokers)）")"
+                },
+                {
+                  "title": "（function route(invokers) {
+    var result = new java.util.ArrayList(invokers.size());
+    for (i = 0; i < invokers.size(); i ++) {
+        if ("10.20.153.10".equals(invokers.get(i).getUrl().getHost())) {
+            result.add(invokers.get(i));
+        }
+    }
+    return result;
+} (invokers)）; // 表示立即执行方法"
+                }
+              ]
+            },
+            {
+              "title": "标签路由规则",
+              "topics": [
+                {
+                  "title": "provider config 配置 tag = xxx, 注册标签路由器"
+                },
+                {
+                  "title": "消费者在每次rpc 调用时,设置RpcContext. tag= xxx 指定某些 provider"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "灰度发布",
+          "topics": [
+            {
+              "title": "可以使用服务路由规则"
+            },
+            {
+              "title": "使用自定义负载均很策略, 选择实际的 provider"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

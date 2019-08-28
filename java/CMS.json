@@ -1,0 +1,127 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "CMS",
+      "topics": [
+        {
+          "title": "特性",
+          "topics": [
+            {
+              "title": "老年代	"
+            },
+            {
+              "title": "并发 追求低延迟"
+            },
+            {
+              "title": "标记清除算法",
+              "topics": [
+                {
+                  "title": "指定参数可以压缩"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "分支主题 3"
+        },
+        {
+          "title": "过程",
+          "topics": [
+            {
+              "title": "初步标记",
+              "topics": [
+                {
+                  "title": "STW;   "
+                },
+                {
+                  "title": "标记老年代中所有的GC Roots对象"
+                },
+                {
+                  "title": "标记年轻代中活着的对象引用到的老年代的对象",
+                  "topics": [
+                    {
+                      "title": "只标记老年代的"
+                    }
+                  ]
+                },
+                {
+                  "title": "[Image]"
+                }
+              ]
+            },
+            {
+              "title": "并发标记",
+              "topics": [
+                {
+                  "title": "不会STW"
+                },
+                {
+                  "title": "初始标记节点只是会找到部分存活对象,这部分存活对象和gc roots 关联"
+                },
+                {
+                  "title": "从初始标记阶段 标记的存活对象开始继续在老年代中找存活的对象"
+                },
+                {
+                  "title": "[Image]"
+                }
+              ]
+            },
+            {
+              "title": "再次标记 STW",
+              "topics": [
+                {
+                  "title": "标记整个堆的对象,新生代对象也会被当做 GC roots"
+                },
+                {
+                  "title": "重新标记存活对象,包括已经改变引用的存活的脏对象.  "
+                }
+              ]
+            },
+            {
+              "title": "并发清理",
+              "topics": [
+                {
+                  "title": "可以和用户线程并行"
+                },
+                {
+                  "title": "这个期间还是会产生垃圾对象,即与gc root 失去联系"
+                }
+              ]
+            },
+            {
+              "title": "并发重置",
+              "topics": [
+                {
+                  "title": "重置gc 算法需要的数据结构"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Note",
+          "topics": [
+            {
+              "title": "CMS gc 不是Full GC,只是老年代的 GC 算法"
+            },
+            {
+              "title": "如果再次标记阶段比较耗时可以尝试添加 -XX:+CMSScavengeBeforeRemark
+收集前清理一次 eden"
+            },
+            {
+              "title": "内存碎片",
+              "topics": [
+                {
+                  "title": "CMS是标记清除算法,会导致内存碎片问题"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

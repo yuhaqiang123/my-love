@@ -1,0 +1,53 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "go 协程",
+      "topics": [
+        {
+          "title": "Go的调度器结构",
+          "topics": [
+            {
+              "title": "M:代表真正的内核OS线程，和POSIX里的thread差不多，真正干活的人
+G:代表一个goroutine，它有自己的栈，instruction pointer和其他信息（正在等待的channel等等），用于调度。
+P:代表调度的上下文，可以把它看做一个局部的调度器，使go代码在一个线程上跑，它是实现从N:1到N:M映射的关键。",
+              "image": {
+                "src": "xap:resources/3bbc4145fac1e73e45dd5150f57561e5ab23745b14ab4a17ba9295306f272ed4.png",
+                "align": "top",
+                "width": 301,
+                "height": 295
+              }
+            },
+            {
+              "title": "P的数量可以通过GOMAXPROCS()来设置，它其实也就代表了真正的并发度，即有多少个goroutine可以同时运行。",
+              "makers": [
+                "star-red"
+              ]
+            },
+            {
+              "title": "为何要维护多个上下文P",
+              "topics": [
+                {
+                  "title": "当一个OS线程M0陷入阻塞时，P转而在OS线程M1上运行。调度器保证有足够的线程来运行所以的context P。
+因为当一个OS线程被阻塞时，P可以转而投奔另一个OS线程！",
+                  "topics": [
+                    {
+                      "title": "另一个os线程也是由go进程创建的，如果不够则新建一个内核线程，如果有空闲的线程则"
+                    }
+                  ]
+                },
+                {
+                  "title": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "分支主题 2"
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

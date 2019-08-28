@@ -1,0 +1,33 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "Python",
+      "topics": [
+        {
+          "title": "sort 和sorted",
+          "topics": [
+            {
+              "title": "sort 列表内置方法, 对列表直接修改"
+            },
+            {
+              "title": "sorted python 内置,对一切可迭代对象,返回新迭代对象"
+            },
+            {
+              "title": "key 是带一个参数的函数，返回一个值用来排序，默认为 None",
+              "topics": [
+                {
+                  "title": "lambda x: x["key"]"
+                }
+              ]
+            },
+            {
+              "title": "reverse 表示排序结果是否反转"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

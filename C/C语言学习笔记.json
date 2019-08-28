@@ -1,0 +1,185 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "C语言学习笔记",
+      "topics": [
+        {
+          "title": "调试",
+          "topics": [
+            {
+              "title": "strace",
+              "topics": [
+                {
+                  "title": "可以追踪系统调用"
+                }
+              ]
+            },
+            {
+              "title": "makefile",
+              "topics": [
+                {
+                  "title": "target: prerequire
+Tab  command",
+                  "topics": [
+                    {
+                      "title": "如果target 不存在或者pre 比 target 更新就执行command"
+                    }
+                  ]
+                },
+                {
+                  "title": "可以根据.o: .c .h 来判断"
+                },
+                {
+                  "title": "gcc -o target .o",
+                  "topics": [
+                    {
+                      "title": "生成目标文件"
+                    }
+                  ]
+                },
+                {
+                  "title": "gcc -c  .c ",
+                  "topics": [
+                    {
+                      "title": "编译生成.o"
+                    }
+                  ]
+                },
+                {
+                  "title": "编译是针对.c 的, .h 修改 需要重新编译.但是编译单元是.c"
+                },
+                {
+                  "title": "objects = main.o kbd.o command.o display.o \
+    insert.o search.o files.o utils.o
+
+edit : $(objects)
+    cc -o edit $(objects)
+
+main.o : defs.h
+kbd.o : defs.h command.h
+command.o : defs.h command.h
+display.o : defs.h buffer.h
+insert.o : defs.h buffer.h
+search.o : defs.h buffer.h
+files.o : defs.h buffer.h command.h
+utils.o : defs.h
+
+.PHONY : clean
+clean :
+    rm edit $(objects)",
+                  "topics": [
+                    {
+                      "title": "自动推导, 不需要管理gcc -c ,不需要声明.o 相同的.c 文件"
+                    },
+                    {
+                      "title": "声明objects 变量"
+                    }
+                  ]
+                },
+                {
+                  "title": "include 引入其他makefile",
+                  "topics": [
+                    {
+                      "title": "寻找顺序",
+                      "topics": [
+                        {
+                          "title": "如果make执行时，有 -I 或 --include-dir 参数，那么make就会在这个参数所指定的目 录下去寻找。"
+                        },
+                        {
+                          "title": "如果目录 <prefix>/include （一般是： /usr/local/bin 或 /usr/include ）存在的话，make也会去找"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "忽略失败 例如 -rm, -include"
+                },
+                {
+                  "title": "执行顺序",
+                  "topics": [
+                    {
+                      "title": "读入所有的Makefile。"
+                    },
+                    {
+                      "title": "读入被include的其它Makefile。"
+                    },
+                    {
+                      "title": "初始化文件中的变量。"
+                    },
+                    {
+                      "title": "推导隐晦规则，并分析所有规则。"
+                    },
+                    {
+                      "title": "为所有的目标文件创建依赖关系链。"
+                    },
+                    {
+                      "title": "根据依赖关系，决定哪些目标要重新生成。"
+                    },
+                    {
+                      "title": "执行生成命令。"
+                    }
+                  ]
+                },
+                {
+                  "title": "make 后边依序执行label",
+                  "topics": [
+                    {
+                      "title": "例如make clean hi (先执行clean 在执行hi)"
+                    },
+                    {
+                      "title": "最终的target 放到 最后"
+                    }
+                  ]
+                },
+                {
+                  "title": "第一个label 默认被执行,也就是make 不输入任何label .就会执行默认label"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "语言",
+          "topics": [
+            {
+              "title": "左值右值",
+              "topics": [
+                {
+                  "title": "可以取地址的变量",
+                  "topics": [
+                    {
+                      "title": "左值中必定可以解析出对应对象的地址，除非该对象是位字段（bit-field）或者被声明为寄存器存储类"
+                    },
+                    {
+                      "title": "包括[], * 运算符都可以是左值",
+                      "topics": [
+                        {
+                          "title": "*左值可以保证修改该地址的值."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "左值与右值的根本区别在于能否获取内存地址，而能否赋值不是区分的依据。通常临时量均为右值"
+                },
+                {
+                  "title": "左右值参考表"
+                },
+                {
+                  "title": "[Image]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "测试"
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

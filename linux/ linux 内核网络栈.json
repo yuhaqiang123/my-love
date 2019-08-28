@@ -1,0 +1,484 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": " linux 内核网络栈",
+      "topics": [
+        {
+          "title": "为什么要学内核网络栈",
+          "topics": [
+            {
+              "title": "更好的理解docker,虚拟机等技术的网络实现"
+            },
+            {
+              "title": "理解网络瓶颈"
+            },
+            {
+              "title": "排查网络丢包情况"
+            }
+          ]
+        },
+        {
+          "title": "核心数据结构  sk_buff",
+          "topics": [
+            {
+              "title": "socket kernel buffer （skb） 是 Linux 内核网络栈（L2 到 L4）处理网络包（packets）所使用的 buffer，它的类型是 sk_buffer。简单来说，一个 skb 表示 Linux 网络栈中的一个 packet；TCP 分段和 IP 分组生产的多个 skb 被一个 skb list 形式来保存。",
+              "makers": [
+                "task-done",
+                "priority-1",
+                "flag-red"
+              ]
+            },
+            {
+              "title": "网络栈的传递过程中,不会sk_buffer 不会发生拷贝.只是复制地址",
+              "makers": [
+                "task-done",
+                "flag-red",
+                "priority-1"
+              ]
+            },
+            {
+              "title": "链表 pre, next, socket , device, packet header(tcp, udp, ip,icmp, ip层等)"
+            },
+            {
+              "title": "skb 大小",
+              "topics": [
+                {
+                  "title": "IP 栈发到该队列的 packets 的长度必须小于 MTU。"
+                },
+                {
+                  "title": "默认最大大小为 NIC MTU",
+                  "topics": [
+                    {
+                      "title": "MTU 如果很大, 则上层需要发送的数据包就会越少"
+                    },
+                    {
+                      "title": "当发送的ip报文长度超出了最大的传输单位MTU，且允许分片的情况下，就会对ip报文进行分片",
+                      "makers": [
+                        "task-done",
+                        "priority-1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "绝大多数的网卡都有一个固定的最大传输单元（maximum transmission unit, MTU）属性，它是该网络设备能够传输的最大帧（frame）的大小。对以太网来说，默认值为 1500 bytes，但是有些以太网络可以支持巨帧（jumbo frame），最大能到 9000 bytes。在 IP 网络栈内，MTU 表示能发给 NIC 的最大 packet 的大小。比如，如果一个应用向一个 TCP socket 写入了 2000 bytes 数据，那么 IP 栈需要创建两个 IP packets 来保持每个 packet 的大小等于或者小于 1500 bytes。可见，对于大数据传输，相对较小的 MTU 会导致产生大量的小网络包（small packets）并被传入 driver queue。这成为 IP 分片 （IP fragmentation）。"
+                },
+                {
+                  "title": "一个skb 不会再被链路层细分,直接可以作为一个链路层报文发出去,但是tcp 可能包括多个skb",
+                  "makers": [
+                    "task-done",
+                    "flag-red",
+                    "priority-1"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Ring Buffer ",
+          "topics": [
+            {
+              "title": "NIC (network interface card) 在系统启动过程中会向系统注册自己的各种信息，系统会分配 Ring Buffer 队列也会分配一块专门的内核内存区域给 NIC 用于存放传输上来的数据包"
+            },
+            {
+              "title": "Ring Buffer 队列内存放的是一个个 Packet Descriptor ，其有两种状态： ready 和 used 。初始时 Descriptor 是空的，指向一个空的 sk_buff，处在 ready 状态。当有数据时，DMA 负责从 NIC 取数据，并在 Ring Buffer 上按顺序找到下一个 ready 的 Descriptor，将数据存入该 Descriptor 指向的 sk_buff 中，并标记槽为 used。因为是按顺序找 ready 的槽，所以 Ring Buffer 是个 FIFO 的队列"
+            },
+            {
+              "title": "当 DMA 读完数据之后，NIC 会触发一个 IRQ 让 CPU 去处理收到的数据。因为每次触发 IRQ 后 CPU 都要花费时间去处理 Interrupt Handler，如果 NIC 每收到一个 Packet 都触发一个 IRQ 会导致 CPU 花费大量的时间在处理 Interrupt Handler，处理完后又只能从 Ring Buffer 中拿出一个 Packet，虽然 Interrupt Handler 执行时间很短，但这么做也非常低效，并会给 CPU 带去很多负担。所以目前都是采用一个叫做 New API(NAPI) 的机制，去对 IRQ 做合并以减少 IRQ 次数"
+            },
+            {
+              "title": "ring buffer 的数据是 硬中断让DMA 发起调用, 将网卡数据拷贝到ring buffer
+然后再中断下半段.发起软中断, 将ring buffer数据移走, 移动到具体的ip层协议处理.",
+              "topics": [
+                {
+                  "title": "只有一次拷贝,  在链路层到ip层 没有再次拷贝数据"
+                }
+              ]
+            },
+            {
+              "title": "会丢数据",
+              "topics": [
+                {
+                  "title": " Ring Buffer 的空间是有限的，当收到的数据包速率大于单个 CPU 处理速度的时候 Ring Buffer 可能被占满，占满之后再来的新数据包会被自动丢弃"
+                },
+                {
+                  "title": "TCP 不是保证拥塞时, 对端不再传输数据吗? 其他两者没关系, ring buffer 工作在链路层, 处理完后,才回到 tcp的 接受缓冲区(当然不会拷贝数据)"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "netdev_max_backlog溢出",
+          "topics": [
+            {
+              "title": "netdev_max_backlog是内核从NIC收到包后，交由协议栈（如IP、TCP）处理之前的缓冲队列。
+每个CPU核都有一个backlog队列，与Ring Buffer同理，当接收包的速率大于内核协议栈处理的速率时，CPU的backlog队列不断增长，当达到设定的netdev_max_backlog值时，数据包将被丢弃。"
+            }
+          ]
+        },
+        {
+          "title": "NAPI如何减少中断",
+          "topics": [
+            {
+              "title": "NIC driver 初始化时向 Kernel 注册 poll 函数，用于后续从 Ring Buffer 拉取收到的数据"
+            },
+            {
+              "title": "driver 注册开启 NAPI，这个机制默认是关闭的，只有支持 NAPI 的 driver 才会去开启"
+            },
+            {
+              "title": "收到数据后 NIC 通过 DMA 将数据存到内存",
+              "topics": [
+                {
+                  "title": "第三步"
+                }
+              ]
+            },
+            {
+              "title": "NIC 触发一个 IRQ，并触发 CPU 开始执行 driver 注册的 Interrupt Handler",
+              "topics": [
+                {
+                  "title": "IRQ硬中断"
+                }
+              ]
+            },
+            {
+              "title": "driver 的 Interrupt Handler 通过 napi_schedule 函数触发 softirq (NET_RX_SOFTIRQ) 来唤醒 NAPI subsystem，NET_RX_SOFTIRQ 的 handler 是 net_rx_action 会在另一个线程中被执行，在其中会调用 driver 注册的 poll 函数获取收到的 Packet",
+              "topics": [
+                {
+                  "title": "poll函数原理",
+                  "topics": [
+                    {
+                      "title": "从 Ring Buffer 中将收到的 sk_buff 读取出来"
+                    },
+                    {
+                      "title": "对 sk_buff 做一些基本检查，可能会涉及到将几个 sk_buff 合并因为可能同一个 Frame 被分散放在多个 sk_buff 中"
+                    },
+                    {
+                      "title": "将 sk_buff 交付上层网络栈处理"
+                    },
+                    {
+                      "title": "清理 sk_buff，清理 Ring Buffer 上的 Descriptor 将其指向新分配的 sk_buff 并将状态设置为 ready"
+                    },
+                    {
+                      "title": "更新一些统计数据，比如收到了多少 packet，一共多少字节等"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "driver 会禁用当前 NIC 的 IRQ，从而能在 poll 完所有数据之前不会再有新的 IRQ",
+              "topics": [
+                {
+                  "title": "硬中断可以屏蔽,可以排队"
+                },
+                {
+                  "title": "网卡的软中断时,也会屏蔽硬中断.(不是抢占,是屏蔽哦) 在负载高时,很有必要, 否则屏蔽硬中断会导致网卡被cpu 阻塞, 导致网卡处理过慢"
+                }
+              ]
+            },
+            {
+              "title": "当所有事情做完之后，NAPI subsystem 会被禁用，并且会重新启用 NIC 的 IRQ"
+            },
+            {
+              "title": "回到第三步"
+            }
+          ]
+        },
+        {
+          "title": "accept, read 如何返回",
+          "topics": [
+            {
+              "title": "accept, read 其实是主动阻塞的,将自己置为阻塞装填,然后主动调度. 当调度返回时, 也就是自己再次被唤醒,获得cpu 开始执行之时. 获得cpu 之后,会再次检查缓冲区 是否满足 accept, read 条件. 然后做下一步处理"
+            },
+            {
+              "title": "accept 和read,其实是在等待网络的某一个条件, 条件满足时,自然会唤醒他. 但是是由谁来唤醒呢. 是在网卡接受包的软中断中, 处理内核网络栈. 然后唤醒该 socket 的线程"
+            }
+          ]
+        },
+        {
+          "title": "多队列网卡",
+          "topics": [
+            {
+              "title": "NIC 会为每个队列分配一个 IRQ, NIC 收到 Frame 的时候能通过 Hash Function 来决定 Frame 该放在哪个 Ring Buffer 上，"
+            },
+            {
+              "title": "触发的 IRQ 也可以通过操作系统或者手动配置 IRQ affinity 将 IRQ 分配到多个 CPU 上。这样 IRQ 能被不同的 CPU 处理，从而做到 Ring Buffer 上的数据也能被不同的 CPU 处理，从而提高数据的并行处理能力"
+            },
+            {
+              "title": "将网卡的中断分散到多个cpu上.在高并发场景十分有用. 其中分配一部分cpu处理网卡报文中断. 一部分进程负责处理应用请求.(在用户层工作),避免用户层的延迟及抖动",
+              "makers": [
+                "task-done",
+                "flag-red",
+                "priority-1"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "tcp栈的主要过程",
+          "topics": [
+            {
+              "title": "tcp_sendmsg 函数会首先检查已经建立的 TCP connection 的状态，然后获取该连接的 MSS，开始 segement 发送流程。"
+            },
+            {
+              "title": "构造 TCP 段的 playload：它在内核空间中创建该 packet 的 sk_buffer 数据结构的实例 skb，从 userspace buffer 中拷贝 packet 的数据到 skb 的 buffer。"
+            },
+            {
+              "title": "构造 TCP header。"
+            },
+            {
+              "title": "计算 TCP 校验和（checksum）和 顺序号 （sequence number）。
+TCP 校验和是一个端到端的校验和，由发送端计算，然后由接收端验证。其目的是为了发现TCP首部和数据在发送端到接收端之间发生的任何改动。如果接收方检测到校验和有差错，则TCP段会被直接丢弃。TCP校验和覆盖 TCP 首部和 TCP 数据。
+TCP的校验和是必需的"
+            },
+            {
+              "title": "发到 IP 层处理：调用 IP handler 句柄 ip_queue_xmit，将 skb 传入 IP 处理流程。"
+            }
+          ]
+        },
+        {
+          "title": "ip层主要过程",
+          "topics": [
+            {
+              "title": "（1）路由处理，即选择下一跳 "
+            },
+            {
+              "title": "（2）添加 IP header"
+            },
+            {
+              "title": "（3）计算 IP header checksum，用于检测 IP 报文头部在传播过程中是否出错 "
+            },
+            {
+              "title": "（4）可能的话，进行 IP 分片"
+            },
+            {
+              "title": "（5）处理完毕，获取下一跳的 MAC 地址，设置链路层报文头，然后转入链路层处理。"
+            }
+          ]
+        },
+        {
+          "title": "链路层栈",
+          "topics": [
+            {
+              "title": "   功能上，在物理层提供比特流服务的基础上，建立相邻结点之间的数据链路，通过差错控制提供数据帧（Frame）在信道上无差错的传输，并进行各电路上的动作系列。数据链路层在不可靠的物理介质上提供可靠的传输。该层的作用包括：物理地址寻址、数据的成帧、流量控制、数据的检错、重发等。在这一层，数据的单位称为帧（frame）"
+            },
+            {
+              "title": " 实现上，Linux 提供了一个 Network device 的抽象层，其实现在 linux/net/core/dev.c。
+具体的物理网络设备在设备驱动中（driver.c）需要实现其中的虚函数。Network Device 抽象层调用具体网络设备的函数。"
+            }
+          ]
+        },
+        {
+          "title": "物理层 - 物理层封装和发送",
+          "topics": [
+            {
+              "title": "物理层(网卡)在收到发送请求之后，通过 DMA 将该主存中的数据拷贝至内部RAM（buffer）之中。在数据拷贝中，同时加入符合以太网协议的相关header，IFG、前导符和CRC。对于以太网网络，物理层发送采用CSMA/CD,即在发送过程中侦听链路冲突。"
+            },
+            {
+              "title": "一旦网卡完成报文发送，将产生中断通知CPU，然后驱动层中的中断处理程序就可以删除保存的 skb 了"
+            }
+          ]
+        },
+        {
+          "title": "网络问题排查",
+          "topics": [
+            {
+              "title": "查看中断分布情况即CPU都在哪些设备上干活，干了多少",
+              "topics": [
+                {
+                  "title": "cat /proc/interrupts"
+                }
+              ]
+            },
+            {
+              "title": "每隔两秒查看下所有核状态信息，其中%irq为硬中断，%soft为软中断",
+              "topics": [
+                {
+                  "title": "mpstat -P ALL 2"
+                }
+              ]
+            },
+            {
+              "title": "查看网卡是否支持队列",
+              "topics": [
+                {
+                  "title": " lscpi -vvv"
+                }
+              ]
+            },
+            {
+              "title": "查看网卡支持多少个队列",
+              "topics": [
+                {
+                  "title": "grep eth0 /proc/interrupts |awk '{print $NF}'"
+                }
+              ]
+            },
+            {
+              "title": "配置网卡队列到不同的CPU",
+              "topics": [
+                {
+                  "title": "apt-get -y install irqbalance
+service irqbalance start"
+                }
+              ]
+            },
+            {
+              "title": "通过ethtool或/proc/net/dev可以查看因Ring Buffer满而丢弃的包统计",
+              "topics": [
+                {
+                  "title": " ethtool -S eth0|grep rx_fifo"
+                }
+              ]
+            },
+            {
+              "title": "# 查看eth0网卡Ring Buffer最大值和当前设置",
+              "topics": [
+                {
+                  "title": "ethtool -g eth0"
+                }
+              ]
+            },
+            {
+              "title": "修改网卡eth0接收与发送硬件缓存区大小",
+              "topics": [
+                {
+                  "title": "ethtool -G eth0 rx 4096 tx 4096"
+                }
+              ]
+            },
+            {
+              "title": "半连接队列溢出",
+              "topics": [
+                {
+                  "title": "半连接队列指的是TCP传输中服务器收到SYN包但还未完成三次握手的连接队列，队列大小由内核参数tcp_max_syn_backlog定义"
+                },
+                {
+                  "title": "半连接队列的连接数量可以通过netstat统计SYN_RECV状态的连接得知",
+                  "topics": [
+                    {
+                      "title": " netstat -ant|grep SYN_RECV|wc -l"
+                    }
+                  ]
+                },
+                {
+                  "title": "查看是否出现半连接队列溢出",
+                  "topics": [
+                    {
+                      "title": "dmesg | grep "TCP: drop open request from""
+                    }
+                  ]
+                },
+                {
+                  "title": "调整队列长度",
+                  "topics": [
+                    {
+                      "title": "sysctl -w net.ipv4.tcp_max_syn_backlog=1024"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "用户层",
+          "topics": [
+            {
+              "title": "每当用户应用调用  read 或者 recvfrom 时，该调用会被映射为/net/socket.c 中的 sys_recv 系统调用，并被转化为 sys_recvfrom 调用，然后调用 sock_recgmsg 函数。"
+            },
+            {
+              "title": "对于 INET 类型的 socket，/net/ipv4/af inet.c 中的 inet_recvmsg 方法会被调用，它会调用相关协议的数据接收方法。"
+            },
+            {
+              "title": "对 TCP 来说，调用 tcp_recvmsg。该函数从 socket buffer 中拷贝数据到 user buffer。"
+            },
+            {
+              "title": "对 UDP 来说，从 user space 中可以调用三个 system call recv()/recvfrom()/recvmsg() 中的任意一个来接收 UDP package，这些系统调用最终都会调用内核中的 udp_recvmsg 方法"
+            }
+          ]
+        },
+        {
+          "title": "传输层",
+          "topics": [
+            {
+              "title": "传输层 TCP 处理入口在 tcp_v4_rcv 函数（位于 linux/net/ipv4/tcp ipv4.c 文件中），它会做 TCP header 检查等处理。"
+            },
+            {
+              "title": "调用 _tcp_v4_lookup，查找该 package 的 open socket。如果找不到，该 package 会被丢弃。接下来检查 socket 和 connection 的状态。"
+            },
+            {
+              "title": "如果socket 和 connection 一切正常，调用 tcp_prequeue 使 package 从内核进入 user space，放进 socket 的 receive queue。然后 socket 会被唤醒，调用 system call，并最终调用 tcp_recvmsg 函数去从 socket recieve queue 中获取 segment。"
+            },
+            {
+              "title": "传输层需要保证可靠性, 其状态变更,检查, 拥塞控制,超时重传将十分复杂"
+            }
+          ]
+        },
+        {
+          "title": "网络层处理",
+          "topics": [
+            {
+              "title": "IP 层的入口函数在 ip_rcv 函数。该函数首先会做包括 package checksum 在内的各种检查，如果需要的话会做 IP defragment（将多个分片合并），然后 packet 调用已经注册的 Pre-routing netfilter hook ，完成后最终到达 ip_rcv_finish 函数。"
+            },
+            {
+              "title": "ip_rcv_finish 函数会调用 ip_router_input 函数，进入路由处理环节。它首先会调用 ip_route_input 来更新路由，然后查找 route，决定该 package 将会被发到本机还是会被转发还是丢弃：",
+              "topics": [
+                {
+                  "title": "如果是发到本机的话，调用 ip_local_deliver 函数，可能会做 de-fragment（合并多个 IP packet），然后调用 ip_local_deliver 函数。该函数根据 package 的下一个处理层的 protocal number，调用下一层接口，包括 tcp_v4_rcv （TCP）, udp_rcv （UDP），icmp_rcv (ICMP)，igmp_rcv(IGMP)。
+
+对于 TCP 来说，函数 tcp_v4_rcv 函数会被调用，从而处理流程进入 TCP 栈。"
+                },
+                {
+                  "title": "
+如果需要转发 （forward），则进入转发流程。该流程需要处理 TTL，再调用 dst_input 函数。该函数会
+（1）处理 Netfilter Hook 
+（2）执行 IP fragmentation 
+（3）调用 dev_queue_xmit，进入链路层处理流程。",
+                  "topics": [
+                    {
+                      "title": "如果转发会再次发送到链路层进行转发."
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "链路层处理流程",
+          "topics": [
+            {
+              "title": "一个 package 到达机器的物理网络适配器，当它接收到数据帧时，就会触发一个中断，并将通过 DMA 传送到位于 linux kernel 内存中的 rx_ring。"
+            },
+            {
+              "title": "网卡发出中断，通知 CPU 有个 package 需要它处理。中断处理程序主要进行以下一些操作，包括分配 skb_buff 数据结构，并将接收到的数据帧从网络适配器I/O端口拷贝到skb_buff 缓冲区中；从数据帧中提取出一些信息，并设置 skb_buff 相应的参数，这些参数将被上层的网络协议使用，例如skb->protocol；",
+              "topics": [
+                {
+                  "title": "该中断为硬中断,属于中断上半部分. 负责让DMA 把网卡数据传输到内核ring_buffer中. 其中会创建核心的数据结构sk_buffer(socket_buffer)"
+                }
+              ]
+            },
+            {
+              "title": "终端处理程序经过简单处理后，发出一个软中断（NET_RX_SOFTIRQ），通知内核接收到新的数据帧。"
+            },
+            {
+              "title": "内核 2.5 中引入一组新的 API 来处理接收的数据帧，即 NAPI。所以，驱动有两种方式通知内核：(1) 通过以前的函数netif_rx；(2)通过NAPI机制。该中断处理程序调用 Network device的 netif_rx_schedule 函数，进入软中断处理流程，再调用 net_rx_action 函数。"
+            },
+            {
+              "title": "该函数关闭中断，获取每个 Network device 的 rx_ring 中的所有 package，最终 pacakage 从 rx_ring 中被删除，进入 netif _receive_skb 处理流程。"
+            },
+            {
+              "title": "netif_receive_skb 是链路层接收数据报的最后一站。它根据注册在全局数组 ptype_all 和 ptype_base 里的网络层数据报类型，把数据报递交给不同的网络层协议的接收函数(INET域中主要是ip_rcv和arp_rcv)。该函数主要就是调用第三层协议的接收函数处理该skb包，进入第三层网络层处理。"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

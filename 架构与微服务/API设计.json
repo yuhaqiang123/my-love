@@ -1,0 +1,185 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "API设计",
+      "topics": [
+        {
+          "title": "基本特性",
+          "topics": [
+            {
+              "title": "平台独立性",
+              "topics": [
+                {
+                  "title": "向客户端屏蔽后台实现的细节"
+                },
+                {
+                  "title": "无论API如何在内部实施，任何客户端都应该能够调用API。这需要使用标准协议，并且具有客户端和Web服务可以就要交换的数据格式达成一致的机制"
+                }
+              ]
+            },
+            {
+              "title": "服务发展",
+              "topics": [
+                {
+                  "title": "Web API应该能够独立于客户端应用程序进化和添加功能。随着API的发展，现有的客户端应用程序应该继续运行而无需修改。应该可以发现所有功能，以便客户端应用程序可以完全使用它"
+                },
+                {
+                  "title": "API设计要考虑向后兼容性"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "RestAPI 设计",
+          "topics": [
+            {
+              "title": "设计原则",
+              "topics": [
+                {
+                  "title": "围绕资源设计",
+                  "topics": [
+                    {
+                      "title": "任何类型的对象，数据或服务"
+                    }
+                  ]
+                },
+                {
+                  "title": "资源具有标识符",
+                  "topics": [
+                    {
+                      "title": "该标识符是唯一标识该资源的URI"
+                    }
+                  ]
+                },
+                {
+                  "title": "客户端通过某种交换协议来标识资源"
+                },
+                {
+                  "title": "使用统一的接口",
+                  "topics": [
+                    {
+                      "title": "PUT,DELETE, POST,ADD"
+                    }
+                  ]
+                },
+                {
+                  "title": "使用无状态请求模型",
+                  "topics": [
+                    {
+                      "title": "每个请求是原子的"
+                    }
+                  ]
+                },
+                {
+                  "title": "由表示中包含的超媒体链接驱动",
+                  "topics": [
+                    {
+                      "title": "例如某个资源的详情中,包括修改该资源的链接"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "注意",
+              "topics": [
+                {
+                  "title": "资源URI应基于名词（资源）而不是动词（资源上的操作）"
+                },
+                {
+                  "title": "资源不必基于单个物理数据项",
+                  "topics": [
+                    {
+                      "title": "API设计不要和数据库表关联上"
+                    },
+                    {
+                      "title": "Web API不需要将每个表公开为资源集合"
+                    },
+                    {
+                      "title": "避免在Web API和底层数据源之间引入依赖关系"
+                    }
+                  ]
+                },
+                {
+                  "title": "对引用集合的URI使用复数名词",
+                  "topics": [
+                    {
+                      "title": "/customers是客户集合/customers/5的路径，是ID等于5的客户的路径"
+                    }
+                  ]
+                },
+                {
+                  "title": "考虑不同类型资源之间的关系以及如何公开这些关联",
+                  "topics": [
+                    {
+                      "title": "每个HTTP GET请求应返回通过响应中包含的超链接查找与请求对象直接相关的资源所需的信息，并且还应提供描述每个资源上可用操作的信息"
+                    },
+                    {
+                      "title": ""orderID":3,
+  "productID":2,
+  "quantity":4,
+  "orderValue":16.60,
+  "links":[
+    {
+      "rel":"customer",
+      "href":"https://adventure-works.com/customers/3",
+      "action":"GET",
+      "types":["text/xml","application/json"]
+    },
+    {
+      "rel":"customer",
+      "href":"https://adventure-works.com/customers/3",
+      "action":"PUT",
+      "types":["application/x-www-form-urlencoded"]
+    }]"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "动作",
+              "topics": [
+                {
+                  "title": "GET在指定的URI处检索资源的表示。响应消息的正文包含所请求资源的详细信息。"
+                },
+                {
+                  "title": "POST在指定的URI处创建新资源。请求消息的主体提供新资源的详细信息。请注意，POST也可用于触发实际不创建资源的操作。"
+                },
+                {
+                  "title": "PUT可以在指定的URI处创建或替换资源。请求消息的主体指定要创建或更新的资源。"
+                },
+                {
+                  "title": "PATCH执行资源的部分更新。请求正文指定要应用于资源的更改集。"
+                },
+                {
+                  "title": "DELETE删除指定URI处的资源。"
+                },
+                {
+                  "title": "POST，PUT和PATCH之间的区别",
+                  "topics": [
+                    {
+                      "title": "POST请求创建资源"
+                    },
+                    {
+                      "title": "PUT请求创建资源或更新现有资源"
+                    },
+                    {
+                      "title": "PATCH请求对现有资源执行部分更新"
+                    },
+                    {
+                      "title": "PUT请求必须是幂等的, POST,PATCH不一定幂等"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

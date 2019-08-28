@@ -1,0 +1,24 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "阅读写作",
+      "topics": [
+        {
+          "title": "容易误解的话",
+          "topics": [
+            {
+              "title": "[Image]",
+              "topics": [
+                {
+                  "title": "系统调用属于同步中断,而不是 所谓的在代码指令期间发生的中断."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

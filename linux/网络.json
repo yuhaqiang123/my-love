@@ -1,0 +1,34 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "网络",
+      "topics": [
+        {
+          "title": "dns",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "浏览器缓存：浏览器会按照一定的频率缓存 DNS 记录。"
+            },
+            {
+              "title": "操作系统缓存：如果浏览器缓存中找不到需要的 DNS 记录，那就去操作系统中找。"
+            },
+            {
+              "title": "路由缓存：路由器也有 DNS 缓存。"
+            },
+            {
+              "title": "ISP 的 DNS 服务器：ISP 是互联网服务提供商(Internet Service Provider)的简称，ISP 有专门的 DNS 服务器应对 DNS 查询请求。"
+            },
+            {
+              "title": "根服务器：ISP 的 DNS 服务器还找不到的话，它就会向根服务器发出请求，进行递归查询（DNS 服务器先问根域名服务器.com 域名服务器的 IP 地址，然后再问.baidu 域名服务器，依次类推）"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

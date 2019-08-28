@@ -1,0 +1,360 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "redis高可用",
+      "topics": [
+        {
+          "title": "redis cluster",
+          "topics": [
+            {
+              "title": "特性",
+              "topics": [
+                {
+                  "title": "1、所有的redis节点彼此互联(PING-PONG机制),内部使用二进制协议优化传输速度和带宽。"
+                },
+                {
+                  "title": "     2、节点的fail是通过集群中超过半数的节点检测失效时才生效。"
+                },
+                {
+                  "title": "     3、客户端与redis节点直连,不需要中间proxy层.客户端不需要连接集群所有节点,连接集群中任何一个可用节点即可。"
+                },
+                {
+                  "title": "     4、redis-cluster把所有的物理节点映射到[0-16383]slot上（不一定是平均分配）,cluster 负责维护node<->slot<->value。",
+                  "topics": [
+                    {
+                      "title": "每个Redis 节点都需要执行命令,声明自己负责的 slot"
+                    },
+                    {
+                      "title": "cluster addslots {slot_index1} {slot_index 2}  {slot_index 3}"
+                    }
+                  ]
+                },
+                {
+                  "title": "     5、Redis集群预分好16384个桶，当需要在 Redis 集群中放置一个 key-value 时，根据 CRC16(key) mod 16384的值，决定将一个key放到哪个桶中。"
+                },
+                {
+                  "title": "每个Redis实例都知道其他节点的存在"
+                }
+              ]
+            },
+            {
+              "title": "无法保证强一致性",
+              "topics": [
+                {
+                  "title": "1、你的客户端写给主服务器节点 B
+2、主服务器节点B向您的客户端回复确认。
+3、主服务器节点B将写入传播到它的从服务器B1，B2和B3。"
+                },
+                {
+                  "title": "如果在 2步之后, 没有发送从服务器,此时B 挂掉了,那么key将丢失(故障期间一定会有key 丢失)"
+                },
+                {
+                  "title": "异步复制机制"
+                }
+              ]
+            },
+            {
+              "title": "容错",
+              "topics": [
+                {
+                  "title": "选举过程是集群中所有master参与,如果半数以上master节点与故障节点通信超过(cluster-node-timeout),认为该节点故障，自动触发故障转移操作."
+                },
+                {
+                  "title": "(2):什么时候整个集群不可用(cluster_state:fail)? 
+    a:如果集群任意master挂掉,且当前master没有slave.集群进入fail状态,也可以理解成集群的slot映射[0-16383]不完成时进入fail状态. 
+    b:如果集群超过半数以上master挂掉，无论是否有slave集群进入fail状态."
+                },
+                {
+                  "title": "当集群不可用时,所有对集群的操作做都不可用，收到((error) CLUSTERDOWN The cluster is down)错误"
+                }
+              ]
+            },
+            {
+              "title": "故障转移",
+              "topics": [
+                {
+                  "title": "1. 下线的主节点的所有从节点里面，会进行选举，选举出一个新的主节点。
+2. 被选中的从节点会执行 slave no one命令，成为新的主节点。
+3. 新的主节点会撤销所有对已下线主节点的槽指派，并将这些槽指派给自己。
+4. 新的主节点向集群广播一条pong消息，这条pong消息可以让集群中的其他节点立即知道这个节点已经由从节点变成了主节点，并且这个主节点已经接管了原本由已下线节点处理的槽。
+5.新的主节点开始接受和自己负责处理的槽有关的命令请求，故障转移操作完成。"
+                }
+              ]
+            },
+            {
+              "title": "主从选举",
+              "topics": [
+                {
+                  "title": "1. 当从节点发现自己复制的主节点进入已下线时，从节点（这里发出请求的从节点可能会有多个）会向集群广播一条cluster_type_failover_auth_request的消息，要求有投票权（负责处理槽）的主节点向这个节点进行投票。
+
+2.收到cluster_type_failover_auth_request消息的主节点，根据自身条件（发起投票节点的current epoch不低于投票节点的current epoch）判断是否赞成该从节点成为新的主节点，若赞成则返回一条cluster_type_failover_auth_ack消息。
+
+3. 从节点接收到cluster_type_failover_auth_ack消息，会将选票数加1。
+
+4.如果某个从节点的选票大于等于集群中主节点的一半时（大于等于N/2 + 1），这个节点就会成为新的主节点。
+
+如果在一个配置周期内，没有一个从节点获得足够多的选票，那么集群中会进入新的配置周期，并在此进行选举，知道选出新的主节点为止。"
+                },
+                {
+                  "title": "所有从节点都可能征求意见,自己是否可以成为主(投票的人只投给自己大的节点),超过半数即可(n+1)/2 "
+                },
+                {
+                  "title": "可能选不出来",
+                  "makers": [
+                    "c_symbol_trophy"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "局限",
+              "topics": [
+                {
+                  "title": "1.目前只支持同一个槽上的key的批量操作；
+
+2.目前只支持同一个槽上的key事务；
+
+3.只能使用数据库0(每个redis实例有16个数据库，可通过select {index}命令来切换)；
+
+4.不能将一个大的key(如hash、list)映射到不同的节点上；
+
+5.目前集群主从复制只支持一层，不支持嵌套树状架构；"
+                }
+              ]
+            },
+            {
+              "title": "扩容时",
+              "topics": [
+                {
+                  "title": "步骤",
+                  "topics": [
+                    {
+                      "title": "1.对目标节点发送
+cluster setslot {slot_index} importing {source_node_id}
+2.对源节点发送
+cluster setslot {slot_index} migrating {target_node_id}
+3.源节点循环执行
+cluster getkeysinslot {slot_index} {count(key个数)}
+4.源节点执行，把key通过流水线(pipeline)迁移到目标节点
+migrate {target_ip} {target_port}  "" 0 {timeout} keys {key1} {key2} {key3}
+5.重复3、4步骤
+6.向集群中所有主节点发送通知
+cluster setslot {slot_index} node {target_nodeid}"
+                    }
+                  ]
+                },
+                {
+                  "title": "每个节点都知道每个槽对应的 cluster node ."
+                },
+                {
+                  "title": "节点在接到命令请求时,查询是否自己处理,如果是则处理,如果不是,返回 move 错误, moved错误携带正确的节点ip和端口号返回给客户端指引其转向执行，而且客户端以后的每一次关于该key都会去moved错误提供的节点去执行。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Codis",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "访问层:访问方式可以是vip或者是通过java代码调用jodis,然后连接调用不同的codis-proxy地址来实现高可用的LVS和HA功能."
+            },
+            {
+              "title": "代理层:然后中间层由codis-proxy和zookeeper处理数据走向和分配,通过crc32算法,把key平均分配在不同redis的某一个slot中.实现类似raid0的条带化,在旧版本的codis中,slot需要手工分配,在codis3.2之后,slot会自动分配,相当方便."
+            },
+            {
+              "title": "数据层:最后codis-proxy把数据存进真实的redis-server主服务器上,由于codis的作者黄东旭相当注重数据一致性,不允许有数据延时造成的数据不一致,所以架构从一开始就没考虑主从读写分离.从服务器仅仅是作为故障切换的冗余架构,由zookeeper调用redis-sentinel实现故障切换功能."
+            },
+            {
+              "title": "在Codis中，Codis会把所有的key分成1024个槽，这1024个槽对应着的就是Redis的集群，这个在Codis中是会在内存中维护着这1024个槽与Redis实例的映射关系。这个槽是可以配置，可以设置成 2048 或者是4096个。看你的Redis的节点数量有多少，偏多的话，可以设置槽多一些。",
+              "topics": [
+                {
+                  "title": "当Codis的Codis Dashbord 改变槽位的信息的时候，其他的Codis节点会监听到ZooKeeper的槽位变化，会及时同步过来。如图："
+                },
+                {
+                  "title": "zk负责同步槽位信息."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "哨兵机制",
+          "topics": [
+            {
+              "title": "profile",
+              "topics": [
+                {
+                  "title": "在复制的基础上，哨兵实现了自动化的故障恢复。缺陷：写操作无法负载均衡；存储能力受到单机的限制。",
+                  "makers": [
+                    "task-done",
+                    "priority-1",
+                    "flag-red"
+                  ]
+                },
+                {
+                  "title": "哨兵系统中的主从节点，与普通的主从节点并没有什么区别，故障发现和转移是由哨兵来控制和完成的。",
+                  "makers": [
+                    "flag-red",
+                    "task-done",
+                    "priority-1"
+                  ]
+                },
+                {
+                  "title": "哨兵节点本质上是 Redis 节点。"
+                },
+                {
+                  "title": "每个哨兵节点，只需要配置监控主节点，便可以自动发现其他的哨兵节点和从节点。"
+                },
+                {
+                  "title": "在哨兵节点启动和故障转移阶段，各个节点的配置文件会被重写(config rewrite)。"
+                },
+                {
+                  "title": "本章的例子中，一个哨兵只监控了一个主节点；实际上，一个哨兵可以监控多个主节点，通过配置多条 sentinel monitor 即可实现。"
+                },
+                {
+                  "title": "哨兵和代理有什么区别",
+                  "makers": [
+                    "flag-red",
+                    "c_symbol_trophy",
+                    "task-done",
+                    "priority-1"
+                  ],
+                  "topics": [
+                    {
+                      "title": "如果是配置提供者，客户端在通过哨兵获得主节点信息后，会直接建立到主节点的连接，后续的请求(如 set/get)会直接发向主节点。"
+                    },
+                    {
+                      "title": "如果是代理，客户端的每一次请求都会发向哨兵，哨兵再通过主节点处理请求。"
+                    }
+                  ]
+                },
+                {
+                  "title": "哨兵节点的数量应不止一个，一方面增加哨兵节点的冗余，避免哨兵本身成为高可用的瓶颈；另一方面减少对下线的误判。此外，这些不同的哨兵节点应部署在不同的物理机上。
+
+哨兵节点的数量应该是奇数，便于哨兵通过投票做出“决策”：领导者选举的决策、客观下线的决策等。
+各个哨兵节点的配置应一致，包括硬件、参数等；此外，所有节点都应该使用 ntp 或类似服务，保证时间准确、一致。"
+                },
+                {
+                  "title": "哨兵集群没有主从之分!!!也不会需要互相配置ip,发现对方. "
+                }
+              ]
+            },
+            {
+              "title": "[Image]",
+              "topics": [
+                {
+                  "title": "哨兵节点：哨兵系统由一个或多个哨兵节点组成，哨兵节点是特殊的 Redis 节点，不存储数据。"
+                },
+                {
+                  "title": "数据节点：主节点和从节点都是数据节点。"
+                }
+              ]
+            },
+            {
+              "title": "哨兵工作职责",
+              "topics": [
+                {
+                  "title": "监控（Monitoring）：哨兵会不断地检查主节点和从节点是否运作正常。"
+                },
+                {
+                  "title": "自动故障转移（Automatic failover）：当主节点不能正常工作时，哨兵会开始自动故障转移操作，它会将失效主节点的其中一个从节点升级为新的主节点，并让其他从节点改为复制新的主节点。"
+                },
+                {
+                  "title": "配置提供者（Configurationprovider）：客户端在初始化时，通过连接哨兵来获得当前 Redis 服务的主节点地址。"
+                },
+                {
+                  "title": "通知（Notification）：哨兵可以将故障转移的结果发送给客户端。"
+                }
+              ]
+            },
+            {
+              "title": "客户端使用",
+              "topics": [
+                {
+                  "title": "[Image]"
+                },
+                {
+                  "title": "在整个过程中，我们的代码不需要显式的指定主节点的地址，就可以连接到主节点；代码中对故障转移没有任何体现，就可以在哨兵完成故障转移后自动的切换主节点。"
+                },
+                {
+                  "title": "过程",
+                  "topics": [
+                    {
+                      "title": "遍历哨兵节点，获取主节点信息：遍历哨兵节点，通过其中一个哨兵节点 + masterName 获得主节点的信息。"
+                    },
+                    {
+                      "title": "增加对哨兵的监听：这样当发生故障转移时，客户端便可以收到哨兵的通知，从而完成主节点的切换。
+具体做法是：利用 Redis 提供的发布订阅功能，为每一个哨兵节点开启一个单独的线程，订阅哨兵节点的 + switch-master 频道，当收到消息时，重新初始化连接池。"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "原理",
+              "topics": [
+                {
+                  "title": "[Image]",
+                  "topics": [
+                    {
+                      "title": null
+                    }
+                  ]
+                },
+                {
+                  "title": "[Image]"
+                },
+                {
+                  "title": "[Image]",
+                  "topics": [
+                    {
+                      "title": "多个节点认为下线, 才是客观下线"
+                    }
+                  ]
+                },
+                {
+                  "title": "[Image]",
+                  "topics": [
+                    {
+                      "title": "客观下线后, 才会触发 领导者哨兵选举 ,由选举出来的哨兵leader 负责故障转移"
+                    }
+                  ]
+                },
+                {
+                  "title": "[Image]",
+                  "topics": [
+                    {
+                      "title": "由此可见, 故障转移会丢失数据"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "淘气三千问",
+          "topics": [
+            {
+              "title": "集群比哨兵机制对比",
+              "topics": [
+                {
+                  "title": "集群可以对写操作进行负载均衡, 哨兵仅仅是保证 redis master 高可用. 并没有实现负载均衡"
+                },
+                {
+                  "title": "集群负载均衡后,对于部分命令支持不好. 例如事务, keys操作, "
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

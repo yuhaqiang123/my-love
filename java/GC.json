@@ -1,99 +1,100 @@
 [
   {
-    "title": "\u753b\u5e03 1",
+    "title": "画布 1",
     "topic": {
       "title": "GC",
       "topics": [
         {
-          "title": "\u4ec0\u4e48\u662f\u5806\u6808,\u4e3a\u4ec0\u4e48\u8981\u6709\u5806\u6808\u4e4b\u5206"
+          "title": "什么是堆栈,为什么要有堆栈之分"
         },
         {
-          "title": "\u804c\u8d23",
+          "title": "职责",
           "topics": [
             {
-              "title": "\u5206\u914d\u5185\u5b58"
+              "title": "分配内存"
             },
             {
-              "title": "\u786e\u4fdd\u4efb\u4f55\u88ab\u5f15\u7528\u7684\u5bf9\u8c61\u4ecd\u7136\u5728\u5185\u5b58\u4e2d\u95f4"
+              "title": "确保任何被引用的对象仍然在内存中间"
             },
             {
-              "title": "\u91cd\u65b0\u8986\u76d6\u90a3\u4e9b\u5728\u6267\u884c\u4ee3\u7801\u4e2d\u5f15\u7528\u4e0d\u53ef\u8fbe\u7684\u5185\u5b58"
+              "title": "重新覆盖那些在执行代码中引用不可达的内存"
             }
           ]
         },
         {
-          "title": "\u7b97\u6cd5\u4f18\u52a3",
+          "title": "算法优劣",
           "topics": [
             {
-              "title": "\u5ef6\u65f6",
+              "title": "延时",
               "topics": [
                 {
-                  "title": "\u5e76\u53d1\u5ea6\u3000= \u541e\u5410\u91cf * \u5ef6\u8fdf",
+                  "title": "并发度　= 吞吐量 * 延迟",
                   "topics": [
                     {
-                      "title": "\u541e\u5410\u548c\u5ef6\u65f6\u662f\u4e24\u4e2a\u5355\u72ec\u7684\u53d8\u91cf.\u541e\u5410\u53ef\u4ee5\u901a\u8fc7\u52a0\u673a\u5668,\u63d0\u9ad8\u5e76\u53d1\u89e3\u51b3.\u63d0\u9ad8\u541e\u5410\u4e0d\u4e00\u5b9a\u5ef6\u65f6\u589e\u52a0,\u964d\u4f4e\u541e\u5410,\u5ef6\u65f6\u4e0d\u4e00\u5b9a\u589e\u52a0"
+                      "title": "吞吐和延时是两个单独的变量.吞吐可以通过加机器,提高并发解决.提高吞吐不一定延时增加,降低吞吐,延时不一定增加"
                     },
                     {
-                      "title": "\u8981\u627e\u5230\u7cfb\u7edf\u7684\u74f6\u9888\u4e5f\u5c31\u662f\u5f71\u54cd\u5e76\u53d1\u7684\u5730\u65b9,\u8fd9\u4e2a\u5730\u65b9\u662f\u4f18\u5316\u541e\u5410\u7684\u5173\u952e.\u800c\u5ef6\u65f6\u53ef\u80fd\u5305\u62ec:\u4f18\u5316\u4ee3\u7801,\u5f02\u6b65\u5904\u7406\u7b49\u7b49"
+                      "title": "要找到系统的瓶颈也就是影响并发的地方,这个地方是优化吞吐的关键.而延时可能包括:优化代码,异步处理等等"
                     },
                     {
-                      "title": "\u5ef6\u65f6\u6682\u65f6\u4e0d\u5305\u62ec\u7b49\u5f85\u6392\u961f\u5ef6\u65f6,\u53ea\u662f\u4efb\u52a1\u5b9e\u9645\u5904\u7406\u7684\u5ef6\u8fdf,\u5728\u5b9e\u9645\u7684\u76d1\u63a7\u4e2d,\u5e94\u8be5\u5206\u79bb\u8fd9\u4e24\u79cd\u76d1\u63a7, \u5b9e\u9645\u4e0a\u4efb\u52a1\u5904\u7406\u7684\u8017\u65f6\u968f\u7740\u541e\u5410\u91cf\u53ef\u80fd\u4e0d\u53d8, \u4f46\u662f\u7b49\u5f85\u8017\u65f6\u53ef\u80fd\u4f1a\u53d8\u5316,\u56e0\u4e3a\u5e76\u53d1\u5ea6\u5982\u679c\u5230\u4e86\u74f6\u9888,\u8bf7\u6c42\u91cf\u4e0a\u53bb,\u5ef6\u65f6\u4e0d\u53d8,\u6392\u961f\u7684\u8bf7\u6c42\u4f1a\u53d8\u591a. \u7528\u6237\u6216\u8005\u8c03\u7528\u65b9\u611f\u53d7\u5230\u5c31\u662f\u5ef6\u8fdf\u589e\u52a0"
+                      "title": "延时暂时不包括等待排队延时,只是任务实际处理的延迟,在实际的监控中,应该分离这两种监控, 实际上任务处理的耗时随着吞吐量可能不变, 但是等待耗时可能会变化,因为并发度如果到了瓶颈,请求量上去,延时不变,排队的请求会变多. 用户或者调用方感受到就是延迟增加"
                     },
                     {
-                      "title": "\u53ea\u9488\u5bf9\u4e00\u79cd\u8bf7\u6c42\u6216\u4e00\u4e2a\u6307\u6807.\u4e0d\u80fd\u628a\u6240\u6709\u7684\u8bf7\u6c42\u90fd\u7b97\u4e0a.\u8fd9\u6837\u7ed3\u679c\u53ef\u80fd\u6709\u51fa\u5165,\u56e0\u4e3a\u4e0d\u540c\u63a5\u53e3\u7684QPS\u548c\u5ef6\u65f6\u662f\u4e0d\u540c\u7684,\n\u4f1a\u51fa\u73b0\u56e0\u4e3a\u67d0\u4e9b\u8bf7\u6c42\u7a81\u7136\u589e\u52a0\u51cf\u5c11,\u5bfc\u81f4\u6574\u4f53\u5ef6\u65f6\u589e\u52a0\u6216\u8005\u51cf\u5c11\u7684\u60c5\u51b5"
+                      "title": "只针对一种请求或一个指标.不能把所有的请求都算上.这样结果可能有出入,因为不同接口的QPS和延时是不同的,
+会出现因为某些请求突然增加减少,导致整体延时增加或者减少的情况"
                     },
                     {
-                      "title": "\u901a\u8fc7\u89c2\u5bdf\u8bf7\u6c42\u5ef6\u65f6(\u5305\u62ec\u6392\u961f)\u548c\u5904\u7406\u5ef6\u65f6,\u53ef\u4ee5\u8ba9\u6211\u4eec\u770b\u5230\u5b9e\u9645\u7684\u5e76\u53d1\u5ea6.\u907f\u514d\u7528\u6237\u8bf7\u6c42\u6392\u961f"
+                      "title": "通过观察请求延时(包括排队)和处理延时,可以让我们看到实际的并发度.避免用户请求排队"
                     }
                   ]
                 }
               ]
             },
             {
-              "title": "\u5360\u7528CPU",
+              "title": "占用CPU",
               "topics": [
                 {
-                  "title": "\u5e76\u53d1\u8fd8\u662f\u4e32\u884c"
+                  "title": "并发还是串行"
                 }
               ]
             },
             {
-              "title": "\u5185\u5b58\u788e\u7247",
+              "title": "内存碎片",
               "topics": [
                 {
-                  "title": "\u9700\u8981\u538b\u7f29"
+                  "title": "需要压缩"
                 }
               ]
             },
             {
-              "title": "\u9891\u7e41\u7a0b\u5ea6"
+              "title": "频繁程度"
             },
             {
               "title": "Stop the world",
               "topics": [
                 {
-                  "title": "\u679a\u4e3e\u6839\u8282\u70b9\u65f6\u9700\u8981\u7981\u6b62\u5bf9\u8c61\u5f15\u7528\u5173\u7cfb\u7684\u53d8\u5316,\u5426\u5219\u65e0\u6cd5\u51c6\u786eGC"
+                  "title": "枚举根节点时需要禁止对象引用关系的变化,否则无法准确GC"
                 },
                 {
-                  "title": "JVM\u4f1a\u5728\u7279\u5b9a\u7684\u6570\u636e\u7ed3\u6784\u4e2d\u8bb0\u5f55\u6240\u6709\u5bf9\u8c61\u7684\u5f15\u7528\u5173\u7cfb"
+                  "title": "JVM会在特定的数据结构中记录所有对象的引用关系"
                 },
                 {
-                  "title": "\u5e76\u4e0d\u662f\u7ebf\u7a0b\u7684\u4efb\u4f55\u5b57\u8282\u7801\u6307\u4ee4\u6267\u884c\u65f6,\u90fd\u80fd\u88ab\u6302\u8d77,\u53ea\u6709\u7279\u5b9a\u7684\u67d0\u4e9b\u5730\u65b9,\u624d\u53ef\u4ee5\u6302\u8d77\u7ebf\u7a0b,\u6682\u505c\u70b9"
+                  "title": "并不是线程的任何字节码指令执行时,都能被挂起,只有特定的某些地方,才可以挂起线程,暂停点"
                 },
                 {
-                  "title": "STW\u524d\u9700\u8981\u6682\u505c\u6240\u6709\u7ebf\u7a0b,\u6240\u4ee5 PrintGCApplicationStoppedTime jvm\u53c2\u6570 \u4f1a\u6253\u5370Stopping \u7ebf\u7a0b\u6240\u9700\u8981\u7684\u65f6\u95f4"
+                  "title": "STW前需要暂停所有线程,所以 PrintGCApplicationStoppedTime jvm参数 会打印Stopping 线程所需要的时间"
                 },
                 {
-                  "title": "Java \u7ebf\u7a0b\u6a21\u578b\u91c7\u7528 LWP 1:1 \u5373\u4e00\u4e2a\u7ebf\u7a0b\u6620\u5c04\u4e3a\u4e00\u4e2a\u5185\u6838\u7ebf\u7a0b, \u5728\u51fd\u6570\u8fdb\u5165\u9000\u51fa, uncount loop(while) \u5faa\u73af\u7b49\u4f1a\u4e13\u95e8\u6709\u68c0\u67e5\u70b9, \u68c0\u67e5\u70b9\u4e5f\u5c31\u662f\u6709\u4e00\u6761\u673a\u5668\u6307\u4ee4,\u8bbf\u95ee\u67d0\u4e2a\u5185\u5b58\u9875,\u8be5\u9875\u4e3a\u7f3a\u9875\u65f6,\u5c31\u4f1a\u89e6\u53d1\u4e00\u4e2a\u4e2d\u65ad\u4fe1\u53f7, \u7ebf\u7a0b\u8f6c\u800c\u9700\u8981\u6267\u884c\u8be5\u4fe1\u53f7\u5904\u7406,\u5373 \u505c\u6b62\u6267\u884c",
+                  "title": "Java 线程模型采用 LWP 1:1 即一个线程映射为一个内核线程, 在函数进入退出, uncount loop(while) 循环等会专门有检查点, 检查点也就是有一条机器指令,访问某个内存页,该页为缺页时,就会触发一个中断信号, 线程转而需要执行该信号处理,即 停止执行",
                   "topics": [
                     {
-                      "title": "\u5b50\u4e3b\u9898 1",
+                      "title": "子主题 1",
                       "topics": [
                         {
                           "title": " Signal Dispatcher",
                           "topics": [
                             {
-                              "title": "\u4fe1\u53f7\u5904\u7406\u5206\u914d\u5668, linux  \u4e0a\u7684\u4fe1\u53f7\u5904\u7406\u53ea\u80fd\u6709\u4e00\u4e2a\u7ebf\u7a0b\u5904\u7406"
+                              "title": "信号处理分配器, linux  上的信号处理只能有一个线程处理"
                             }
                           ]
                         },
@@ -101,7 +102,7 @@
                           "title": "CompilerThread0",
                           "topics": [
                             {
-                              "title": "\u5373\u65f6\u7f16\u8bd1\u7ebf\u7a0b"
+                              "title": "即时编译线程"
                             }
                           ]
                         },
@@ -112,7 +113,8 @@
                           "title": "Attach Listener",
                           "topics": [
                             {
-                              "title": "\u8be5\u7ebf\u7a0b\u8d1f\u8d23\u63a5\u6536\u5916\u90e8\u547d\u4ee4\uff0c\u6267\u884c\u8be5\u547d\u4ee4\u5e76\u628a\u7ed3\u679c\u8fd4\u56de\u7ed9\u8c03\u7528\u8005\njava -version"
+                              "title": "该线程负责接收外部命令，执行该命令并把结果返回给调用者
+java -version"
                             }
                           ]
                         },
@@ -120,7 +122,7 @@
                           "title": "Reference Handler",
                           "topics": [
                             {
-                              "title": "JVM\u5728\u521b\u5efamain\u7ebf\u7a0b\u540e\u5c31\u521b\u5efaReference Handler\u7ebf\u7a0b\uff0c\u5176\u4f18\u5148\u7ea7\u6700\u9ad8\uff0c\u4e3a10\uff0c\u5b83\u4e3b\u8981\u7528\u4e8e\u5904\u7406\u5f15\u7528\u5bf9\u8c61\u672c\u8eab\uff08\u8f6f\u5f15\u7528\u3001\u5f31\u5f15\u7528\u3001\u865a\u5f15\u7528\uff09\u7684\u5783\u573e\u56de\u6536\u95ee\u9898 \u3002"
+                              "title": "JVM在创建main线程后就创建Reference Handler线程，其优先级最高，为10，它主要用于处理引用对象本身（软引用、弱引用、虚引用）的垃圾回收问题 。"
                             }
                           ]
                         },
@@ -128,16 +130,16 @@
                           "title": "VM Thread",
                           "topics": [
                             {
-                              "title": "VM\u4e2d\u7ebf\u7a0b\u7684\u6bcd\u4f53\uff0c\u6839\u636eHotSpot\u6e90\u7801\u4e2d\u5173\u4e8evmThread.hpp\u91cc\u9762\u7684\u6ce8\u91ca\uff0c\u5b83\u662f\u4e00\u4e2a\u5355\u4f8b\u7684\u5bf9\u8c61\uff08\u6700\u539f\u59cb\u7684\u7ebf\u7a0b\uff09\u4f1a\u4ea7\u751f\u6216\u89e6\u53d1\u6240\u6709\u5176\u4ed6\u7684\u7ebf\u7a0b\uff0c\u8fd9\u4e2a\u5355\u4f8b\u7684VM\u7ebf\u7a0b\u662f\u4f1a\u88ab\u5176\u4ed6\u7ebf\u7a0b\u6240\u4f7f\u7528\u6765\u505a\u4e00\u4e9bVM\u64cd\u4f5c\uff08\u5982\u6e05\u626b\u5783\u573e\u7b49\uff09\u3002"
+                              "title": "VM中线程的母体，根据HotSpot源码中关于vmThread.hpp里面的注释，它是一个单例的对象（最原始的线程）会产生或触发所有其他的线程，这个单例的VM线程是会被其他线程所使用来做一些VM操作（如清扫垃圾等）。"
                             },
                             {
-                              "title": "VM\u7ebf\u7a0b\u662fHotSpot VM\u4e2d\u7684\u7279\u6b8a\u7ebf\u7a0b\u3002\u5b83\u5728VM\u4e2d\u6267\u884c\u7279\u6b8a\u4efb\u52a1\uff0c\u4f8b\u5982\u5783\u573e\u6536\u96c6"
+                              "title": "VM线程是HotSpot VM中的特殊线程。它在VM中执行特殊任务，例如垃圾收集"
                             },
                             {
-                              "title": "\u5728 VM Thread \u7684\u7ed3\u6784\u4f53\u91cc\u6709\u4e00\u4e2aVMOperationQueue\u5217\u961f\uff0c\u6240\u6709\u7684VM\u7ebf\u7a0b\u64cd\u4f5c(vm_operation)\u90fd\u4f1a\u88ab\u4fdd\u5b58\u5230\u8fd9\u4e2a\u5217\u961f\u5f53\u4e2d\uff0cVMThread \u672c\u8eab\u5c31\u662f\u4e00\u4e2a\u7ebf\u7a0b\uff0c\u5b83\u7684\u7ebf\u7a0b\u8d1f\u8d23\u6267\u884c\u4e00\u4e2a\u81ea\u8f6e\u8be2\u7684loop\u51fd\u6570(\u5177\u4f53\u53ef\u4ee5\u53c2\u8003\uff1aVMThread.cpp\u91cc\u9762\u7684void VMThread::loop()) \uff0c\u8be5loop\u51fd\u6570\u4eceVMOperationQueue\u5217\u961f\u4e2d\u6309\u7167\u4f18\u5148\u7ea7\u53d6\u51fa\u5f53\u524d\u9700\u8981\u6267\u884c\u7684\u64cd\u4f5c\u5bf9\u8c61(VM_Operation)\uff0c\u5e76\u4e14\u8c03\u7528VM_Operation->evaluate\u51fd\u6570\u53bb\u6267\u884c\u8be5\u64cd\u4f5c\u7c7b\u578b\u672c\u8eab\u7684\u4e1a\u52a1\u903b\u8f91\u3002"
+                              "title": "在 VM Thread 的结构体里有一个VMOperationQueue列队，所有的VM线程操作(vm_operation)都会被保存到这个列队当中，VMThread 本身就是一个线程，它的线程负责执行一个自轮询的loop函数(具体可以参考：VMThread.cpp里面的void VMThread::loop()) ，该loop函数从VMOperationQueue列队中按照优先级取出当前需要执行的操作对象(VM_Operation)，并且调用VM_Operation->evaluate函数去执行该操作类型本身的业务逻辑。"
                             },
                             {
-                              "title": "VM\u64cd\u4f5c\u7c7b\u578b\u88ab\u5b9a\u4e49\u5728vm_operations.hpp\u6587\u4ef6\u5185\uff0c\u5217\u4e3e\u51e0\u4e2a\uff1aThreadStop\u3001ThreadDump\u3001PrintThreads\u3001GenCollectFull\u3001GenCollectFullConcurrent\u3001CMS_Initial_Mark\u3001CMS_Final_Remark"
+                              "title": "VM操作类型被定义在vm_operations.hpp文件内，列举几个：ThreadStop、ThreadDump、PrintThreads、GenCollectFull、GenCollectFullConcurrent、CMS_Initial_Mark、CMS_Final_Remark"
                             }
                           ]
                         },
@@ -145,10 +147,10 @@
                           "title": "VM Periodic Task Thread",
                           "topics": [
                             {
-                              "title": "\u8be5\u7ebf\u7a0b\u662fJVM\u5468\u671f\u6027\u4efb\u52a1\u8c03\u5ea6\u7684\u7ebf\u7a0b\uff0c\u5b83\u7531WatcherThread\u521b\u5efa\uff0c\u662f\u4e00\u4e2a\u5355\u4f8b\u5bf9\u8c61\u3002\u8be5\u7ebf\u7a0b\u5728JVM\u5185\u4f7f\u7528\u5f97\u6bd4\u8f83\u9891\u7e41\uff0c\u6bd4\u5982\uff1a\u5b9a\u671f\u7684\u5185\u5b58\u76d1\u63a7\u3001JVM\u8fd0\u884c\u72b6\u51b5\u76d1\u63a7\u3002"
+                              "title": "该线程是JVM周期性任务调度的线程，它由WatcherThread创建，是一个单例对象。该线程在JVM内使用得比较频繁，比如：定期的内存监控、JVM运行状况监控。"
                             },
                             {
-                              "title": "\u4f8b\u5982 jstat,\u67e5\u770b \u5185\u90e8\u76d1\u63a7",
+                              "title": "例如 jstat,查看 内部监控",
                               "topics": [
                                 {
                                   "title": null
@@ -161,7 +163,7 @@
                           "title": "GC task thread",
                           "topics": [
                             {
-                              "title": "\u5783\u573e\u56de\u6536\u7ebf\u7a0b\uff0c\u8be5\u7ebf\u7a0b\u4f1a\u8d1f\u8d23\u8fdb\u884c\u5783\u573e\u56de\u6536\u3002\u901a\u5e38JVM\u4f1a\u542f\u52a8\u591a\u4e2a\u7ebf\u7a0b\u6765\u5904\u7406\u8fd9\u4e2a\u5de5\u4f5c"
+                              "title": "垃圾回收线程，该线程会负责进行垃圾回收。通常JVM会启动多个线程来处理这个工作"
                             }
                           ]
                         },
@@ -169,7 +171,7 @@
                           "title": "Concurrent Mark-Sweep GC Thread",
                           "topics": [
                             {
-                              "title": "\u5e76\u53d1\u6807\u8bb0\u6e05\u9664\u5783\u573e\u56de\u6536\u5668\uff08\u5c31\u662f\u901a\u5e38\u6240\u8bf4\u7684CMS GC\uff09\u7ebf\u7a0b\uff0c \u8be5\u7ebf\u7a0b\u4e3b\u8981\u9488\u5bf9\u4e8e\u5e74\u8001\u4ee3\u5783\u573e\u56de\u6536"
+                              "title": "并发标记清除垃圾回收器（就是通常所说的CMS GC）线程， 该线程主要针对于年老代垃圾回收"
                             }
                           ]
                         }
@@ -178,10 +180,14 @@
                   ]
                 },
                 {
-                  "title": "\u4e3a\u4ec0\u4e48",
+                  "title": "为什么",
                   "topics": [
                     {
-                      "title": "\u00a0\u00a0 1. \u7528\u6237\u7ebf\u7a0b\u548c c mark \u7ebf\u7a0b\u5b58\u5728\u5e76\u53d1\u7ade\u4e89.\n\n\u00a0\u00a0\u00a0\u00a0 1.1A \u72ec\u7acb, B \u5f15\u7528 C.\u00a0 cmark\u5148\u904d\u5386\u4e86 A, cmark \u7ebf\u7a0b\u904d\u5386\u5230 B \u65f6, \u7528\u6237\u7ebf\u7a0b\u5c06 C \u7ed9\u4e86 A.\u00a0 \u8fd9\u65f6\u5019 C \u6ca1\u6709\u88ab reachable \u5230. \u6700\u540e\u8ba4\u4e3a C \u662f unreable \u7684.\u5176\u5b9e\u5e76\u4e0d\u662f\n\n\u00a0\u00a0\u00a0 1.2. \u53e6\u5916\u5df2\u5206\u914d\u7684\u6c60\u4e5f\u65f6\u65f6\u53d8\u5927. \u5982\u679c\u4e0d\u9501\u4f4f,\u4e5f\u4f1a\u88ab\u6709\u95ee\u9898.\u5bfc\u81f4 unreachable \u8ba1\u7b97\u7684\u6709\u8bef."
+                      "title": "   1. 用户线程和 c mark 线程存在并发竞争.
+
+     1.1A 独立, B 引用 C.  cmark先遍历了 A, cmark 线程遍历到 B 时, 用户线程将 C 给了 A.  这时候 C 没有被 reachable 到. 最后认为 C 是 unreable 的.其实并不是
+
+    1.2. 另外已分配的池也时时变大. 如果不锁住,也会被有问题.导致 unreachable 计算的有误."
                     }
                   ]
                 }
@@ -190,76 +196,76 @@
           ]
         },
         {
-          "title": "\u53d1\u751f\u65f6\u673a",
+          "title": "发生时机",
           "topics": [
             {
-              "title": "\u65b0\u751f\u4ee3\u3001\u5e74\u8001\u4ee3\u548c\u6c38\u4e45\u4ee3\u8fd9\u4e09\u4e2a\u7a7a\u95f4\u4e2d\u7684\u4efb\u4f55\u4e00\u4e2a\u4e0d\u80fd\u6ee1\u8db3\u5185\u5b58\u5206\u914d\u8bf7\u6c42\u65f6\uff0c\u5c31\u4f1a\u53d1\u751f\u5783\u573e\u6536\u96c6"
+              "title": "新生代、年老代和永久代这三个空间中的任何一个不能满足内存分配请求时，就会发生垃圾收集"
             }
           ]
         },
         {
-          "title": "\u5185\u5b58\u7ba1\u7406",
+          "title": "内存管理",
           "topics": [
             {
-              "title": "\u5185\u5b58\u7ec4\u7ec7",
+              "title": "内存组织",
               "topics": [
                 {
-                  "title": "\u6307\u9488\u78b0\u649e",
+                  "title": "指针碰撞",
                   "topics": [
                     {
-                      "title": "\u4f7f\u7528\u4e00\u4e2a\u6307\u9488\u8bb0\u5f55\u7a7a\u95f2\u5185\u5b58\u7684\u8d77\u59cb\u5730\u5740,\u6bcf\u6b21\u5185\u5b58\u8fde\u7eed\u5206\u914d"
+                      "title": "使用一个指针记录空闲内存的起始地址,每次内存连续分配"
                     },
                     {
-                      "title": "ParNew, Serial\u5783\u573e\u56de\u6536\u90fd\u4f7f\u7528\u8fd9\u79cd\u65b9\u5f0f,\u4f7f\u7528\u6807\u8bb0\u590d\u5236\u7b97\u6cd5\u7684"
+                      "title": "ParNew, Serial垃圾回收都使用这种方式,使用标记复制算法的"
                     },
                     {
-                      "title": "\u4e3a\u4e86\u907f\u514d\u7ebf\u7a0b\u540c\u6b65,\u4f7f\u7528TLAB \u7ebf\u7a0b\u5c40\u90e8\u5b58\u50a8\u7a7a\u95f4 ,\u5982\u679c\u8be5\u5185\u5b58\u4e0d\u8db3,\u5219\u4f7f\u7528 CAS\u7b97\u6cd5,\u65e0\u9501\u540c\u6b65\u7533\u8bf7\u5185\u5b58"
+                      "title": "为了避免线程同步,使用TLAB 线程局部存储空间 ,如果该内存不足,则使用 CAS算法,无锁同步申请内存"
                     }
                   ]
                 },
                 {
-                  "title": "\u7a7a\u95f2\u94fe\u8868",
+                  "title": "空闲链表",
                   "topics": [
                     {
-                      "title": "\u4f7f\u7528\u4e00\u4e2a\u94fe\u8868\u8bb0\u5f55\u5185\u5b58\u7684\u7a7a\u95f2\u5730\u5740,\u5185\u5b58\u5206\u914d\u5e76\u4e0d\u662f\u8fde\u7eed\u7684"
+                      "title": "使用一个链表记录内存的空闲地址,内存分配并不是连续的"
                     }
                   ]
                 }
               ]
             },
             {
-              "title": "\u5185\u5b58\u533a\u57df",
+              "title": "内存区域",
               "topics": [
                 {
-                  "title": "MetaSpace\u5143\u6570\u636e",
+                  "title": "MetaSpace元数据",
                   "topics": [
                     {
-                      "title": "\u975e\u5806\u7a7a\u95f4,\u662fjvm\u4eceos \u4e2d\u7533\u8bf7\u7684\u5185\u5b58,\u53ef\u4ee5\u52a8\u6001\u6269\u5c55,\u4e0d\u4f1a\u53c2\u4e0e\u5783\u573e\u56de\u6536"
+                      "title": "非堆空间,是jvm从os 中申请的内存,可以动态扩展,不会参与垃圾回收"
                     },
                     {
-                      "title": "\u6bcf\u4e00\u4e2a\u7c7b\u52a0\u8f7d\u5668\u90fd\u4f1a\u5bf9\u5e94\u4e00\u4e2a\u5143\u6570\u636e\u7a7a\u95f4"
+                      "title": "每一个类加载器都会对应一个元数据空间"
                     }
                   ]
                 }
               ]
             },
             {
-              "title": "\u6839\u641c\u7d22\u7b97\u6cd5",
+              "title": "根搜索算法",
               "topics": [
                 {
-                  "title": "\u6839\u8282\u70b9",
+                  "title": "根节点",
                   "topics": [
                     {
-                      "title": "1. \u865a\u62df\u673a\u6808(\u6808\u6862\u4e2d\u7684\u672c\u5730\u53d8\u91cf\u8868)\u4e2d\u7684\u5f15\u7528\u7684\u5bf9\u8c61 \uff1b "
+                      "title": "1. 虚拟机栈(栈桢中的本地变量表)中的引用的对象 ； "
                     },
                     {
-                      "title": "2. \u65b9\u6cd5\u533a\u4e2d\u7684\u7c7b\u9759\u6001\u5c5e\u6027\u5f15\u7528\u7684\u5bf9\u8c61 \uff1b "
+                      "title": "2. 方法区中的类静态属性引用的对象 ； "
                     },
                     {
-                      "title": "3. \u65b9\u6cd5\u533a\u4e2d\u7684\u5e38\u91cf\u5f15\u7528\u7684\u5bf9\u8c61 \uff1b "
+                      "title": "3. 方法区中的常量引用的对象 ； "
                     },
                     {
-                      "title": "4. \u672c\u5730\u65b9\u6cd5\u6808\u4e2dJNI\u7684\u5f15\u7528\u7684\u5bf9\u8c61\uff1b "
+                      "title": "4. 本地方法栈中JNI的引用的对象； "
                     }
                   ]
                 }
@@ -268,21 +274,21 @@
           ]
         },
         {
-          "title": "\u65e5\u5fd7\u67e5\u770b",
+          "title": "日志查看",
           "topics": [
             {
-              "title": "real time\u6307\u8fdb\u7a0b\u5b9e\u9645\u5904\u7406\u7684\u65f6\u95f4.\u5305\u62ec\u5360\u7528cpu  \u65f6\u95f4.i/o, \u9501\u7b49\u5f85\u662f block,\u6302\u8d77\u65f6\u95f4"
+              "title": "real time指进程实际处理的时间.包括占用cpu  时间.i/o, 锁等待是 block,挂起时间"
             },
             {
-              "title": "user time,sys time \u662f\u6307\u8fdb\u7a0b\u5904\u4e8e\u7528\u6237\u6001\u548c\u5185\u6838\u6001\u7684 cpu\u65f6\u95f4.(\u4e0d\u5305\u62eci/o \u963b\u585e\u65f6\u95f4)"
+              "title": "user time,sys time 是指进程处于用户态和内核态的 cpu时间.(不包括i/o 阻塞时间)"
             },
             {
-              "title": "\u7531\u4e8e\u591a\u7ebf\u7a0b\u60c5\u666f\u7684\u5b58\u5728,\u8fdb\u7a0b\u7684 real time \u53ef\u80fd\u5c0f\u4e8e user, sys time"
+              "title": "由于多线程情景的存在,进程的 real time 可能小于 user, sys time"
             }
           ]
         },
         {
-          "title": "\u6392\u67e5\u5de5\u5177",
+          "title": "排查工具",
           "topics": [
             {
               "title": "jstack -l pid"
@@ -291,10 +297,10 @@
               "title": "jmap -heap",
               "topics": [
                 {
-                  "title": "dump \u51fa\u5f53\u524d\u8fdb\u7a0b\u7684\u5185\u5b58\u4f7f\u7528\u60c5\u51b5"
+                  "title": "dump 出当前进程的内存使用情况"
                 },
                 {
-                  "title": "\u4f1a\u53ef\u80fd\u5bfc\u81f4\u5f53\u524d\u8fdb\u7a0b\u963b\u585e"
+                  "title": "会可能导致当前进程阻塞"
                 }
               ]
             },
@@ -302,41 +308,41 @@
               "title": "jmap -histo 10953",
               "topics": [
                 {
-                  "title": "\u67e5\u770b\u7c7b\u5b9e\u4f8b\u7684\u67f1\u72b6\u4fe1\u606f"
+                  "title": "查看类实例的柱状信息"
                 }
               ]
             }
           ]
         },
         {
-          "title": "\u53c2\u6570",
+          "title": "参数",
           "topics": [
             {
-              "title": "-XX:+PrintTenuringDistribution \u6253\u5370gc  \u540esurvivor \u533a\u7684\u5e74\u9f84\u5206\u5e03"
+              "title": "-XX:+PrintTenuringDistribution 打印gc  后survivor 区的年龄分布"
             },
             {
-              "title": "xmx xms\u8bbe\u5b9a\u8981\u76f8\u540c,\u6bcf\u6b21\u7533\u8bf7\u5185\u5b58\u4e4b\u524d,\u5b9e\u9645\u4e0a\u90fd\u662f\u9700\u8981Full GC  \u7684"
+              "title": "xmx xms设定要相同,每次申请内存之前,实际上都是需要Full GC  的"
             },
             {
-              "title": "-XX:+HeapDumpOnOutOfMemoryError  \u5728\u53d1\u751fOOM\u65f6 \u751f\u6210 dump\u6587\u4ef6"
+              "title": "-XX:+HeapDumpOnOutOfMemoryError  在发生OOM时 生成 dump文件"
             },
             {
-              "title": "-XX:+DisableExplictitGC  \u7981\u7528 System.gc()"
+              "title": "-XX:+DisableExplictitGC  禁用 System.gc()"
             },
             {
-              "title": "\u5143\u6570\u636e\u4f18\u5316",
+              "title": "元数据优化",
               "topics": [
                 {
-                  "title": "-XX:+MaxMetaspaceSize  \u6700\u5927\u7a7a\u95f4"
+                  "title": "-XX:+MaxMetaspaceSize  最大空间"
                 },
                 {
-                  "title": "-XX:+MetaspaceSize  \u521d\u59cb\u7a7a\u95f4"
+                  "title": "-XX:+MetaspaceSize  初始空间"
                 },
                 {
-                  "title": "-XX:+MinMetaspaceFreeRatio \u6269\u5927\u7a7a\u95f4\u7684\u6700\u5c0f\u9608\u503c\u6bd4\u4f8b"
+                  "title": "-XX:+MinMetaspaceFreeRatio 扩大空间的最小阈值比例"
                 },
                 {
-                  "title": "-XX:+MaxMetaspaceFreeRatio \u7f29\u5c0f\u7a7a\u95f4\u7684\u6700\u5927\u9608\u503c\u6bd4\u4f8b"
+                  "title": "-XX:+MaxMetaspaceFreeRatio 缩小空间的最大阈值比例"
                 }
               ]
             },
@@ -344,7 +350,7 @@
               "title": "ParallecGCThreads",
               "topics": [
                 {
-                  "title": "ParNew gc \u65f6\u7684\u7ebf\u7a0b\u6570, \u4e00\u822c\u8bbe\u7f6ecpu \u6838\u6570\u5c31\u53ef\u4ee5"
+                  "title": "ParNew gc 时的线程数, 一般设置cpu 核数就可以"
                 }
               ]
             },
@@ -355,21 +361,21 @@
                   "title": "-XX:+UseConcMarkSweepGC",
                   "topics": [
                     {
-                      "title": "\u4f7f\u7528 CMS \u56de\u6536\u8001\u5e74\u4ee3"
+                      "title": "使用 CMS 回收老年代"
                     }
                   ]
                 },
                 {
-                  "title": "\u518d\u6b21\u6807\u8bb0\u524dminor gc \u4e00\u6b21,\u51cf\u5c11\u65b0\u751f\u4ee3\u5bf9\u8c61\u5927\u5c0f,\u51cf\u5c11\u904d\u5386\u65f6\u95f4 -XX:+CMSScavengeBeforeRemark"
+                  "title": "再次标记前minor gc 一次,减少新生代对象大小,减少遍历时间 -XX:+CMSScavengeBeforeRemark"
                 },
                 {
                   "title": "-XX:CMSFullGCsBeforeCompaction=n",
                   "topics": [
                     {
-                      "title": "\u6307\u53d1\u751f\u591a\u5c11\u6b21Full gc  \u624d\u5f00\u542f\u538b\u7f29 \u9ed8\u8ba4\u662f0, \u5373\u6bcf\u6b21Full gc \u540e\u90fd\u4f1a\u538b\u7f29"
+                      "title": "指发生多少次Full gc  才开启压缩 默认是0, 即每次Full gc 后都会压缩"
                     },
                     {
-                      "title": "\u5982\u679c\u8bbe\u7f6e\u8fc7\u9ad8,\u4f1a\u5bfc\u81f4\u5185\u5b58\u788e\u7247\u95ee\u9898\u4e25\u91cd,\u591a\u6b21 Full GC \u540e\u4e5f\u65e0\u6cd5\u538b\u7f29"
+                      "title": "如果设置过高,会导致内存碎片问题严重,多次 Full GC 后也无法压缩"
                     }
                   ]
                 },
@@ -377,16 +383,16 @@
                   "title": "-XX:CMSInitiatingOccupancyFraction=70",
                   "topics": [
                     {
-                      "title": "CMS\u5728\u5bf9\u5185\u5b58\u5360\u7528\u7387\u8fbe\u523070%\u7684\u65f6\u5019\u5f00\u59cbGC"
+                      "title": "CMS在对内存占用率达到70%的时候开始GC"
                     },
                     {
-                      "title": "\u5982\u679c\u5185\u5b58\u589e\u957f\u8fc7\u5feb,\u53ef\u4ee5\u9002\u5ea6\u964d\u4f4e\u8be5\u503c,\u51cf\u5c11 GC \u671f\u95f4,\u5185\u5b58\u4e0d\u591f\u7684\u95ee\u9898"
+                      "title": "如果内存增长过快,可以适度降低该值,减少 GC 期间,内存不够的问题"
                     },
                     {
-                      "title": "\u5982\u679c\u5185\u5b58\u589e\u957f\u7f13\u6162,\u53ef\u4ee5\u8003\u8651\u5c06\u8be5\u503c\u8bbe\u7f6e\u9ad8\u4e00\u70b9, \u51cf\u5c11 CMS gc\u9891\u7387"
+                      "title": "如果内存增长缓慢,可以考虑将该值设置高一点, 减少 CMS gc频率"
                     },
                     {
-                      "title": "\u786e\u8ba4\u662f\u5426\u9700\u8981\u63d0\u5347\u8001\u5e74\u4ee3\u7a7a\u95f4\u5927\u5c0f \u5426\u5219\u8be5\u95ee\u9898\u4f1a\u4e00\u76f4\u5f88\u4e25\u91cd"
+                      "title": "确认是否需要提升老年代空间大小 否则该问题会一直很严重"
                     }
                   ]
                 },
@@ -394,128 +400,130 @@
                   "title": "ParallecCMSThreads",
                   "topics": [
                     {
-                      "title": "CMS gc\u65f6\u6307\u5b9a\u7684\u7ebf\u7a0b\u6838\u6570"
+                      "title": "CMS gc时指定的线程核数"
                     }
                   ]
                 }
               ]
             },
             {
-              "title": "-XX:+-XX:+PrintGC\t",
+              "title": "-XX:+-XX:+PrintGC	",
               "topics": [
                 {
-                  "title": "\u8be6\u7ec6\u7684GC\u65e5\u5fd7"
+                  "title": "详细的GC日志"
                 }
               ]
             },
             {
-              "title": "\u505c\u987f\u65f6\u95f4",
+              "title": "停顿时间",
               "topics": [
                 {
                   "title": "-XX:+PrintGCApplicationStoppedTime",
                   "topics": [
                     {
-                      "title": "\u6253\u5370\u5783\u573e\u56de\u6536\u671f\u95f4\u7a0b\u5e8f\u6682\u505c\u7684\u65f6\u95f4"
+                      "title": "打印垃圾回收期间程序暂停的时间"
                     }
                   ]
                 },
                 {
-                  "title": "-XX:+PrintGCApplicationConcurrentTime\t",
+                  "title": "-XX:+PrintGCApplicationConcurrentTime	",
                   "topics": [
                     {
-                      "title": "\u6253\u5370\u6bcf\u6b21\u5783\u573e\u56de\u6536\u524d\uff0c\u7a0b\u5e8f\u672a\u4e2d\u65ad\u7684\u6267\u884c\u65f6\u95f4"
+                      "title": "打印每次垃圾回收前，程序未中断的执行时间"
                     }
                   ]
                 }
               ]
             },
             {
-              "title": "-XX:+PrintTLAB\t",
+              "title": "-XX:+PrintTLAB	",
               "topics": [
                 {
-                  "title": "\u6253\u5370  \u7ebf\u7a0b\u5728eden \u5206\u914d\u72ec\u6709\u7a7a\u95f4\u7684\u5927\u5c0f"
+                  "title": "打印  线程在eden 分配独有空间的大小"
                 }
               ]
             },
             {
-              "title": "-XX:+HeapDumpOnOutOfMemoryError\t",
+              "title": "-XX:+HeapDumpOnOutOfMemoryError	",
               "topics": [
                 {
-                  "title": "OOM\u65f6\u6253\u5370\u5806\u6808\u4fe1\u606f"
+                  "title": "OOM时打印堆栈信息"
                 }
               ]
             },
             {
-              "title": "-XX:+PrintClassHistogramBeforeFullGC\t\n-XX:+PrintClassHistogramBeforeFullGC\t",
+              "title": "-XX:+PrintClassHistogramBeforeFullGC	
+-XX:+PrintClassHistogramBeforeFullGC	",
               "topics": [
                 {
-                  "title": "Full gc\u524d\u540e\u6253\u5370\u7c7b\u7684\u67f1\u72b6\u4fe1\u606f"
+                  "title": "Full gc前后打印类的柱状信息"
                 }
               ]
             },
             {
-              "title": "docker \u60c5\u51b5\u4e0b, \u7531\u4e8e\u83b7\u53d6\u7684\u6838\u6570\u9ed8\u8ba4\u4e3a\u7269\u7406\u673a\u6838\u6570,\u6240\u4ee5\u9700\u8981\u624b\u52a8\u8bbe\u7f6e \u5e76\u884c\u5783\u573e\u56de\u6536\u5668\u7684\u7ebf\u7a0b\u6570"
+              "title": "docker 情况下, 由于获取的核数默认为物理机核数,所以需要手动设置 并行垃圾回收器的线程数"
             }
           ]
         },
         {
-          "title": "zstack \u4f18\u5316",
+          "title": "zstack 优化",
           "topics": [
             {
-              "title": "\u8c03\u5927\u5806\u5185\u5b58",
+              "title": "调大堆内存",
               "topics": [
                 {
-                  "title": "\u7981\u6b62\u8fd0\u884c\u65f6\u83b7\u53d6\u5185\u5b58"
+                  "title": "禁止运行时获取内存"
                 }
               ]
             },
             {
-              "title": "\u5c06\u8001\u5e74\u4ee3\u6bd4\u4f8b\u964d\u4e0b\u6765",
+              "title": "将老年代比例降下来",
               "topics": [
                 {
-                  "title": "\u589e\u52a0\u65b0\u751f\u4ee3\u7684\u6bd4\u4f8b,\u8fd9\u6837\u8ba9minor gc \u51cf\u5c11,\u51cf\u5c11minor gc,\u51b2\u5411 \u8001\u5e74\u4ee3\u7684\u5bf9\u8c61\u5c31\u5c11\u5f88\u591a"
+                  "title": "增加新生代的比例,这样让minor gc 减少,减少minor gc,冲向 老年代的对象就少很多"
                 }
               ]
             },
             {
-              "title": "\u5b50\u4e3b\u9898 3"
+              "title": "子主题 3"
             }
           ]
         },
         {
-          "title": "\u95ee\u9898",
+          "title": "问题",
           "topics": [
             {
-              "title": "promotion failed\n\u4f1a\u53d1\u751fFull GC ",
+              "title": "promotion failed
+会发生Full GC ",
               "topics": [
                 {
-                  "title": "1. \u6551\u52a9\u7a7a\u95f4\u4e0d\u591f\uff0c\u6551\u52a9\u7a7a\u95f4\u91cc\u7684\u5bf9\u8c61\u8fd8\u4e0d\u5e94\u8be5\u88ab\u79fb\u52a8\u5230\u5e74\u8001\u4ee3\uff0c\u4f46\u5e74\u8f7b\u4ee3\u53c8\u6709\u5f88\u591a\u5bf9\u8c61\u9700\u8981\u653e\u5165\u6551\u52a9\u7a7a\u95f4\uff1b"
+                  "title": "1. 救助空间不够，救助空间里的对象还不应该被移动到年老代，但年轻代又有很多对象需要放入救助空间；"
                 },
                 {
-                  "title": "2. \u5e74\u8001\u4ee3\u6ca1\u6709\u8db3\u591f\u7684\u7a7a\u95f4\u63a5\u7eb3\u6765\u81ea\u5e74\u8f7b\u4ee3\u7684\u5bf9\u8c61\uff1b\u8fd9\u4e24\u79cd\u60c5\u51b5\u90fd\u4f1a\u8f6c\u5411Full GC"
+                  "title": "2. 年老代没有足够的空间接纳来自年轻代的对象；这两种情况都会转向Full GC"
                 },
                 {
-                  "title": "3.\u5e94\u8be5\u8bf4\u8be5\u95ee\u9898\u548c CMS\u6ca1\u6709\u5173\u7cfb,\u8fd9\u662f\u65b0\u751f\u4ee3gc \u65f6\u53d1\u751f\u7684\u95ee\u9898,cms \u8001\u5e74\u4ee3GC\u65f6,\u51fa\u73b0\u63d0\u5347\u5931\u8d25\u4e00\u822c\u4f1a\u62a5 concurrent mode failure"
+                  "title": "3.应该说该问题和 CMS没有关系,这是新生代gc 时发生的问题,cms 老年代GC时,出现提升失败一般会报 concurrent mode failure"
                 },
                 {
-                  "title": "\u95ee\u9898\u6839\u6e90",
+                  "title": "问题根源",
                   "topics": [
                     {
-                      "title": "\u8001\u5e74\u4ee3\u7a7a\u95f4\u786e\u5b9e\u4e0d\u591f\u7528"
+                      "title": "老年代空间确实不够用"
                     },
                     {
-                      "title": "\u8001\u5e74\u4ee3\u5185\u5b58\u788e\u7247\u4e25\u91cd,\u6ca1\u6709\u5b8c\u6574\u7a7a\u95f4\u5b58\u653e\u8be5\u5bf9\u8c61",
+                      "title": "老年代内存碎片严重,没有完整空间存放该对象",
                       "topics": [
                         {
-                          "title": "CMSFullGCsBeforeCompaction \u4e0d\u8981\u8bbe\u7f6e\u8fc7\u5927,\u4f1a\u5bfc\u81f4\u591a\u6b21Full GC \u624d\u538b\u7f29"
+                          "title": "CMSFullGCsBeforeCompaction 不要设置过大,会导致多次Full GC 才压缩"
                         }
                       ]
                     },
                     {
-                      "title": "\u53ef\u80fd\u662f\u65b0\u751f\u4ee3\u63d0\u5347\u8fc7\u5feb?\u662f\u4e0d\u662fsurvior\u7a7a\u95f4\u592a\u5c0f,\u8c03\u5927\u8bd5\u8bd5?"
+                      "title": "可能是新生代提升过快?是不是survior空间太小,调大试试?"
                     },
                     {
-                      "title": "-XX:CMSInitiatingOccupancyFraction\u8fc7\u9ad8, \u8001\u5e74\u4ee3\u4e3a\u65b0\u751f\u4ee3\u62c5\u4fdd\u7684\u5269\u4f59\u7a7a\u95f4\u4e0d\u8db3"
+                      "title": "-XX:CMSInitiatingOccupancyFraction过高, 老年代为新生代担保的剩余空间不足"
                     }
                   ]
                 }
@@ -525,17 +533,18 @@
               "title": "concurrent mode failure",
               "topics": [
                 {
-                  "title": "CMS GC \u671f\u95f4,\u63d0\u5347\u5bf9\u8c61\u65f6(ygc \u6216\u5927\u5bf9\u8c61)\u8001\u5e74\u4ee3\u7a7a\u95f4\u4e0d\u8db3",
+                  "title": "CMS GC 期间,提升对象时(ygc 或大对象)老年代空间不足",
                   "topics": [
                     {
-                      "title": "\u4f1a\u4f7f\u7528\u4e32\u884c\u6536\u96c6\u5668\u6536\u96c6\u8001\u5e74\u4ee3\u5783\u573e"
+                      "title": "会使用串行收集器收集老年代垃圾"
                     }
                   ]
                 }
               ]
             },
             {
-              "title": "promotion failed \u2013 concurrent mode failure\nMinor GC\u540e\uff0c Survivor\u7a7a\u95f4\u5bb9\u7eb3\u4e0d\u4e86\u5269\u4f59\u5bf9\u8c61\uff0c\u5c06\u8981\u653e\u5165\u8001\u5e74\u4ee3\uff0c\u8001\u5e74\u4ee3\u6709\u788e\u7247\u6216\u8005\u4e0d\u80fd\u5bb9\u7eb3\u8fd9\u4e9b\u5bf9\u8c61\uff0c\u5c31\u4ea7\u751f\u4e86concurrent mode failure, \u7136\u540e\u8fdb\u884cstop-the-world\u7684Serial Old\u6536\u96c6\u5668\u3002"
+              "title": "promotion failed – concurrent mode failure
+Minor GC后， Survivor空间容纳不了剩余对象，将要放入老年代，老年代有碎片或者不能容纳这些对象，就产生了concurrent mode failure, 然后进行stop-the-world的Serial Old收集器。"
             }
           ]
         },
@@ -543,75 +552,75 @@
           "title": "Full GC",
           "topics": [
             {
-              "title": "\u6b65\u9aa4",
+              "title": "步骤",
               "topics": [
                 {
-                  "title": "\u65b0\u751f\u4ee3\u7684 GC\u7b97\u6cd5\u5bf9\u65b0\u751f\u4ee3 GC"
+                  "title": "新生代的 GC算法对新生代 GC"
                 },
                 {
-                  "title": "\u8001\u5e74\u4ee3\u7684 GC\u7b97\u6cd5\u5bf9\u8001\u5e74\u4ee3,\u6c38\u4e45\u4ee3gc"
+                  "title": "老年代的 GC算法对老年代,永久代gc"
                 }
               ]
             },
             {
-              "title": "\u53d1\u751f\u6761\u4ef6",
+              "title": "发生条件",
               "topics": [
                 {
                   "title": "system.gc();"
                 },
                 {
-                  "title": "\u65e7\u751f\u4ee3\u7a7a\u95f4\u4e0d\u8db3",
+                  "title": "旧生代空间不足",
                   "topics": [
                     {
-                      "title": "\u65b0\u751f\u4ee3\u5bf9\u8c61\u8f6c\u5165"
+                      "title": "新生代对象转入"
                     },
                     {
-                      "title": "\u521b\u5efa\u4e3a\u5927\u5bf9\u8c61\u3001\u5927\u6570\u7ec4\u65f6"
+                      "title": "创建为大对象、大数组时"
                     }
                   ]
                 },
                 {
-                  "title": ". Permanet Generation\u7a7a\u95f4\u6ee1",
+                  "title": ". Permanet Generation空间满",
                   "topics": [
                     {
-                      "title": "\u53ef\u4f7f\u7528 CMS GC"
+                      "title": "可使用 CMS GC"
                     }
                   ]
                 },
                 {
-                  "title": "CMS\u65f6\u5f02\u5e38",
+                  "title": "CMS时异常",
                   "topics": [
                     {
                       "title": "promotion failed",
                       "topics": [
                         {
-                          "title": "\u65b0\u751f\u4ee3\u5f80\u8001\u5e74\u4ee3\u63d0\u5347\u65f6",
+                          "title": "新生代往老年代提升时",
                           "topics": [
                             {
-                              "title": "\u6b63\u5e38\u5e74\u9f84\u8db3\u591f"
+                              "title": "正常年龄足够"
                             },
                             {
-                              "title": "survivor \u4e0d\u8db3,\u76f4\u63a5\u63d0\u5347\u8001\u5e74\u4ee3"
+                              "title": "survivor 不足,直接提升老年代"
                             }
                           ]
                         },
                         {
-                          "title": "\u8001\u5e74\u4ee3\u6070\u597d\u7a7a\u95f4\u4e0d\u591f"
+                          "title": "老年代恰好空间不够"
                         },
                         {
-                          "title": "\u5e94\u5bf9\u63aa\u65bd",
+                          "title": "应对措施",
                           "topics": [
                             {
-                              "title": "\u589e\u5927survivor space"
+                              "title": "增大survivor space"
                             },
                             {
-                              "title": "\u589e\u5927\u65e7\u751f\u4ee3\u7a7a\u95f4"
+                              "title": "增大旧生代空间"
                             },
                             {
-                              "title": "\u8c03\u4f4e\u89e6\u53d1\u5e76\u53d1GC\u7684\u6bd4\u7387",
+                              "title": "调低触发并发GC的比率",
                               "topics": [
                                 {
-                                  "title": "\u5230\u8fbe\u8be5\u6bd4\u7387 CMS\u4f1a\u5f00\u542f\u5783\u573e\u56de\u6536,\u8fd9\u6837\u8001\u5e74\u4ee3\u7a7a\u95f4\u4f1a\u7a7a\u95f2\u8f83\u591a"
+                                  "title": "到达该比率 CMS会开启垃圾回收,这样老年代空间会空闲较多"
                                 }
                               ]
                             }
@@ -625,31 +634,31 @@
                   ]
                 },
                 {
-                  "title": "\u7edf\u8ba1\u5f02\u5e38",
+                  "title": "统计异常",
                   "topics": [
                     {
-                      "title": "\u7edf\u8ba1\u5f97\u5230\u7684Minor GC\u664b\u5347\u5230\u65e7\u751f\u4ee3\u7684\u5e73\u5747\u5927\u5c0f\u5927\u4e8e\u65e7\u751f\u4ee3\u7684\u5269\u4f59\u7a7a\u95f4",
+                      "title": "统计得到的Minor GC晋升到旧生代的平均大小大于旧生代的剩余空间",
                       "topics": [
                         {
-                          "title": "\u6b64\u65f6\u4e0d\u4f1a\u4f7f\u7528\u65b0\u751f\u4ee3 GC\u65b9\u5f0f\u53bb\u56de\u6536\u65b0\u751f\u4ee3,\u800c\u662f\u4f7f\u7528\u8001\u5e74\u4ee3\u65b9\u5f0f\u56de\u6536\u65b0\u751f\u4ee3,\u8001\u5e74\u4ee3,\u6c38\u4e45\u4ee3"
+                          "title": "此时不会使用新生代 GC方式去回收新生代,而是使用老年代方式回收新生代,老年代,永久代"
                         }
                       ]
                     }
                   ]
                 },
                 {
-                  "title": "\u5b9e\u9645\u4e0a\u9664\u4e86 CMS, G1\u5176\u4ed6\u8001\u5e74\u4ee3gc \u7b97\u6cd5,\u90fd\u4f1a\u5728\u8001\u5e74\u4ee3gc \u65f6,\u89e6\u53d1Full gc "
+                  "title": "实际上除了 CMS, G1其他老年代gc 算法,都会在老年代gc 时,触发Full gc "
                 }
               ]
             },
             {
-              "title": "\u5931\u8d25",
+              "title": "失败",
               "topics": [
                 {
-                  "title": "\u5982\u679c\u4ee5\u4e0a\u8001\u5e74\u4ee3,\u6c38\u4e45\u4ee3\u89e6\u53d1\u7684Full GC \u540e,\u5206\u914d\u7a7a\u95f4\u518d\u5931\u8d25\u5c31\u4f1a\u62a5\u4ee5\u4e0b\u5f02\u5e38"
+                  "title": "如果以上老年代,永久代触发的Full GC 后,分配空间再失败就会报以下异常"
                 },
                 {
-                  "title": "\uff1ajava.lang.OutOfMemoryError: Java heap space"
+                  "title": "：java.lang.OutOfMemoryError: Java heap space"
                 },
                 {
                   "title": "java.lang.OutOfMemoryError: PermGen space"
@@ -660,7 +669,7 @@
               "title": "serail Old GC",
               "topics": [
                 {
-                  "title": "\u5355\u7ebf\u7a0b\u56de\u6536"
+                  "title": "单线程回收"
                 }
               ]
             }
@@ -670,16 +679,18 @@
           "title": "minor gc",
           "topics": [
             {
-              "title": "\u4f1astop the world",
+              "title": "会stop the world",
               "topics": [
                 {
-                  "title": "\u5982\u679ceden\u5927\u90e8\u5206\u5bf9\u8c61\u671d\u751f\u5915\u6b7b\u65f6\u95f4\u6bd4\u8f83\u77ed,\u4f46\u662f\u5982\u679c\u5927\u91cf\u5b58\u6d3b\u5bf9\u8c61,\u5c31\u4f1a\u5f88\u6162"
+                  "title": "如果eden大部分对象朝生夕死时间比较短,但是如果大量存活对象,就会很慢"
                 },
                 {
-                  "title": "minor gc  \u7684\u8017\u65f6\u4e3b\u8981\u5728\u590d\u5236\u5bf9\u8c61\u7684\u65f6\u95f4\u4e0a"
+                  "title": "minor gc  的耗时主要在复制对象的时间上"
                 },
                 {
-                  "title": "minor gc \u65f6,\u8001\u5e74\u4ee3\u662f\u4e0d\u4f1a\u589e\u957f\u7684, \u5982\u679c\u8001\u5e74\u4ee3\u5f15\u7528\u4e86\u65b0\u751f\u4ee3,\u5176\u5b9e\u4e5f\u7b97\u662f\u65b0\u751f\u4ee3 \u7684\u5bf9\u8c61\u88abroot\u6839\u5f15\u7528\u4e86,\u8fd9\u6837\u53cd\u5411\u5f15\u7528\u4f1a\u5bfc\u81f4\u5927\u91cf\u65b0\u751f\u4ee3\u5bf9\u8c61\u88ab\u5f15\u7528,\u5728\u67d0\u4e9b\u957f\u4efb\u52a1\u7684\u8fdb\u7a0b\u91cc,\u4f1a\u6709\u5f88\u591a\u5bf9\u8c61\u5f15\u7528\u8fdb\u8001\u5e74\u4ee3\n\n\u4e00\u822c\u60c5\u51b5\u662f,\u65b0\u751f\u4ee3\u5bf9\u8c61\u5f15\u7528\u8001\u5e74\u4ee3\u5bf9\u8c61,\u4f8b\u5982\u4e00\u4e2a\u666e\u901a\u5bf9\u8c61\u5f15\u7528\u4e86service,dao\u7b49\u5e38\u89c1\u7ec4\u4ef6\u7b49,\u8fd9\u6837\u65b0\u751f\u4ee3\u5411\u8001\u5e74\u4ee3\u7684\u5f15\u7528\u4f1a\u88ab\u5ffd\u7565\u6389"
+                  "title": "minor gc 时,老年代是不会增长的, 如果老年代引用了新生代,其实也算是新生代 的对象被root根引用了,这样反向引用会导致大量新生代对象被引用,在某些长任务的进程里,会有很多对象引用进老年代
+
+一般情况是,新生代对象引用老年代对象,例如一个普通对象引用了service,dao等常见组件等,这样新生代向老年代的引用会被忽略掉"
                 }
               ]
             },
@@ -687,24 +698,34 @@
               "title": "eden Survivor from to"
             },
             {
-              "title": "\u4f7f\u7528\u6807\u8bb0\u590d\u5236,\u6bcf\u4e00\u6b21minor gc eden \u533a\u90fd\u4f1a\u88ab clear ,eden\u533a\u6bcf\u6b21\u5185\u5b58\u5206\u914d\u90fd\u4ece\u9876\u90e8\u5f00\u59cb"
+              "title": "使用标记复制,每一次minor gc eden 区都会被 clear ,eden区每次内存分配都从顶部开始"
             },
             {
-              "title": "minor gc\u5c06eden\u533a\u53cafrom survivor\u533a\u57df\u7684\u5b58\u6d3b\u5bf9\u8c61\u8fdb\u884c\u5904\u7406\n\u5982\u679c\u8fd9\u4e9b\u5bf9\u8c61\u5e74\u9f84\u8fbe\u5230\u9608\u503c\uff0c\u5219\u76f4\u63a5\u664b\u5347\u5230\u5e74\u8001\u4ee3\n\u82e5\u8981\u62f7\u8d1d\u7684\u5bf9\u8c61\u592a\u5927\uff0c\u90a3\u4e48\u4e0d\u4f1a\u62f7\u8d1d\u5230to survivor\uff0c\u800c\u662f\u76f4\u63a5\u8fdb\u5165\u5e74\u8001\u4ee3\n\u82e5to survivor\u533a\u57df\u7a7a\u95f4\u4e0d\u591f/\u6216\u8005\u590d\u5236\u8fc7\u7a0b\u4e2d\u51fa\u73b0\u4e0d\u591f\uff0c\u5219\u53d1\u751fsurvivor\u6ea2\u51fa\uff0c\u76f4\u63a5\u8fdb\u5165\u5e74\u8001\u4ee3\n\u5176\u4ed6\u7684\uff0c\u82e5to survivor\u533a\u57df\u7a7a\u95f4\u591f\uff0c\u5219\u5b58\u6d3b\u5bf9\u8c61\u62f7\u8d1d\u5230to survivor\u533a\u57df"
+              "title": "minor gc将eden区及from survivor区域的存活对象进行处理
+如果这些对象年龄达到阈值，则直接晋升到年老代
+若要拷贝的对象太大，那么不会拷贝到to survivor，而是直接进入年老代
+若to survivor区域空间不够/或者复制过程中出现不够，则发生survivor溢出，直接进入年老代
+其他的，若to survivor区域空间够，则存活对象拷贝到to survivor区域"
             }
           ]
         },
         {
-          "title": "\u65e5\u5fd7",
+          "title": "日志",
           "topics": [
             {
               "title": "-Xloggc:logs/gclog.%p -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=50M -XX:+PrintGC -XX:+PrintGCDetails -XX:+PrintGCDateStamps"
             },
             {
-              "title": "gc real time \u624d\u662f\u5b9e\u9645\u7684cpu \u8017\u65f6",
+              "title": "gc real time 才是实际的cpu 耗时",
               "topics": [
                 {
-                  "title": "\n\n    The sys and user are CPU times exclusively. Consequently they do not include the time that the process is blocked for CPU or is doing I/O etc.\n    The GC time should generally be similar to the sys+user time but if the process is blocked or waiting then it would be higher. This would be true for a serial collector and a single processor box. However, in the multiprocessor environments (with parallel collectors), the GC time would be lesser than the sys+user time since there are multiple CPUs.\n    The real time would be similar to the GC time.\n\n"
+                  "title": "
+
+    The sys and user are CPU times exclusively. Consequently they do not include the time that the process is blocked for CPU or is doing I/O etc.
+    The GC time should generally be similar to the sys+user time but if the process is blocked or waiting then it would be higher. This would be true for a serial collector and a single processor box. However, in the multiprocessor environments (with parallel collectors), the GC time would be lesser than the sys+user time since there are multiple CPUs.
+    The real time would be similar to the GC time.
+
+"
                 }
               ]
             }

@@ -1,0 +1,478 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "深入理解 socket & 网络错误 错误码",
+      "topics": [
+        {
+          "title": "淘气三千问",
+          "topics": [
+            {
+              "title": "如何正确的处理关闭一个链接",
+              "topics": [
+                {
+                  "title": "心跳机制"
+                },
+                {
+                  "title": "主动关闭write . read 等待EOF. 然后close "
+                },
+                {
+                  "title": "商定关闭协议, 遇到关闭报文 直接ack , 然后close .对方收到数据后, 或者EOF,然后close "
+                }
+              ]
+            },
+            {
+              "title": "弄懂这些错误码和网络异常场景有什么用?",
+              "topics": [
+                {
+                  "title": "线上为啥会出现broken pipe",
+                  "topics": [
+                    {
+                      "title": "对方已经关闭了连接, 重置了连接. 此时再写入会报错. 例如客户端 read timeout 后,关闭了连接."
+                    }
+                  ]
+                },
+                {
+                  "title": "websocket出现EOF如何理解",
+                  "topics": [
+                    {
+                      "title": "对端关闭了连接, 此时再read 会EOF"
+                    }
+                  ]
+                },
+                {
+                  "title": "socket close异常怎么回事",
+                  "topics": [
+                    {
+                      "title": "编程错误"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "常见错误",
+          "topics": [
+            {
+              "title": "以下报错均为linux 内核网络协议栈报错, 非具体语言 或者运行时库 机制导致的"
+            },
+            {
+              "title": " Connection refused",
+              "topics": [
+                {
+                  "title": "如果对方端口没有监听, 此时接受端会发送reset报文, 客户端握手失败, 直接报connection refused"
+                },
+                {
+                  "title": "当内核中的 TCP 协议栈收到了 SYN 请求，但是该端口上没有处于监听状态，则相应 RST，此时 client 看到的便是 connection refused。"
+                }
+              ]
+            },
+            {
+              "title": "Destination net unreachable",
+              "topics": [
+                {
+                  "title": "检测目标主机是不是可连通"
+                },
+                {
+                  "title": "TTL（Time To Live）是一个IP数据报的生存时间，当每个IP数据报经过路由器的时候都回把TTL值减去1或者减去在路由器中停留的时间，但是大多数数据报在路由器中停留的时间都小于1秒种，因此实际上就是在TTL值减去了1。这样，TTL值就相当于一个路由器的计数器。当路由器接收到一个TTL为0或者1的IP数据报的时候，路由器就不再转发这个数据了，而直接丢弃，并且发送一个ICMP“超时”信息给源主机"
+                },
+                {
+                  "title": "这个错误一般是不可达"
+                }
+              ]
+            },
+            {
+              "title": "Connection reset by peer",
+              "topics": [
+                {
+                  "title": "假设对端正常关闭,但是进程已经退出,  此时write写数据, 对方内核会发送reset报文,就会报错, reset by peer, 此时这个管道就会被关闭."
+                },
+                {
+                  "title": "假设对端正常关闭, 此时是知道对方已经关闭了的(收到了FIN), 此时再调用write 就会触发 broken pipe "
+                },
+                {
+                  "title": "某些场景下 如果进程突然中断, 或者宕机,或者因为编程不当没有手动调用close ,此时会发生没有关闭连接的场景, 对方不会感知 连接已经被关闭.此时就会在write 时,接收到reset报文."
+                },
+                {
+                  "title": "如果在read的过程中,收到对方已经关闭FIN报文, 此时会报错connection reset by peer",
+                  "topics": [
+                    {
+                      "title": "读也是可以触发connection reset by peer的",
+                      "makers": [
+                        "task-done",
+                        "priority-1",
+                        "flag-red"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "当缓冲区存在数据时, 如果调用close  ,是直接发送reset 报文的. 此时对端如果recv 会直接报错"
+                }
+              ]
+            },
+            {
+              "title": "Broken pipe",
+              "topics": [
+                {
+                  "title": "当接收端已经明确的知道对方已经关闭连接了, 再向socket 发送数据,此时就会报错, 管道已经关闭,此时是不会发送数据给对端的(因为socket已经关闭了)",
+                  "makers": [
+                    "flag-red",
+                    "task-done",
+                    "priority-1"
+                  ]
+                },
+                {
+                  "title": "例如客户端主动close  服务端收到了ack, 此时服务端再次写数据 就会触发broken pipe"
+                },
+                {
+                  "title": "向关闭的管道写数据,此时内核会向进程发送SIGPIPE信号. 需要处理这个信号,否则会杀死进程."
+                }
+              ]
+            },
+            {
+              "title": " Socket is closed",
+              "topics": [
+                {
+                  "title": "己方主动关闭了连接后（调用了Socket的close方法）再对网络连接进行读写操作。此时自己是知道连接已经关闭,自己不能再发送数据了, 所以直接告诉他 socket已经关闭了. 不要再发送(write )数据了."
+                },
+                {
+                  "title": "一般发生于误关闭 socket 的编程错误, 或者没有处理好 关闭socket和发送数据的先后顺序问题"
+                }
+              ]
+            },
+            {
+              "title": "EOF",
+              "topics": [
+                {
+                  "title": "此时主要是 对方已经关闭, 此时再读取会出现EOF  , 表示对方已经关闭连接 管道已经为空. 的场景. 此种场景其实需要判断一下sockt是否已关闭, 再决定是否需要读.  此种异常属于编程错误, 因为对于管道, socket而言和文件不同, 文件是存在末尾的, 而管道socket只有对方关闭,才是真的到末尾. 所以此时就可以判断下是否关闭, 未关闭情况下可以考虑read, 否则就会有可能触发EOF",
+                  "makers": [
+                    "priority-1",
+                    "task-done"
+                  ],
+                  "topics": [
+                    {
+                      "title": "如果此时不知道对方已经关闭, 只能无限的阻塞. 并不会直接返回EOF.(这就是为什么设置read timeout 和心跳的原因, 因为某些场景不适合发送心跳包, 所以需要设置read timeout)"
+                    },
+                    {
+                      "title": "如果在read的过程中,收到对方已经关闭FIN报文, 此时会报错connection reset by peer"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "结论",
+              "topics": [
+                {
+                  "title": "对于明确已经关闭的情况下 触发的错误",
+                  "topics": [
+                    {
+                      "title": "broken pipe"
+                    },
+                    {
+                      "title": "EOF"
+                    },
+                    {
+                      "title": "socket is closed"
+                    }
+                  ]
+                },
+                {
+                  "title": "connection reset by peer 不一定是RESET 报文, FIN 报文也是可以触发的."
+                }
+              ]
+            },
+            {
+              "title": "too many timewait ",
+              "topics": [
+                {
+                  "title": "主动关闭方 会进入这个状态"
+                },
+                {
+                  "title": "http 服务器是 服务端首先关闭."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "reset报文",
+          "topics": [
+            {
+              "title": "目标端口未监听",
+              "topics": [
+                {
+                  "title": "此时客户端报connection confused "
+                }
+              ]
+            },
+            {
+              "title": " 目的主机或者网络路径中防火墙拦截"
+            },
+            {
+              "title": "已关闭的socket发送数据",
+              "topics": [
+                {
+                  "title": "Connection reset by peer"
+                }
+              ]
+            },
+            {
+              "title": "对于异常场景下接收到对端的报文.都会选择发送RESET 报文"
+            }
+          ]
+        },
+        {
+          "title": "shutdown & close",
+          "topics": [
+            {
+              "title": "close 关闭socket文件描述符, 如果socket被多个进程共享,即socketfd被dup或者被子进程共享, 那么close只会关闭当前socketfd, 直到最后一个文件描述符, 则会关闭socket",
+              "topics": [
+                {
+                  "title": "计数为0 则会发送FIN"
+                }
+              ]
+            },
+            {
+              "title": "shutdown 提供了单独关闭读写得能力, 也可以同时关闭读写. 但是和close不冲突, shutdown之后还是需要close. shutdown不是对文件描述符操作, 而是对socket操作."
+            },
+            {
+              "title": "  SO_LINGER与close，当SO_LINGER选项开启但超时值为0时，调用close直接发送RST（这样可以避免进入TIME_WAIT状态，但破坏了TCP协议的正常工作方式），SO_LINGER对shutdown无影响。",
+              "makers": [
+                "task-done",
+                "flag-red",
+                "priority-1"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "socket 关闭场景分析",
+          "makers": [
+            "task-done",
+            "flag-red",
+            "priority-1"
+          ],
+          "topics": [
+            {
+              "title": "socket close",
+              "topics": [
+                {
+                  "title": "socket  close 此时会发送 FIN, 对端发送任何数据 都会返回reset, 除非发送 FIN"
+                }
+              ]
+            },
+            {
+              "title": "关闭之前没有主动close",
+              "topics": [
+                {
+                  "title": " socket 没有 close, 那么内核会代答fin, 对方发送fin 则会 ack, 否则reset (没有 主动 close, 内核默认会帮助close)"
+                },
+                {
+                  "title": "进程退出后, 对端再发送数据会触发reset .",
+                  "topics": [
+                    {
+                      "title": "第一次会connection reset 或者broken , 第二次及以后 broken pipe"
+                    },
+                    {
+                      "title": "write 之后对方会返回reset,但是write 本身可能来不及收到reset. 就返回了, 此时收到reset会把状态记录在tcp协议栈, 下次再write 会出现broken pipe"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "socket 只shutdown write",
+              "topics": [
+                {
+                  "title": "此时对方可以发送数据,依然可以ack ,如果进程退出(不会发送任何报文,因为已经关闭), 对方再发送数据则会reset, 如果对方在自己 关闭write后发送了数据, 即使对方发送了 FIN  最后四次挥手后, 也会再给对方一个 reset(原因不详)
+"
+                },
+                {
+                  "title": "shutdown write之后此时会发送FIN 给对方,告诉自己已经关闭,此时对方read会触发EOF, 但是此时对方还是可以 write ,本端还是可以read. 但是等进程退出,对方再write, 那么就会给对方reset"
+                }
+              ]
+            },
+            {
+              "title": "只shutdown read",
+              "topics": [
+                {
+                  "title": "close 掉 read , 此时调用 read  则会显示到达 EOF, 但是此时没有发送任何 FIN给对端, 对方发数据也会 ack,但是socket已经无法读数据, 每次read 返回EOF.所以关闭read, 和关闭write 区别很大, 关闭 read 不会影响到 对方.只影响自己read. (进程退出还是会帮助进行 FIN)
+"
+                },
+                {
+                  "title": "如果shutdown read 后, 再shutdown write 此时对方再write, 还是会reset ."
+                }
+              ]
+            },
+            {
+              "title": "主动reset",
+              "topics": [
+                {
+                  "title": "如果socket设置setnolinger 则会(如果 timeout=0)立即进行reset. 不会发送 fin . 对方收到可能会显示 connection reset, write 可能会 broken pipe"
+                },
+                {
+                  "title": "此种reset一般发生在 接收到异常数据, 例如rpc反序列过程中,发现报文不合法,此时会reset."
+                },
+                {
+                  "title": "对方收到reset之后不会再发送FIN ",
+                  "makers": [
+                    "flag-red",
+                    "task-done",
+                    "priority-1"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "reset 和close 对 read 的影响",
+              "makers": [
+                "flag-red",
+                "task-done",
+                "priority-1"
+              ],
+              "topics": [
+                {
+                  "title": "对另一端read 的影响",
+                  "topics": [
+                    {
+                      "title": "reset会出现connection reset by peer, 正常close ,会出现eof(正常情况下如果未关闭, read会阻塞. 如果对方关闭会直接EOF)"
+                    }
+                  ]
+                },
+                {
+                  "title": "对本端read/write 的影响",
+                  "topics": [
+                    {
+                      "title": "会报错socket is closed"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "进程退出对socket影响",
+              "topics": [
+                {
+                  "title": "如果没有close ,那么一定会close掉socket."
+                },
+                {
+                  "title": "无论是只shutdown read, shutdown write, 抑或没有任何close, 进程退出后都等同于close"
+                }
+              ]
+            },
+            {
+              "title": "任何情况下 Fin报文在关闭,或者半关闭状态下 都会被ack,不会被reset ,write 给已关闭的连接会触发对方reset."
+            }
+          ]
+        },
+        {
+          "title": "啥是reset 报文",
+          "topics": [
+            {
+              "title": "在TCP协议中，rst段标识复位，用来异常的关闭连接。在TCP的设计中它是不可或缺的，发送rst段关闭连接时，不必等缓冲区的数据都发送出去，直接丢弃缓冲区中的数据。而接收端收到rst段后，也不必发送ack来确认。",
+              "topics": [
+                {
+                  "title": "6个控制位字段：URG|ACK|PSH|RST|SYN|FIN"
+                }
+              ]
+            },
+            {
+              "title": "哪些场景呢",
+              "topics": [
+                {
+                  "title": " GFW ",
+                  "topics": [
+                    {
+                      "title": "墙"
+                    }
+                  ]
+                },
+                {
+                  "title": "对方端口未打开，发生在连接建立.,  　　如果对方sync_backlog满了的话，sync简单被丢弃，表现为超时，而不会rst"
+                },
+                {
+                  "title": "close Socket 时recv buffer 不为空",
+                  "topics": [
+                    {
+                      "title": "　　例如，客户端发了两个请求，服务器只从buffer 读取第一个请求处理完就关闭连接，tcp层认为数据没有正确提交到应用，使用rst关闭连接"
+                    }
+                  ]
+                },
+                {
+                  "title": "移动链路
+ 移动网络下，国内是有5分钟后就回收信令，也就是IM产品，如果心跳>5分钟后服务器再给客户端发消息，就会收到rst。也要查移动网络下IM 保持<5min 心跳"
+                },
+                {
+                  "title": "SO_LINGER 应用强制使用rst 关闭(在close之前 ,在socket 设置这个选项)
+  该选项会直接丢弃未发送完毕的send buffer，可能造成业务错误，慎用； 当然内网服务间http client 在收到应答时主动关闭，使用改选项，会节省资源。
+   好像曾经测试过haproxy 某种配置下，会使用rst关闭连接，少了网络交互而且没有TIME_WAIT 问题"
+                },
+                {
+                  "title": " 超过超时重传次数、网络暂时不可达"
+                },
+                {
+                  "title": " TIME_WAIT 状态
+
+　　tw_recycle = 1 时，sync timestamps 比上次小时，会被rst"
+                },
+                {
+                  "title": "设置 connect_timeout
+
+     应用设置了连接超时，sync 未完成时超时了，会发送rst终止连接。"
+                },
+                {
+                  "title": "非正常包
+
+　 连接已经关闭，seq 不正确等"
+                },
+                {
+                  "title": "数据错误，不是按照既定序列号发送数据. "
+                },
+                {
+                  "title": "服务器关闭或异常终止了连接，由于网络问题，客户端没有收到服务器的关闭请求，这称为TCP半打开连接。就算重启服务器，也没有连接信息。如果客户端向提其写入数据，对方就会回应一个RST报文段。 "
+                }
+              ]
+            },
+            {
+              "title": "如何避免意外的reset",
+              "makers": [
+                "flag-red",
+                "task-done",
+                "priority-1"
+              ],
+              "topics": [
+                {
+                  "title": "利用应用层协议定义结构化的数据，双方对何时数据发送/接收完毕/可以安全关闭连接有明确一致的契约；"
+                },
+                {
+                  "title": "close之前消费掉数据；"
+                },
+                {
+                  "title": "需要在半关闭状态下读数据时，使用shutdownOutput()，它会发送FIN但依然可以读取数据；等对方发送FIN，read返回-1后再调用close()释放socket。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "profile",
+          "topics": [
+            {
+              "title": "mac下抓包",
+              "topics": [
+                {
+                  "title": "sudo tcpdump -i lo0 host 127.0.0.1 and port 8999"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

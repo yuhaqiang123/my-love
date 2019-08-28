@@ -1,0 +1,19 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "Java杂乱",
+      "topics": [
+        {
+          "title": "Jetty",
+          "topics": [
+            {
+              "title": "Jetty QTP 等待队列"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

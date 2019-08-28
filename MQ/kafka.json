@@ -1,0 +1,726 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "kafka",
+      "topics": [
+        {
+          "title": "使用模型",
+          "topics": [
+            {
+              "title": "如何决定发送到哪一个分区",
+              "topics": [
+                {
+                  "title": "生产者可以指定key 和 分区的负载策略",
+                  "topics": [
+                    {
+                      "title": "key"
+                    },
+                    {
+                      "title": "实现kafka提供的分区路由接口"
+                    },
+                    {
+                      "title": "客户端回自动执行该接口, 在生产者发送到  kafka server 时指定分区"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "如何实现广播",
+              "topics": [
+                {
+                  "title": "topic反正只有一个,消息也只有一份"
+                },
+                {
+                  "title": "kafka保证多个consumer group 中只有一个consumer消费到该消息
+
+多个consumer group 可 多次消费该topic消息",
+                  "topics": [
+                    {
+                      "title": "不同的consumer 消费不同的分区"
+                    },
+                    {
+                      "title": " Kafka 对消息的分配是以 Partition 为单位分配的"
+                    },
+                    {
+                      "title": "无法保证同一个 Consumer Group 里的 Consumer 均匀消费数据"
+                    },
+                    {
+                      "title": "同一个 Partition 里的数据是有序的，这种设计可以保证每个 Partition 里的数据可以被有序消费。"
+                    },
+                    {
+                      "title": "consumer 上下线会被动态分配"
+                    },
+                    {
+                      "title": "consumer rebalance?",
+                      "makers": [
+                        "symbol-question",
+                        "priority-1"
+                      ]
+                    },
+                    {
+                      "title": "high level consumer 的设计"
+                    }
+                  ]
+                },
+                {
+                  "title": "其他mq 通过记录消息的消费状态, 并且通过将多个消息 路由到 多个队列 实现的广播. "
+                }
+              ]
+            },
+            {
+              "title": "消费端offset处理",
+              "topics": [
+                {
+                  "title": "指定offset消费",
+                  "topics": [
+                    {
+                      "title": "重置某个分区的offset 针对某一个consumer"
+                    },
+                    {
+                      "title": "consumer会被kafka感知到",
+                      "topics": [
+                        {
+                          "title": "每个consumer都有一个consumer id"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "seekToEnd"
+                    },
+                    {
+                      "title": "seekToBeginning"
+                    },
+                    {
+                      "title": "offset可以被放在第三方,例如数据库, 这样可以指定消费者的消费位置......"
+                    },
+                    {
+                      "title": "每个分区的offset都该被记住, 这样即使reblance 或者 重新订阅 从指定offset开始订阅"
+                    }
+                  ]
+                },
+                {
+                  "title": "通过wakeup 可以让poll方法响应中断",
+                  "topics": [
+                    {
+                      "title": "KafkaConsumer 除了poll方法,还有wakeup方法, 可使consumer从poll返回"
+                    }
+                  ]
+                },
+                {
+                  "title": "consumer可以捕获reblance事件, 再丢失之后,可以重新提交最新的offset
+被分配也能得到最新的offset"
+                },
+                {
+                  "title": "一个consumer group 和一个分区有一个offset",
+                  "topics": [
+                    {
+                      "title": "每一个group 都会存在一个协调者,负责consumer过期等问题(重平衡)"
+                    }
+                  ]
+                },
+                {
+                  "title": "重平衡期间不会消费消息"
+                },
+                {
+                  "title": "代码示例",
+                  "topics": [
+                    {
+                      "title": "http://www.dengshenyu.com/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2017/11/14/kafka-consumer.html"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "consumer",
+              "topics": [
+                {
+                  "title": "特性",
+                  "topics": [
+                    {
+                      "title": "consumer group 由 broker server 管理,不由zk管理"
+                    },
+                    {
+                      "title": "可完全不依赖于zk"
+                    },
+                    {
+                      "title": "consumer 直接连接到group 的Coordinator",
+                      "topics": [
+                        {
+                          "title": "1. 连接到最后一次连接的broker（如果是刚启动的consumer，则要根据配置中的borker）。它会响应一个包含coordinator信息(host, port等)的response。
+
+    2）连接到coordinator。"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "创建时指定group"
+                    },
+                    {
+                      "title": "consumer client 非线程安全"
+                    }
+                  ]
+                },
+                {
+                  "title": "client自己不实现线程模型,而是由客户端自己poll,自己实现线程模型"
+                },
+                {
+                  "title": "[Image]"
+                },
+                {
+                  "title": "reblance",
+                  "topics": [
+                    {
+                      "title": "过程",
+                      "topics": [
+                        {
+                          "title": "1）会给一个coordinator发起Join请求（请求中要包括自己的一些元数据，例如自己感兴趣的topics）"
+                        },
+                        {
+                          "title": "2）Coordinator 根据这些consumer的join请求，选择出一个leader，并通知给各个consumer。这里的leader是consumer group 内的leader，是由某个consumer担任，不要与partition的leader混淆。"
+                        },
+                        {
+                          "title": "3）Consumer leader 根据这些consumer的metadata，重新为每个consumer member重新分配partition。分配完毕通过coordinator把最新分配情况同步给每个consumer。"
+                        },
+                        {
+                          "title": "4）Consumer拿到最新的分配后，继续工作。"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "offset 如何管理?",
+          "topics": [
+            {
+              "title": "kafka server不管offset"
+            },
+            {
+              "title": "需要consumer 自己管理offset"
+            },
+            {
+              "title": "存储地方",
+              "topics": [
+                {
+                  "title": "zk"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "参与者",
+          "topics": [
+            {
+              "title": "Topic",
+              "topics": [
+                {
+                  "title": "每条发布到 Kafka 集群的消息都有一个类别，这个类别被称为 Topic",
+                  "topics": [
+                    {
+                      "title": "物理上不同 Topic 的消息分开存储"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Partition",
+              "topics": [
+                {
+                  "title": "每个 Topic 包含一个或多个 Partition."
+                },
+                {
+                  "title": "为了提高吞吐, 每个topic都被分成多个分区."
+                },
+                {
+                  "title": "单独一个目录(可分散IO)"
+                },
+                {
+                  "title": "实际的消息持久化格式",
+                  "topics": [
+                    {
+                      "title": "message length ： 4 bytes (value: 1+4+n)
+"magic" value ： 1 byte 
+crc ： 4 bytes 
+payload ： n bytes "
+                    }
+                  ]
+                },
+                {
+                  "title": "可在配置文件指定topic默认分区数, 也可以在创建topic时 指定"
+                }
+              ]
+            },
+            {
+              "title": "Producer负责发布消息到 Kafka broker"
+            },
+            {
+              "title": "Consumer消息消费者，向 Kafka broker 读取消息的客户端",
+              "topics": [
+                {
+                  "title": "Consumer Group每个 Consumer 属于一个特定的 Consumer Group"
+                },
+                {
+                  "title": "可指定重复消费消息, 采用pull 模型,从offset拉取数据"
+                },
+                {
+                  "title": "能得到消息的分区"
+                }
+              ]
+            },
+            {
+              "title": "zookeeper",
+              "topics": [
+                {
+                  "title": "kafka server 选主",
+                  "topics": [
+                    {
+                      "title": "为什么需要主??",
+                      "makers": [
+                        "priority-1",
+                        "task-done",
+                        "flag-red"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "记录consumer消费的 offset"
+                },
+                {
+                  "title": "是否是性能瓶颈"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "pull 还是push",
+          "topics": [
+            {
+              "title": "push ",
+              "topics": [
+                {
+                  "title": "消费者处于被动. 容易处理不过来"
+                },
+                {
+                  "title": "broker 需要记录消费者的消费状况,例如多少个消息没有被ack."
+                },
+                {
+                  "title": "推送更加及时"
+                }
+              ]
+            },
+            {
+              "title": "pull",
+              "topics": [
+                {
+                  "title": "Consumer 的消费能力以适当的速率消费消息"
+                },
+                {
+                  "title": "broker 实现更加轻量, 消费者自己记录自己的状态",
+                  "topics": [
+                    {
+                      "title": "如何保证消费者重启时, 不重复消费",
+                      "makers": [
+                        "priority-1",
+                        "symbol-question"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "持久化实现",
+          "topics": [
+            {
+              "title": "分区的实现",
+              "topics": [
+                {
+                  "title": "每一个分区都在一个目录上",
+                  "topics": [
+                    {
+                      "title": "可以分散IO"
+                    },
+                    {
+                      "title": "不同的目录可以挂载不同的磁盘"
+                    },
+                    {
+                      "title": "一个分区也会存在多个.kafka后缀的文件"
+                    },
+                    {
+                      "title": "有单独的索引文件,指定不同.kafka文件的offset范围"
+                    }
+                  ]
+                },
+                {
+                  "title": "分区文件过期策略",
+                  "topics": [
+                    {
+                      "title": "kafka不删除已经被消费的数据"
+                    },
+                    {
+                      "title": "一是基于时间，二是基于 Partition 文件大小",
+                      "topics": [
+                        {
+                          "title": "只会清理被消费的数据"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "kafka是否不记录消息的消费记录",
+                      "makers": [
+                        "priority-1",
+                        "star-red",
+                        "symbol-question"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "CAP支持",
+          "topics": [
+            {
+              "title": "如何对消息冗余",
+              "makers": [
+                "priority-1",
+                "symbol-question"
+              ],
+              "topics": [
+                {
+                  "title": "避免一台机器挂了, 消息不能被消费"
+                },
+                {
+                  "title": "参考 zk的特性, 只会有一个master负责读写, 其他只是同步数据.",
+                  "topics": [
+                    {
+                      "title": "为啥其他备份不负责读? 难道是延迟吗?",
+                      "makers": [
+                        "priority-1",
+                        "symbol-question"
+                      ]
+                    },
+                    {
+                      "title": "同步的单位是 分区"
+                    },
+                    {
+                      "title": "所以一个分区需要一个master "
+                    }
+                  ]
+                },
+                {
+                  "title": "备份算法",
+                  "topics": [
+                    {
+                      "title": "将所有 Broker（假设共 n 个 Broker）和待分配的 Partition 排序"
+                    },
+                    {
+                      "title": "将第 i 个 Partition 分配到第（i mod n）个 Broker 上"
+                    },
+                    {
+                      "title": "将第 i 个 Partition 的第 j 个 Replica 分配到第（(i + j) mode n）个 Broker 上"
+                    }
+                  ]
+                },
+                {
+                  "title": " ISR（in-sync replicas",
+                  "topics": [
+                    {
+                      "title": "其保持同步的 Replica 列表",
+                      "topics": [
+                        {
+                          "title": "follower 的消息落后于leader太多",
+                          "topics": [
+                            {
+                              "title": "已被废弃"
+                            },
+                            {
+                              "title": "消息量太大时,容易出bug"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "follower 多久没有fetch消息"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "High Wartermark",
+                      "topics": [
+                        {
+                          "title": "leader 回将自己受到的msg的offset 置为最新的HW"
+                        }
+                      ]
+                    },
+                    {
+                      "title": " Commit Offset 标记的是最新的可被消费的"
+                    },
+                    {
+                      "title": "为什么使用isr",
+                      "topics": [
+                        {
+                          "title": "由于 Leader 可移除不能及时与之同步的 Follower，故与同步复制相比可避免最慢的 Follower 拖慢整体速度，也即 ISR 提高了系统可用性"
+                        },
+                        {
+                          "title": "ISR 中的所有 Follower 都包含了所有 Commit 过的消息，而只有 Commit 过的消息才会被 Consumer 消费，故从 Consumer 的角度而言，ISR 中的所有 Replica 都始终处于同步状态，从而与异步复制方案相比提高了数据一致性。"
+                        },
+                        {
+                          "title": "ISR 可动态调整，极限情况下，可以只包含 Leader，极大提高了可容忍的宕机的 Follower 的数量。与 Majority Quorum 方案相比，容忍相同个数的节点失败，所要求的总节点数少了近一半。"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "min.insync.replicas 参数指定了 Broker 所要求的 ISR 最小长度，默认值为 1"
+                    },
+                    {
+                      "title": "对于 消费者 isr 中的follower 都具有commit的消息, 但是对于producer ,端的成功并不一定是说 isr 所有都ack 才会成功,  而是可以指定的, 必要时,生产者可不关系这个阶段的消息可用性",
+                      "makers": [
+                        "priority-1",
+                        "task-done"
+                      ],
+                      "topics": [
+                        {
+                          "title": "Producer 可以通过 acks 参数指定最少需要多少个 Replica 确认收到该消息才视为该消息发送成功。acks 的默认值是 1，即 Leader 收到该消息后立即告诉 Producer 收到该消息"
+                        },
+                        {
+                          "title": "此时如果在 ISR 中的消息复制完该消息前 Leader 宕机，那该条消息会丢失。而如果将该值设置为 0，则 Producer 发送完数据后，立即认为该数据发送成功，不作任何等待，而实际上该数据可能发送失败，并且 Producer 的 Retry 机制将不生效"
+                        },
+                        {
+                          "title": "根据场景决定生产端的可用性, 大数据场景吞吐量优先. 可以考虑设置为0"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "如何选举",
+                  "topics": [
+                    {
+                      "title": "Majority Vote",
+                      "topics": [
+                        {
+                          "title": "少数服务多数 zk采用的"
+                        },
+                        {
+                          "title": "2f+1 的节点 备份数据必须成功f+1 个"
+                        },
+                        {
+                          "title": "最多容忍f个节点挂了"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "只要有一个follower在isr里就行",
+                      "topics": [
+                        {
+                          "title": "该场景下可能会有潜在的数据丢失(ISR 列表并不一定是最新的)"
+                        },
+                        {
+                          "title": "如果isr为空,都挂了咋办",
+                          "topics": [
+                            {
+                              "title": "等待 ISR 中的任一个 Replica“活”过来，并且选它作为 Leader"
+                            },
+                            {
+                              "title": "选择第一个“活”过来的 Replica（不一定是 ISR 中的）作为 Leader",
+                              "topics": [
+                                {
+                                  "title": "默认"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "title": "kafka会有一个master , 负责分区的选举和 分区备份分配",
+                      "topics": [
+                        {
+                          "title": "通过rpc 通知"
+                        },
+                        {
+                          "title": "避免分区数量太多, zk 管理不过来"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "IO优化",
+          "topics": [
+            {
+              "title": "pagecache",
+              "topics": [
+                {
+                  "title": "使用pagecache 优点",
+                  "topics": [
+                    {
+                      "title": " I/O Scheduler 会将连续的小块写组装成大块的物理写从而提高性能"
+                    },
+                    {
+                      "title": "- I/O Scheduler 会尝试将一些写操作重新按顺序排好，从而减少磁盘头的移动时间"
+                    },
+                    {
+                      "title": "- 充分利用所有空闲内存（非 JVM 内存）。如果使用应用层 Cache（即 JVM 堆内存），会增加 GC 负担"
+                    },
+                    {
+                      "title": "- 读操作可直接在 Page Cache 内进行。如果消费和生产速度相当，甚至不需要通过物理磁盘（直接通过 Page Cache）交换数据"
+                    },
+                    {
+                      "title": "- 如果进程重启，JVM 内的 Cache 会失效，但 Page Cache 仍然可用"
+                    }
+                  ]
+                },
+                {
+                  "title": "每个分区会对应多个segement"
+                },
+                {
+                  "title": "缺点",
+                  "topics": [
+                    {
+                      "title": "机器宕机时，Page Cache 内的数据未写入磁盘从而造成数据丢失。但是这种丢失只发生在机器断电等造成操作系统不工作的场景"
+                    },
+                    {
+                      "title": "可以由 Kafka 层面的 Replication 机制去解决。如果为了保证这种情况下数据不丢失而强制将 Page Cache 中的数据 Flush 到磁盘，反而会降低性能。也正因如此，Kafka 虽然提供了 flush.messages 和 flush.ms 两个参数将 Page Cache 中的数据强制 Flush 到磁盘，但是 Kafka 并不建议使用"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "内存零拷贝技术"
+            },
+            {
+              "title": "message 从producer 开始压缩"
+            }
+          ]
+        },
+        {
+          "title": "可用性保障",
+          "topics": [
+            {
+              "title": "生产者",
+              "topics": [
+                {
+                  "title": "如果同步发送. producer会在发送失败的时候, 重试发送"
+                },
+                {
+                  "title": "异步模式 发送失败重试n次, 直接抛弃"
+                },
+                {
+                  "title": "在备份模式下",
+                  "topics": [
+                    {
+                      "title": "参考zk master 向follower 传播数据时,当有半数节点ack 则返回消息成功"
+                    },
+                    {
+                      "title": "follower不是等落磁盘才 ack, 而是收到立即ack(内存中)",
+                      "topics": [
+                        {
+                          "title": "赌不会存在两台机器同时crash"
+                        },
+                        {
+                          "title": "不能完全保证异常发生后该条消息一定能被 Consumer 消费"
+                        },
+                        {
+                          "title": "一个权衡.机会非常小"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "follower主动向master fetch,而不是master push过去"
+                    },
+                    {
+                      "title": "isr 中所有的follower ack 最终的消息才会被commit ",
+                      "topics": [
+                        {
+                          "title": "只有被commit的消息才会被消费(可能是有commit标记)"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "服务自身消息持久性"
+            },
+            {
+              "title": "消费者可用性保证"
+            }
+          ]
+        },
+        {
+          "title": "BrokerKafka",
+          "topics": [
+            {
+              "title": "集群包含一个或多个服务器",
+              "topics": [
+                {
+                  "title": "需要选主"
+                }
+              ]
+            },
+            {
+              "title": "无状态?",
+              "makers": [
+                "priority-1"
+              ]
+            }
+          ]
+        },
+        {
+          "title": "所谓特性",
+          "topics": [
+            {
+              "title": "以时间复杂度为 O(1) 对消息持久化，即使对 TB 级以上数据也能保证常数时间复杂度的访问性能。",
+              "topics": [
+                {
+                  "title": "为什么对消息持久化 O(1)很困难"
+                }
+              ]
+            },
+            {
+              "title": "高吞吐率。即使在非常廉价的商用机器上也能做到单机支持每秒 100K 条以上消息的传输。"
+            },
+            {
+              "title": "支持 Kafka Server 间的消息分区，及分布式消费，同时保证每个 Partition 内的消息顺序传输。"
+            },
+            {
+              "title": "同时支持离线数据处理和实时数据处理。"
+            },
+            {
+              "title": "Scale out：支持在线水平扩展。"
+            },
+            {
+              "title": "同时提供离线处理和实时处理"
+            }
+          ]
+        },
+        {
+          "title": "[Image]"
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

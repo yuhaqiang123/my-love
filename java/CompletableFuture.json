@@ -1,0 +1,113 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "CompletableFuture",
+      "topics": [
+        {
+          "title": "anyOf 接受一组CompleteableFuture,只要有一个返回,该Future 即返回"
+        },
+        {
+          "title": "allOf 接受一组CF, 等所有的 Future返回,任务结束"
+        },
+        {
+          "title": "Task 协同",
+          "topics": [
+            {
+              "title": "并行最后合并结果",
+              "topics": [
+                {
+                  "title": "thenCombine"
+                }
+              ]
+            },
+            {
+              "title": "任务前后依赖",
+              "topics": [
+                {
+                  "title": "thenCompose"
+                }
+              ]
+            },
+            {
+              "title": "任务完成时后置执行某任务",
+              "topics": [
+                {
+                  "title": "thenAccept"
+                },
+                {
+                  "title": "可接受之前future 的参数"
+                }
+              ]
+            },
+            {
+              "title": "either方法一般接受一个future, 哪一个future 先准备好,就使用哪个 Future的返回值"
+            },
+            {
+              "title": "supplyAsync",
+              "topics": [
+                {
+                  "title": "异步执行一个 Task, 返回的 Future保存 task的执行结果"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "使用顺序",
+          "topics": [
+            {
+              "title": "任务的协同关系生成 allof, thenCombine,threnCompose"
+            },
+            {
+              "title": "thenApply对任务的结果再次处理生成新的结果, exceptionally负责异常处理"
+            },
+            {
+              "title": "对任务的结果进行处理,但是不生成新的结果"
+            },
+            {
+              "title": "对结果不关系,也不输出结果"
+            },
+            {
+              "title": "thenComplete最终结束"
+            },
+            {
+              "title": "没个过程都可以异步"
+            }
+          ]
+        },
+        {
+          "title": "名词定义",
+          "topics": [
+            {
+              "title": "定义要执行的操作为任务,需要异步执行,则为异步任务"
+            },
+            {
+              "title": "任务生产者指提交任务的生产者线程, 执行任务的线程称为消费者线程,而 任务执行完成的后置任务执行,称为后置消费者"
+            }
+          ]
+        },
+        {
+          "title": "future 模式的思考",
+          "topics": [
+            {
+              "title": "拿一个例子作为切入点"
+            }
+          ]
+        },
+        {
+          "title": "示例主题",
+          "topics": [
+            {
+              "title": "云计算业务中,管理节点需要管理众多物理机,假设读者接到一个需求,要求一次性下发一个配置文件到1000台物理机.要求同时成功,如果一个失败,立即回滚掉.下发成功后,给物理机下发另一个命令, 同时有时间的限制"
+            },
+            {
+              "title": "有单独的消费者线程 去负责发送请求.生产者线程在提交完请求就去做其他的事情了,但是他可以拿到实际的future"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

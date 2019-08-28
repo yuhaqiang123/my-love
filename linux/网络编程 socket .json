@@ -1,0 +1,219 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "网络编程 socket ",
+      "topics": [
+        {
+          "title": "淘气三千问",
+          "topics": [
+            {
+              "title": "localhost, 127.0.0.1, 0.0.0.0  的区别"
+            },
+            {
+              "title": "如何进行udp socket编程"
+            },
+            {
+              "title": "tomcat 如果本机多个ip,如何监听.",
+              "topics": [
+                {
+                  "title": "INADDR_ANY",
+                  "topics": [
+                    {
+                      "title": "指定监听这个, 就会同时监听本地所有网卡,所有IP."
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "如何优雅关闭socket"
+            },
+            {
+              "title": "socket 客户端发送 数据, 如何选择ip 或者网卡? 同一个网桥下,能否被分配两个ip",
+              "topics": [
+                {
+                  "title": "可以通过虚拟网卡分配其他ip, mac地址也不同."
+                },
+                {
+                  "title": "客户端发送数据时, 操作系统会根据本地路由表 选择目的地址对应的源ip是谁."
+                }
+              ]
+            },
+            {
+              "title": "什么是backlog"
+            },
+            {
+              "title": "客户端连接服务端出现connection refused. 和socket函数有啥关系",
+              "topics": [
+                {
+                  "title": "如果没有进程在该端口上调用listen 监听该端口. 就会出现refused"
+                }
+              ]
+            },
+            {
+              "title": "客户端连接出现connection timeout",
+              "topics": [
+                {
+                  "title": "已经listen了,但是没有及时accept"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "套接字编程基础",
+          "topics": [
+            {
+              "title": "服务端网络编程模型",
+              "topics": [
+                {
+                  "title": "tcp调用顺序",
+                  "topics": [
+                    {
+                      "title": "int socket(int domain, int type, protocol)",
+                      "topics": [
+                        {
+                          "title": "指定socket的协议. (可创建tcp, udp等)"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "int bind(int socketfd, struct sockaddr *  addr, socklen_t addrlen);",
+                      "topics": [
+                        {
+                          "title": "addr, 用来作为输入参数, 提供服务端绑定的地址.端口"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "listen(int sockfd, int backlog);",
+                      "topics": [
+                        {
+                          "title": "指定tcp连接的backlog"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "int accept(int sockfd, struct sockaddr * addr, socklen_t * addrlen);",
+                      "topics": [
+                        {
+                          "title": "addr 作为输出参数, 输出客户端地址信息"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "客户端编程模型",
+              "topics": [
+                {
+                  "title": "调用顺序",
+                  "topics": [
+                    {
+                      "title": "int connect(int sockfd, struct sockaddr * addr, socklen_t addrlen);"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "常见流程",
+              "topics": [
+                {
+                  "title": "服务端建立监听 监听请求. "
+                },
+                {
+                  "title": "客户端申请连接"
+                },
+                {
+                  "title": "收发数据."
+                },
+                {
+                  "title": "应用层沟通 何时关闭(接收到关闭报文)"
+                },
+                {
+                  "title": "双方close"
+                }
+              ]
+            },
+            {
+              "title": "协议及套接字类型",
+              "topics": [
+                {
+                  "title": "socket 中domain, type, protocol",
+                  "topics": [
+                    {
+                      "title": "domain 指定ip层通讯使用的 协议族. 可选有 PF_INET(IPv4协议), PF_INET6,PF_IPX, PF_PACKET (底层套接字协议族)"
+                    },
+                    {
+                      "title": "套接字type",
+                      "topics": [
+                        {
+                          "title": "套接字的传输方式."
+                        },
+                        {
+                          "title": "面向连接套接字类型",
+                          "topics": [
+                            {
+                              "title": "SOCK_STREAM"
+                            },
+                            {
+                              "title": "当前只存在tcp一种, 如果基于流, 可能会有tcp的替代方案"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "面向消息的套接字",
+                          "topics": [
+                            {
+                              "title": "SOCK_DGRAM"
+                            },
+                            {
+                              "title": "只有udp一种. "
+                            }
+                          ]
+                        },
+                        {
+                          "title": "面向消息和连接的区别",
+                          "topics": [
+                            {
+                              "title": "客户端和服务端 在对待流时, 是需要维护连接状态的."
+                            },
+                            {
+                              "title": "流是没有分割点的, 读取方可以不停读取, 需要自己分割 流."
+                            },
+                            {
+                              "title": "面向连接在传输时, 能保证消息不丢, 不重复, 有序."
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "title": "protocol ",
+                      "topics": [
+                        {
+                          "title": "OPPROTO_TCP"
+                        },
+                        {
+                          "title": "OPPROTO_UDP"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "这三个参数是相互关联的, 例如type选定后, protocol就需要设置匹配的协议. "
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

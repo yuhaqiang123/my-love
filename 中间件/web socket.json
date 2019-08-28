@@ -1,0 +1,254 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "web socket",
+      "topics": [
+        {
+          "title": "原理",
+          "topics": [
+            {
+              "title": "建立在 TCP 协议之上，它需要通过握手连接之后才能通信，服务器端的实现比较容易。"
+            },
+            {
+              "title": "与 HTTP 协议有着良好的兼容性。默认端口也是80或443，并且握手阶段采用 HTTP 协议，因此握手时不容易屏蔽，能通过各种 HTTP 代理服务器。"
+            },
+            {
+              "title": "数据格式比较轻量，性能开销小，通信高效。可以发送文本，也可以发送二进制数据。"
+            },
+            {
+              "title": "没有同源限制，客户端可以与任意服务器通信。",
+              "topics": [
+                {
+                  "title": "http 有"
+                }
+              ]
+            },
+            {
+              "title": "协议标识符是ws（如果加密，则为wss），服务器网址就是URL。（例如：ws://www.example.com/chat）"
+            },
+            {
+              "title": "它是一种双向通信协议，采用异步回调的方式接受消息，当建立通信连接，可以做到持久性的连接，WebSocket服务器和Browser都能主动的向对方发送或接收数据，实质的推送方式是服务器主动推送，只要有数据就推送到请求方。"
+            }
+          ]
+        },
+        {
+          "title": "两个阶段",
+          "topics": [
+            {
+              "title": "握手阶段",
+              "topics": [
+                {
+                  "title": "websocket握手需要借助于HTTP协议，"
+                }
+              ]
+            },
+            {
+              "title": "连接建立阶段",
+              "topics": [
+                {
+                  "title": "建立连接后通信过程使用websocket协议。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "握手阶段",
+          "topics": [
+            {
+              "title": "客户端通过 Upgrade 头部字段列出所希望升级到的协议和版本"
+            },
+            {
+              "title": "Connection: Upgrade 表示Upgrade是一个逐跳字段。这个头部是给proxy看的",
+              "topics": [
+                {
+                  "title": "?为什么是逐跳呢?"
+                }
+              ]
+            },
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "[Image]"
+            }
+          ]
+        },
+        {
+          "title": "为什么需要心跳",
+          "topics": [
+            {
+              "title": "如果没有心跳包, 链路意外断掉之后,  如果客户端不发送数据,是无法感知的,同样服务端也无法感知. 客户端可以重连 ,但是服务端 无法主动连接client ,造成无法主动推送"
+            },
+            {
+              "title": "由于client-> server 中间有很多代理,包括客户端代理, NAT, 反向代理等. 这些代理需要超时时间,避免被无效的链接占用",
+              "topics": [
+                {
+                  "title": "代理如果没有心跳,也无法感知意外断线"
+                },
+                {
+                  "title": "每一个连接都是占用资源的. "
+                }
+              ]
+            },
+            {
+              "title": "tcp 心跳时间太长"
+            }
+          ]
+        },
+        {
+          "title": "为什么需要连接超时",
+          "topics": [
+            {
+              "title": "将无用的连接设置为尽快超时，可以保护服务器的系统资源（CPU、内存、磁盘）"
+            },
+            {
+              "title": "当连接很多时，及时断掉那些建立好的但又长时间不做事的连接，以减少其占用的服务器资源"
+            },
+            {
+              "title": "如果黑客攻击，会不断地和服务器建立连接，因此设置连接超时以防止大量消耗服务器的资源"
+            },
+            {
+              "title": "如果用户请求了动态服务，则 Nginx 就会建立连接，请求 FastCGI 服务以及后端 MySQL 服务，设置连接超时，使得在用户容忍的时间内返回数据"
+            }
+          ]
+        },
+        {
+          "title": "实践",
+          "topics": [
+            {
+              "title": "ConcurrentWebSocketSessionDecorator",
+              "topics": [
+                {
+                  "title": "解决session 被多个线程发送时的并发问题",
+                  "topics": [
+                    {
+                      "title": "原理是先扔进buffer, 尝试获取锁 去flush, 如果失败,则放弃,如果成功,一直把buffer 清空"
+                    }
+                  ]
+                },
+                {
+                  "title": "https://my.oschina.net/HY1024/blog/1624382"
+                },
+                {
+                  "title": "弊端: 如果消息量非常大,一个业务线程可能一直负责发送消息.但是概率较低"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "wss 和ws",
+          "topics": [
+            {
+              "title": "wss 基于https 协议",
+              "topics": [
+                {
+                  "title": "实际上在https 握手阶段之前已经完成了ssl/tls 的秘钥协商
+之后的交互都是密文"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "逐跳头部",
+          "topics": [
+            {
+              "title": "逐跳头部（hop-by-hop header），用来描述当前浏览器与直连服务器（比如Nginx反向代理）的连接信息。比如Keep-Alive头部，仅仅表示浏览器尝试和Nginx之间连接持久化，而不管Nginx和后端服务器之间的连接。proxy要处理这些头部，并按照自己的需要来修改这些头部。默认的逐条头部如下："
+            },
+            {
+              "title": "Connection
+Keep-Alive
+Proxy-Authenticate
+Proxy-Authorization
+TE
+Trailers
+Transfer-Encoding
+Upgrade"
+            }
+          ]
+        },
+        {
+          "title": "端到端头部",
+          "topics": [
+            {
+              "title": "端到端头部（end-to-end header），用来描述这个浏览器和最终处理请求的服务器之间的信息，比如Accept头部，表示客户端想从后端服务器得到的数据类型，而和中间的Nginx无关。proxy不能修改这些头部"
+            }
+          ]
+        },
+        {
+          "title": "对比",
+          "topics": [
+            {
+              "title": "轮训",
+              "topics": [
+                {
+                  "title": "不及时"
+                },
+                {
+                  "title": "增加服务端负载"
+                }
+              ]
+            },
+            {
+              "title": "keep-alive",
+              "topics": [
+                {
+                  "title": "复用http连接, 避免三次握手"
+                },
+                {
+                  "title": "加速传输, 避免慢启动的影响"
+                },
+                {
+                  "title": "虽然复用连接,但是请求还是排队, req 完需要等待response.期间不能发送其他请求"
+                }
+              ]
+            },
+            {
+              "title": "http 2.0",
+              "topics": [
+                {
+                  "title": "长连接"
+                },
+                {
+                  "title": "多路复用(相当于channel)"
+                },
+                {
+                  "title": "可多次reponse. (相当于提供了推送的能力)"
+                }
+              ]
+            },
+            {
+              "title": "基于长轮询的服务端推送技术",
+              "topics": [
+                {
+                  "title": "客户端首先给服务端发送一个请求，服务端收到该请求之后如果数据没有更新则并不立即返回，服务端阻塞请求的返回，直到数据发生了更新或者发生了连接超时，服务端返回数据之后客户端再次发送同样的请求"
+                },
+                {
+                  "title": "实现复杂."
+                },
+                {
+                  "title": "等待期间 客户端无法使用该连接主动推送"
+                }
+              ]
+            },
+            {
+              "title": "websocket",
+              "topics": [
+                {
+                  "title": "自有协议"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "[Image]"
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

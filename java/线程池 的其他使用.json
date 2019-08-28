@@ -1,0 +1,84 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "线程池 的其他使用",
+      "topics": [
+        {
+          "title": "dubbo ",
+          "topics": [
+            {
+              "title": "服务调用调用线程池",
+              "topics": [
+                {
+                  "title": "fixed：固定大小线程池，启动时建立线程，不关闭，一直持有。(缺省)"
+                },
+                {
+                  "title": "具体参数",
+                  "topics": [
+                    {
+                      "title": "coresize：200
+maxsize：200
+队列：SynchronousQueue
+回绝策略：AbortPolicyWithReport - 打印线程信息jstack，之后抛出异常",
+                      "topics": [
+                        {
+                          "title": "采用了直接提交的SynchronousQueue工作队列，所以，所有的task会直接提交给线程池中的某一worker线程，如果没有可用线程，那么会拒绝任务的处理，而抛出异常RejectedExecutionException:Thread pool is EXHAUSTED."
+                        },
+                        {
+                          "title": "为什么使用SynchronousQueue",
+                          "makers": [
+                            "priority-1",
+                            "symbol-question",
+                            "smiley-angry"
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "IO 处理线程池",
+              "topics": [
+                {
+                  "title": "事件派发线程池 派发策略",
+                  "topics": [
+                    {
+                      "title": "all：
+所有消息都派发到线程池，包括请求，响应，连接事件，断开事件，心跳等。 即worker线程接收到事件后，将该事件提交到业务线程池中，自己再去处理其他事。所有消息都派发到线程池，包括请求，响应，连接事件，断开事件，心跳等。 即worker线程接收到事件后，将该事件提交到业务线程池中，自己再去处理其他事。"
+                    },
+                    {
+                      "title": "direct：
+worker线程接收到事件后，由worker执行到底。"
+                    },
+                    {
+                      "title": "message：
+只有请求响应消息派发到线程池，其它连接断开事件，心跳等消息，直接在 IO线程上执行"
+                    },
+                    {
+                      "title": "execution：
+只请求消息派发到线程池，不含响应（客户端线程池），响应和其它连接断开事件，心跳等消息，直接在 IO 线程上执行"
+                    },
+                    {
+                      "title": "connection：
+在 IO 线程上，将连接断开事件放入队列，有序逐个执行，其它消息派发到线程池"
+                    }
+                  ]
+                },
+                {
+                  "title": "（直接通过netty等来配置）,实际就是 Netty 使用过程中, boss 线程和work 线程的配置. 不同的策略决定了不同的事件类型  交给boss还是worker线程进行处理"
+                },
+                {
+                  "title": "[Image]"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

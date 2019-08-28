@@ -1,0 +1,511 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "AQS",
+      "topics": [
+        {
+          "title": "ReentrantLock原理"
+        },
+        {
+          "title": "扩展",
+          "topics": [
+            {
+              "title": "　　不同的自定义同步器争用共享资源的方式也不同。自定义同步器在实现时只需要实现共享资源state的获取与释放方式即可，至于具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS已经在顶层实现好."
+            },
+            {
+              "title": "acquire 是递增 state, release 是递减 state"
+            },
+            {
+              "title": "head节点持有锁,或者只有头节点为 head的节点才有资格尝试获取锁"
+            }
+          ]
+        },
+        {
+          "title": "AbstractQueuedSynchronizer",
+          "topics": [
+            {
+              "title": "原理",
+              "topics": [
+                {
+                  "title": "抽象队列同步器，其底层是volatile与CAS，而其上层则是基于该抽象类构建的许多并发组件，如ReentrantLock、Semaphore等"
+                },
+                {
+                  "title": "核心的数据结构是一个volatile int state 和 一个FIFO线程等待对列。state代表共享资源的数量，如果是互斥访问，一般设置为1，而如果是共享访问，可以设置为N（N为可共享线程的个数）"
+                },
+                {
+                  "title": "线程等待队列是一个双向链表，无法立即获得锁而进入阻塞状态的线程会加入队列的尾部。当然对state以及队列的操作都是采用了volatile + CAS + 自旋的操作方式，采用的是乐观锁的概念。",
+                  "makers": [
+                    "priority-1"
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "扩展",
+              "topics": [
+                {
+                  "title": "自定义同步器在实现时只需要实现共享资源state的获取与释放方式即可, AQS 负责维护具体线程等待队列",
+                  "makers": [
+                    "priority-1",
+                    "task-done"
+                  ]
+                },
+                {
+                  "title": "扩展点",
+                  "topics": [
+                    {
+                      "title": "isHeldExclusively()：该线程是否正在独占资源。只有用到condition才需要去实现它。"
+                    },
+                    {
+                      "title": "tryAcquire(int)：独占方式。尝试获取资源，成功则返回true，失败则返回false。"
+                    },
+                    {
+                      "title": "tryRelease(int)：独占方式。尝试释放资源，成功则返回true，失败则返回false。"
+                    },
+                    {
+                      "title": "tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。"
+                    },
+                    {
+                      "title": "tryReleaseShared(int)：共享方式。尝试释放资源，如果释放后允许唤醒后续等待结点返回true，否则返回false。"
+                    },
+                    {
+                      "title": "以上方法没有定义为抽象方法,主要考虑是 共享和独占模式下只需要各自实现某个方法,无需全部实现,定义抽象方法则需要全部实现,不如直接抛出异常"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "acquire ",
+              "topics": [
+                {
+                  "title": "acquire",
+                  "topics": [
+                    {
+                      "title": "独占模式下线程获取共享资源的顶层入口。如果获取到资源，线程直接返回，否则进入等待队列，直到获取到资源为止，且整个过程忽略中断的影响",
+                      "topics": [
+                        {
+                          "title": "park 等待过程中本身会响应中断,但是不会抛出异常, 会继续参与下一轮争抢锁.直到争抢到为止"
+                        },
+                        {
+                          "title": "lockInterruptedly是park返回后立即检查中断位,一段发现中断立即抛出中断异常"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "public final void acquire(int arg) {
+     if (!tryAcquire(arg) && //尝试获取锁，若获取成功，则state+1，返回true
+
+若获取锁不成功，调用addWaiter方法使线程进入等待队列，acquireQueued方法让线程进入阻塞状态
+         acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+
+//检查在等待过程中是否有中断，若有中断，则在此时再响应
+         selfInterrupt();
+}"
+                    },
+                    {
+                      "title": "acuqire 等待过程中不响应中断,等待完成后响应中断"
+                    },
+                    {
+                      "title": "死等. 会首先尝试获取锁,如果不成功,则排队,再次被唤醒或,则立即获取锁"
+                    },
+                    {
+                      "title": "总结",
+                      "topics": [
+                        {
+                          "title": "调用自定义同步器的tryAcquire()尝试直接去获取资源，如果成功则直接返回；"
+                        },
+                        {
+                          "title": "没成功，则addWaiter()将该线程加入等待队列的尾部，并标记为独占模式；"
+                        },
+                        {
+                          "title": "acquireQueued()使线程在等待队列中休息，有机会时（轮到自己，会被unpark()）会去尝试获取资源。获取到资源后才返回。如果在整个等待过程中被中断过，则返回true，否则返回false。"
+                        },
+                        {
+                          "title": "如果线程在等待过程中被中断过，它是不响应的。只是获取资源后才再进行自我中断selfInterrupt()，将中断补上。",
+                          "makers": [
+                            "priority-1",
+                            "task-done"
+                          ]
+                        },
+                        {
+                          "title": "acquireQueued 会尝试多次tryAcquire. 自旋的方式获取锁+排队"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "CountDownLatch 中的 FairSync,实现了 tryAcquire.
+1. 判断当前 state(当前获取锁的数量)==0,并检测是否有前驱,没有的话,则尝试获取锁.递增 state
+2.如果当前线程持有了锁,并且再次尝试获取锁,则 递增 state(支持可重入)
+3.否则 tryAcquire 获取失败(acquire 方法会继续自旋判断或加进队列)",
+                      "topics": [
+                        {
+                          "title": "FairSync 关键在于有前驱节点的情况下不能获取锁"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "addWaiter",
+                  "topics": [
+                    {
+                      "title": "将本线程插入对队尾 ,首先尝试 CAS插入,而后如果不成功,尝试使用 自旋插入"
+                    }
+                  ]
+                },
+                {
+                  "title": "acquireQueued",
+                  "topics": [
+                    {
+                      "title": "final boolean acquireQueued(final Node node, int arg) {
+    boolean failed = true;//标记是否成功拿到资源
+    try {
+        boolean interrupted = false;//标记等待过程中是否被中断过
+        
+        //又是一个“自旋”！
+        for (;;) {
+            final Node p = node.predecessor();//拿到前驱
+            //如果前驱是head，即该结点已成老二，那么便有资格去尝试获取资源（可能是老大释放完资源唤醒自己的，当然也可能被interrupt了）。
+            if (p == head && tryAcquire(arg)) {
+                setHead(node);//拿到资源后，将head指向该结点。所以head所指的标杆结点，就是当前获取到资源的那个结点或null。
+                p.next = null; // setHead中node.prev已置为null，此处再将head.next置为null，就是为了方便GC回收以前的head结点。也就意味着之前拿完资源的结点出队了！
+                failed = false;
+                return interrupted;//返回等待过程中是否被中断过
+            }
+            
+            //如果自己可以休息了，就进入waiting状态，直到被unpark()
+            if (shouldParkAfterFailedAcquire(p, node) &&
+                parkAndCheckInterrupt())
+                interrupted = true;//如果等待过程中被中断过，哪怕只有那么一次，就将interrupted标记为true
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}"
+                    },
+                    {
+                      "title": "自旋式的等待, 如果前驱节点是 head则 尝试获取锁
+如果不是头结点,则通知前一个节点结束之后,通知自己",
+                      "makers": [
+                        "task-done",
+                        "priority-1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "shouldParkAfterFailedAcquire",
+                  "topics": [
+                    {
+                      "title": "private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+    int ws = pred.waitStatus;//拿到前驱的状态
+    if (ws == Node.SIGNAL)
+        //如果已经告诉前驱拿完号后通知自己一下，那就可以安心休息了
+        return true;
+    if (ws > 0) {
+        /*
+         * 如果前驱放弃了，那就一直往前找，直到找到最近一个正常等待的状态，并排在它的后边。
+         * 注意：那些放弃的结点，由于被自己“加塞”到它们前边，它们相当于形成一个无引用链，稍后就会被保安大叔赶走了(GC回收)！
+         */
+        do {
+            node.prev = pred = pred.prev;
+        } while (pred.waitStatus > 0);
+        pred.next = node;
+    } else {
+         //如果前驱正常，那就把前驱的状态设置成SIGNAL，告诉它拿完号后通知自己一下。有可能失败，人家说不定刚刚释放完呢！
+        compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
+    }
+    return false;"
+                    },
+                    {
+                      "title": "如果前驱节点是 Signal 则代表前驱节点会通知自己,自己可以去休息,否则不能休息"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "release",
+              "topics": [
+                {
+                  "title": "release",
+                  "topics": [
+                    {
+                      "title": "public final boolean release(int arg) {
+    if (tryRelease(arg)) {
+        Node h = head;//找到头结点
+        if (h != null && h.waitStatus != 0)
+            unparkSuccessor(h);//唤醒等待队列里的下一个线程
+        return true;
+    }
+    return false;
+}"
+                    },
+                    {
+                      "title": "独占模式下,释放共享资源的入口.如果彻底释放了,会唤醒等待队列中的其他资源"
+                    },
+                    {
+                      "title": "tryRelease 释放了state, 且该方法不需要考虑进程同步,因为只有获取锁的线程才可以release"
+                    },
+                    {
+                      "title": "只有state 被释放到0之后,才能唤醒"
+                    }
+                  ]
+                },
+                {
+                  "title": "unparkSuccessor",
+                  "topics": [
+                    {
+                      "title": "唤醒等待队列中下一个线程"
+                    },
+                    {
+                      "title": "用unpark()唤醒等待队列中最前边的那个未放弃线程"
+                    },
+                    {
+                      "title": "遍历顺序,从tail 向前遍历, 最后一个<0的节点,将其唤醒, 该线程会被阻塞在acquire 中,此时unpark,其"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "等待队列",
+              "topics": [
+                {
+                  "title": "Node结点是对每一个访问同步代码的线程的封装，其包含了需要同步的线程本身以及线程的状态，如是否被阻塞，是否等待唤醒，是否已经被取消等。变量waitStatus则表示当前被封装成Node结点的等待状态"
+                },
+                {
+                  "title": "node节点状态",
+                  "topics": [
+                    {
+                      "title": "CANCELLED：值为1，在同步队列中等待的线程等待超时或被中断，需要从同步队列中取消该Node的结点，其结点的waitStatus为CANCELLED，即结束状态，进入该状态后的结点将不会再变化。"
+                    },
+                    {
+                      "title": "SIGNAL：值为-1，被标识为该等待唤醒状态的后继结点，当其前继结点的线程释放了同步锁或被取消，将会通知该后继结点的线程执行。说白了，就是处于唤醒状态，只要前继结点释放锁，就会通知标识为SIGNAL状态的后继结点的线程执行。"
+                    },
+                    {
+                      "title": "CONDITION：值为-2，与Condition相关，该标识的结点处于等待队列中，结点的线程等待在Condition上，当其他线程调用了Condition的signal()方法后，CONDITION状态的结点将从等待队列转移到同步队列中，等待获取同步锁。"
+                    },
+                    {
+                      "title": "PROPAGATE：值为-3，与共享模式相关，在共享模式中，该状态标识结点的线程处于可运行状态。"
+                    },
+                    {
+                      "title": "0状态：值为0，代表初始化状态。"
+                    },
+                    {
+                      "title": "分别包括 被中断后取消的, 等待唤醒, 等待某个条件, 共享模式下的可运行状态"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "可等待时长的锁获取",
+              "makers": [
+                "priority-1",
+                "task-done"
+              ],
+              "topics": [
+                {
+                  "title": "LockSupport支持等待时长的 park,只需要添加等待时长即可"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "条件变量虚假唤醒",
+          "topics": [
+            {
+              "title": "是指在等待条件变量时, 线程接收到中断信号,会从系统调用返回,但是此时条件并未满足.所以需要使用 while 不断判断"
+            },
+            {
+              "title": "park方法使用互斥量实现条件等待,也是可以被中断的"
+            },
+            {
+              "title": "虚假唤醒在linux的多处理器系统中/在程序接收到信号时可能回发生。在Windows系统和JAVA虚拟机上也存在。在系统设计时应该可以避免虚假唤醒，但是这会影响条件变量的执行效率，而既然通过while循环就能避免虚假唤醒造成的错误，因此程序的逻辑就变成了while循环的情况。 "
+            },
+            {
+              "title": "即使是虚假唤醒的情况，线程也是在成功锁住mutex后才能从condition_wait()中返回。即使存在多个线程被虚假唤醒，但是也只能是一个线程一个线程的顺序执行，也即：lock(mutex)   检查/处理  condition_wai()或者unlock(mutex)来解锁",
+              "topics": [
+                {
+                  "title": "虚假唤醒和正常唤醒后的逻辑没有区别"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "AQS共享模式",
+          "topics": [
+            {
+              "title": "acquireShared",
+              "topics": [
+                {
+                  "title": "共享模式下线程获取共享资源的顶层入口。它会获取指定量的资源，获取成功则直接返回，获取失败则进入等待队列，直到获取到资源为止，整个过程忽略中断"
+                },
+                {
+                  "title": "public final void acquireShared(int arg) {
+2     if (tryAcquireShared(arg) < 0)
+3         doAcquireShared(arg);
+4 }"
+                },
+                {
+                  "title": "tryAcquireShared",
+                  "topics": [
+                    {
+                      "title": "负值代表获取失败；0代表获取成功，但没有剩余资源；正数表示获取成功，还有剩余资源，其他线程还可以去获取"
+                    }
+                  ]
+                },
+                {
+                  "title": "步骤",
+                  "topics": [
+                    {
+                      "title": "tryAcquireShared()尝试获取资源，成功则直接返回；"
+                    },
+                    {
+                      "title": "失败则通过doAcquireShared()进入等待队列，直到获取到资源为止才返回。"
+                    }
+                  ]
+                },
+                {
+                  "title": "private void doAcquireShared(int arg) {
+    final Node node = addWaiter(Node.SHARED);//加入队列尾部
+    boolean failed = true;//是否成功标志
+    try {
+        boolean interrupted = false;//等待过程中是否被中断过的标志
+        for (;;) {
+            final Node p = node.predecessor();//前驱
+            if (p == head) {//如果到head的下一个，因为head是拿到资源的线程，此时node被唤醒，很可能是head用完资源来唤醒自己的
+                int r = tryAcquireShared(arg);//尝试获取资源
+                if (r >= 0) {//成功
+                    setHeadAndPropagate(node, r);//将head指向自己，还有剩余资源可以再唤醒之后的线程
+                    p.next = null; // help GC
+                    if (interrupted)//如果等待过程中被打断过，此时将中断补上。
+                        selfInterrupt();
+                    failed = false;
+                    return;
+                }
+            }
+            
+            //判断状态，寻找安全点，进入waiting状态，等着被unpark()或interrupt()
+            if (shouldParkAfterFailedAcquire(p, node) &&
+                parkAndCheckInterrupt())
+                interrupted = true;
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}",
+                  "topics": [
+                    {
+                      "title": "和 acquired方法类似. 首屈节点后第一个节点可以争取锁
+否则将自己排队等待其他节点释放
+"
+                    },
+                    {
+                      "title": "获取资源成功后,应该还继续通知其他节点尝试获取"
+                    }
+                  ]
+                },
+                {
+                  "title": "CountDown Latch 用到了 tryAcquireShared 只有当 state等于 0 的时候才可以去 tryAcquired, 否则不能获取锁(await 是去tryAcquire)"
+                }
+              ]
+            },
+            {
+              "title": "releaseShared",
+              "topics": [
+                {
+                  "title": "共享模式下线程释放共享资源的顶层入口。它会释放指定量的资源，如果成功释放且允许唤醒等待线程，它会唤醒等待队列里的其他线程来获取资源"
+                },
+                {
+                  "title": "独占模式下的tryRelease()在完全释放掉资源（state=0）后，才会返回true去唤醒其他线程，这主要是基于独占下可重入的考量；而共享模式下的releaseShared()则没有这种要求，共享模式实质就是控制一定量的线程并发执行，那么拥有资源的线程在释放掉部分资源时就可以唤醒后继等待结点",
+                  "makers": [
+                    "task-done",
+                    "priority-1"
+                  ]
+                },
+                {
+                  "title": "releaseShared一定是可以成功的, 如果返回 true,预示着会有其他acquire能被唤醒, 如果返回 false,预示没有效果.不会唤醒其他线程."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "acquire和 acquireShared 实际上可以被中断.park底层实现是可以被中断的"
+        },
+        {
+          "title": "ReentrantLock",
+          "topics": [
+            {
+              "title": "公平与非公平",
+              "topics": [
+                {
+                  "title": "公平模式在 tryAcquire 时,会首先判断等待队列是否非空,否则不能尝试获取锁"
+                },
+                {
+                  "title": "非公平模式没有限制, 会首先通过 CAS 操作获取锁,每次获取锁时,不需要判断队列是否非空"
+                },
+                {
+                  "title": "分别有 FairSync,NoFairSync"
+                }
+              ]
+            },
+            {
+              "title": "在扩展 AQS的 tryAcquire等扩展点时,实现公平和非公平, 公平是指队列中有元素,就不获取锁"
+            }
+          ]
+        },
+        {
+          "title": "CountDownLatch 和 CyclicBarrier",
+          "topics": [
+            {
+              "title": "API接口上",
+              "topics": [
+                {
+                  "title": "CDL 可以countDown和 await. countDown不阻塞"
+                },
+                {
+                  "title": "CB只有 await当小于 size数的线程 await时,会阻塞"
+                }
+              ]
+            },
+            {
+              "title": "共同点",
+              "topics": [
+                {
+                  "title": "等待某个事件发生 N 次后执行某个动作"
+                }
+              ]
+            },
+            {
+              "title": "区别",
+              "topics": [
+                {
+                  "title": "CDL在 countDown多次后,满足该条件. 同时保证触发条件和 执行某个动作分离开"
+                },
+                {
+                  "title": "CDL的 countDown 方法不阻塞, 只是用来触发事件.N次后,await 方法会立即返回,进而执行某个动作."
+                },
+                {
+                  "title": "CyclicBarrier 没有将条件触发和动作执行分离开, await同时触发了某个条件,但是也意味该线程需要会执行某个动作"
+                },
+                {
+                  "title": "CountDownlatch是 CB的超集合, CDL 等待0,N次, CB会默认等待 N次."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

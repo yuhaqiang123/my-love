@@ -1,0 +1,837 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "kafka使用",
+      "topics": [
+        {
+          "title": "消费者",
+          "topics": [
+            {
+              "title": "profile",
+              "topics": [
+                {
+                  "title": "在consumer group下增加减少会导致rebalance  .重新分配分区, 每一个分区只会被一个group下的 consumer 消费. ",
+                  "topics": [
+                    {
+                      "title": "实际上broker只负责了consumer 分配分区,至于offset完全不care即使已有的commit也仅仅是存储而已."
+                    }
+                  ]
+                },
+                {
+                  "title": "每一个group 是一个消费单元. 例如topic 1 被group 1,2 订阅, 那么group 1,2下订阅该topic的consumer会分配topic1下的所有分区. 但是group1,2下 可能存在某些consumer不订阅该topic. 也就是订阅是按照consumer进行注册, 但是分配topic时, 按照group 进行广播式的分配.",
+                  "topics": [
+                    {
+                      "title": "offset 和conusumer没关系, 只和 group, partition有关"
+                    }
+                  ]
+                },
+                {
+                  "title": "当一个group下consumer大于分区数,会导致部分consumer没有分区可消费"
+                },
+                {
+                  "title": "订阅模式依赖于多个group 支持. 即两个group 消费topic时互不影响. 可单独分配分区给consumer."
+                },
+                {
+                  "title": "consumer 可获取某个topic下的分区详细信息",
+                  "topics": [
+                    {
+                      "title": "topic, 分区, 分区的leader, 分区备份节点, 分区ISR, OSR (某些节点可能比较落后,和leader相差分区较多) "
+                    }
+                  ]
+                },
+                {
+                  "title": "kafkaConsumer 非线程安全, 除wakeup方法 , 为什么这么设计",
+                  "topics": [
+                    {
+                      "title": "不要多个线程调用poll , 无法控制commit ,及消息重复消费"
+                    },
+                    {
+                      "title": "多线程调用会报错"
+                    },
+                    {
+                      "title": "可以使用 多线程机制, 但是每个线程实例化一个consumer, consumer只是group的下 topic的分配单元.  即 一个进程内可以有多个consumer 同属于一个group",
+                      "makers": [
+                        "task-done",
+                        "flag-red",
+                        "priority-1"
+                      ]
+                    },
+                    {
+                      "title": "分区是 消费线程的最小单位, 一个分区只能被一个group 消费者线程处理"
+                    },
+                    {
+                      "title": "可将具体的consumer 和一个线程绑定. 即consumer即包括特定topic的处理逻辑也实现了runable接口"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "参数设置",
+              "topics": [
+                {
+                  "title": "group id 指定group . 默认为空串"
+                },
+                {
+                  "title": "msg key 反序列化, value反序列化器"
+                },
+                {
+                  "title": "broker server"
+                },
+                {
+                  "title": "client id",
+                  "topics": [
+                    {
+                      "title": "不指定可默认分配"
+                    }
+                  ]
+                },
+                {
+                  "title": "max.poll.records",
+                  "topics": [
+                    {
+                      "title": "每次拉取消息最大数"
+                    }
+                  ]
+                },
+                {
+                  "title": "max.poll.interval.ms",
+                  "topics": [
+                    {
+                      "title": "每次poll最大延迟, 如果多久没有poll会被broker剔除,  会触发再平衡",
+                      "topics": [
+                        {
+                          "title": "为了避免consumer假死"
+                        },
+                        {
+                          "title": "默认间隔300s"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "超时被broker踢出触发再平衡后, 如果再提交偏移量会报错,此时会触发消息重复消费"
+                    },
+                    {
+                      "title": "再次poll还会加入, 又一次再平衡."
+                    }
+                  ]
+                },
+                {
+                  "title": "session. timeout. ms <= coordinator检测失败的时间",
+                  "topics": [
+                    {
+                      "title": "默认值是10s, 该参数是 Consumer Group 主动检测 (组内成员comsummer)崩溃的时间间隔"
+                    },
+                    {
+                      "title": "和poll不同, 可能session依然 生效, 但是迟迟没有及时调用poll"
+                    }
+                  ]
+                },
+                {
+                  "title": "heartbeat. interval. ms ",
+                  "topics": [
+                    {
+                      "title": "heartbeat心跳主要用于沟通交流，及时返回请求响应。这个时间间隔真是越快越好。因为一旦出现reblance,那么就会将新的分配方案或者通知重新加入group的命令放进心跳响应中"
+                    }
+                  ]
+                },
+                {
+                  "title": "connection. max. idle. ms <= socket连接",
+                  "topics": [
+                    {
+                      "title": "kafka会定期的关闭空闲Socket连接。默认是9分钟。如果不在乎这些资源开销，推荐把这些参数值为-1，即不关闭这些空闲连接。"
+                    },
+                    {
+                      "title": "一般是producer设置, consumer不会等到socket连接超时, 就会session timeout"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "消息消费",
+              "topics": [
+                {
+                  "title": "ConsumerRecords<K,V> poll(final Duration timeout)",
+                  "topics": [
+                    {
+                      "title": "可指定等待时间."
+                    }
+                  ]
+                },
+                {
+                  "title": "consumerRecords",
+                  "topics": [
+                    {
+                      "title": "按照分区遍历消息结果集合"
+                    },
+                    {
+                      "title": "按照topic遍历消息结果集合"
+                    },
+                    {
+                      "title": "获取结果集中所有分区",
+                      "topics": [
+                        {
+                          "title": "无法获取消息结果集所有topic, 可按照consumer自己订阅的topic信息"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "count 消息数量,  isEmpty是否为空"
+                    }
+                  ]
+                },
+                {
+                  "title": "ConsumerRecord",
+                  "topics": [
+                    {
+                      "title": "topic, 分区, offset, timestamp, key, value,  checksum headers",
+                      "topics": [
+                        {
+                          "title": "时间戳 可用来 过期验证."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "指定位移消费",
+                  "topics": [
+                    {
+                      "title": "当某个group 下没有改分区的commit信息, 会读取consumer 的 auto.offset.reset 字段 作为poll消费起始点",
+                      "topics": [
+                        {
+                          "title": "可指定最新,最早,即分区的最新消息, 和分区的0 offset处消息"
+                        },
+                        {
+                          "title": "也可抛出异常"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "可获取某个分区下的最大offset(非提交的最大 offset)"
+                    },
+                    {
+                      "title": "可获取某个分区下的最小offset, 不一定是0, 日志清理可能会清理掉消息"
+                    },
+                    {
+                      "title": "可查询某个时间点的offset."
+                    },
+                    {
+                      "title": "seek 用于修改poll 操作获取的消息offset",
+                      "topics": [
+                        {
+                          "title": "类似于文件操作的seek,指定read, write操作的位置."
+                        },
+                        {
+                          "title": "可能会位移越界,即seek的位置 在server上已经不存在了"
+                        },
+                        {
+                          "title": "可以将offset 存储于db中, 这样不需要每次commit, 只需要在poll操作时,从数据库中获取offset 然后seek一下."
+                        },
+                        {
+                          "title": "和commit区别, commit是将offset管理起来, seek只是修改consumer本地offset, 如果seek一次后,多次poll会获取到重复的数据. 只有再次seek, poll才会获取新的数据, 而commit也会修改本地的offset,同时上传到broker, 当consumer本地没有offset会从broker远端拉取, 如果不存在使用consumer 配置的 reset 决定使用最新,还是最早. "
+                        },
+                        {
+                          "title": "和commit 不同, commit是保存到远端. 在poll之前如果没有seek会默认从kafka远端获取commit offset"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "在poll之前一般seek一下. 或者使用kfka远端的存储"
+                    }
+                  ]
+                },
+                {
+                  "title": "如何多线程处理同一个分区的消息",
+                  "topics": [
+                    {
+                      "title": ", poll之后 将消息交到 线程池中处理, 每次处理完之后,再提交一次."
+                    },
+                    {
+                      "title": "可考虑滑动窗口机制. 每次拉取的消息都在方格内."
+                    },
+                    {
+                      "title": "最好使用分区来决定 线程处理并发度"
+                    }
+                  ]
+                },
+                {
+                  "title": "可使用pause 暂停消费某些分区的消息. close指定关闭 consumer 在最后提交一次."
+                }
+              ]
+            },
+            {
+              "title": "消息位移提交",
+              "topics": [
+                {
+                  "title": "每个消息都有 一个offset, 如果不提交offset , 当发生reblance, poll则无法获取该在何处offset获取消息"
+                },
+                {
+                  "title": "旧消费client 提交信息放在zk, 新client 放在kafka中(特殊的主题 __consumer_offsets)"
+                },
+                {
+                  "title": "postion(TopicPartition);;; committed(TopicPartition)",
+                  "topics": [
+                    {
+                      "title": "获取下次获取的msg offset"
+                    }
+                  ]
+                },
+                {
+                  "title": "默认提交策略",
+                  "topics": [
+                    {
+                      "title": "每5s自动将此时拉取到的消息提交到kafka, 这个动作是在poll动作完成的.",
+                      "topics": [
+                        {
+                          "title": "但是不代表此时消息事实上被消费了,只是接受到了而已"
+                        },
+                        {
+                          "title": "enable.auto.commit 为true 时"
+                        },
+                        {
+                          "title": "auto.commit.interval.ms 配置为多久刷新"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "在退出前, 要主动的commit一次. 否则最后一次poll是没有commit的",
+                      "makers": [
+                        "task-done",
+                        "flag-red",
+                        "priority-1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "手动位移提交.enable.auto.commit=false",
+                  "topics": [
+                    {
+                      "title": "consumer.commitSync      ",
+                      "topics": [
+                        {
+                          "title": "默认参数为空, 将poll获取到的最大offset提交上去",
+                          "topics": [
+                            {
+                              "title": "如果seek修改offset后, poll返回的数据的最大offset可能小于已经commit的offset"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "带参数(Map<TopicPartition, OffsetAndMetaData>> offsets) 指定分区的offset"
+                        },
+                        {
+                          "title": "按照实际的业务逻辑处理成功,例如落库,写缓存成功,在同步调用, 每一个消息确认一次, 此时最安全.性能较差"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "consumer.commitAsync",
+                      "link": "consumer.commitAsync",
+                      "topics": [
+                        {
+                          "title": "默认异步提交consumer poll到的offset"
+                        },
+                        {
+                          "title": "commitAsync(Callback )在提交成功或失败后, 触发callback"
+                        },
+                        {
+                          "title": "非阻塞."
+                        },
+                        {
+                          "title": "commitAsync(Map<Partition, OffsetAndMetadata> offsets) 指定分区提交"
+                        },
+                        {
+                          "title": "可设置重试策略, 如果提交失败则重试, 但是需要考虑当前已经提交的offset可能小于远端的offset. 需要本地保存这些"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "reblance",
+              "makers": [
+                "flag-red",
+                "task-done",
+                "priority-1"
+              ],
+              "topics": [
+                {
+                  "title": "指定topic注册再平衡监听器.",
+                  "topics": [
+                    {
+                      "title": "即加入删除消费者时,会触发再平衡."
+                    },
+                    {
+                      "title": "onPartitionRevoked(Collection<TopicPartition>  partitions) ",
+                      "topics": [
+                        {
+                          "title": "该监听器方法发生在 再平衡开始前, 消费者停止poll消息之后."
+                        },
+                        {
+                          "title": "可以做一些位移提交动作. 把已处理的消息提交."
+                        },
+                        {
+                          "title": "partitions未再分配前该consumer分配到的分区"
+                        },
+                        {
+                          "title": "可在此时将offset 提交到 外部存储上."
+                        }
+                      ]
+                    },
+                    {
+                      "title": "onPartitionAssigned",
+                      "topics": [
+                        {
+                          "title": "在重新分配分区之后, 消费者开始读取消费之前."
+                        },
+                        {
+                          "title": "可以在这里做一下seek. poll被阻塞时, 此时再平衡会发生什么."
+                        }
+                      ]
+                    },
+                    {
+                      "title": "如果使用seek机制控制获取msg,一定要记住在再平衡之后 使用seek重新设置offset, 因为此时poll保存的offset不一定存在当前分区的offset.",
+                      "makers": [
+                        "task-done",
+                        "priority-1",
+                        "flag-red"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "再平衡时, 此时消费者可能正在处理消息, 此时该分区可能会被其他的消费者获取, 此时offset将极为关键, 如果poll获取到的消息没有得到处理, 应该被丢弃.或者继续处理, 如果丢弃应该保证其他consumer能获取到继续处理, 如果继续处理的话, 那么其他consumer 不应该再次获取该消息.",
+                  "makers": [
+                    "flag-red",
+                    "task-done",
+                    "priority-1"
+                  ],
+                  "topics": [
+                    {
+                      "title": "此时的策略选择 和commit机制有很大关系, 如果每条消息commit一次,那么就应该丢弃, 如果整个结果集commit, 那么就应该继续处理."
+                    },
+                    {
+                      "title": "如果希望消息在分区内顺序处理, 应该极力避免再平衡时,多个consumer 同时处理该分区的消息."
+                    },
+                    {
+                      "title": "从poll获取到消息后, 每次循环时,应该检查在本次poll周期(poll调用,返回, 即结果集处理 算一个周期.) 检查一下是否发生了reblance ."
+                    }
+                  ]
+                },
+                {
+                  "title": "poll操作返回之前, 会检查是否发生了再平衡, 如果发生了, 则直接返回空数据!!!! 以便尽快的进入再平衡后的状态"
+                },
+                {
+                  "title": "poll和reblance 要协同. "
+                }
+              ]
+            },
+            {
+              "title": "订阅方式",
+              "topics": [
+                {
+                  "title": "可指定多个topic订阅",
+                  "topics": [
+                    {
+                      "title": "可指定正则"
+                    },
+                    {
+                      "title": "可指定分区进行订阅"
+                    },
+                    {
+                      "title": "只能使用正则, 订阅分区, 订阅topic 方式中的一个,不可交叉使用",
+                      "makers": [
+                        "task-done",
+                        "flag-red",
+                        "priority-1"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "subscrbe 以最后一次调用为准, 后调用会把之前的订阅关系覆盖掉"
+                }
+              ]
+            },
+            {
+              "title": "拦截器",
+              "topics": [
+                {
+                  "title": "在poll操作返回时, 调用",
+                  "topics": [
+                    {
+                      "title": "可以针对消息进行过滤, 例如某些消息存在过期时间,多久没有消费就会被丢弃. 此时可以使用拦截器过滤."
+                    }
+                  ]
+                },
+                {
+                  "title": "onCommit",
+                  "topics": [
+                    {
+                      "title": "在commit 操作完成后, 会调用onCommit "
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "poll原理",
+              "topics": [
+                {
+                  "title": "只有 poll 方法调用时，consumer 才会真正去连接 kafka 集群，进行相关的操作"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "生产者端",
+          "topics": [
+            {
+              "title": "必要参数",
+              "topics": [
+                {
+                  "title": "acks",
+                  "topics": [
+                    {
+                      "title": "生产者指定的参数, 消息发送到leader 分区节点, 被其他follower节点 成功写入,才认为该消息发送成功了."
+                    },
+                    {
+                      "title": "默认设置为1 .",
+                      "topics": [
+                        {
+                          "title": "mysql的默认半异步复制,也是如此, 只要有一个slave 节点binlog 更新成功, 就认为复制成功了"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "0代表 只要leader 成功即可, -1 或者all 代表 ISR 所有副本成功才算发送成功"
+                    }
+                  ]
+                },
+                {
+                  "title": "socket 缓冲区默认大小, 默认32k. "
+                },
+                {
+                  "title": "连接read timeout"
+                },
+                {
+                  "title": "连接空闲超时, "
+                },
+                {
+                  "title": "消息broker list"
+                },
+                {
+                  "title": "序列化反序列化器"
+                },
+                {
+                  "title": "客户端 producerId ",
+                  "topics": [
+                    {
+                      "title": "broker可自动分配"
+                    }
+                  ]
+                },
+                {
+                  "title": "重试次数",
+                  "topics": [
+                    {
+                      "title": "重试间隔"
+                    }
+                  ]
+                },
+                {
+                  "title": "消息发送最大大小"
+                },
+                {
+                  "title": "每个连接每次未发送成功确认的消息个数. 为1 保证消息在分区有序"
+                }
+              ]
+            },
+            {
+              "title": "特性",
+              "topics": [
+                {
+                  "title": "KafkaProducer 线程安全"
+                }
+              ]
+            },
+            {
+              "title": "消息发送",
+              "topics": [
+                {
+                  "title": "不关心成功失败, 发后即忘"
+                },
+                {
+                  "title": "关心成功失败",
+                  "topics": [
+                    {
+                      "title": "同步等待"
+                    },
+                    {
+                      "title": "异步通知",
+                      "topics": [
+                        {
+                          "title": "在send msg时,注册该消息 成功或失败 的callback"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "同步异步都可以获取成功后的消息主题, 分区号, 分区中偏移量, 时间戳.等元数据."
+                    }
+                  ]
+                },
+                {
+                  "title": "重试",
+                  "topics": [
+                    {
+                      "title": "可指定重试次数",
+                      "topics": [
+                        {
+                          "title": "默认不会重试"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "哪些可重试",
+                      "topics": [
+                        {
+                          "title": "网络异常"
+                        },
+                        {
+                          "title": "leader 不可用"
+                        },
+                        {
+                          "title": "未知的主题 分区异常"
+                        },
+                        {
+                          "title": "NotEnoughAvailableException"
+                        },
+                        {
+                          "title": "NotCoordinatorException"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "哪些不可重试",
+                      "topics": [
+                        {
+                          "title": "消息长度过大"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "序列化器",
+              "topics": [
+                {
+                  "title": "对消息 序列化 反序列化"
+                },
+                {
+                  "title": "生产者需要指定序列化器"
+                }
+              ]
+            },
+            {
+              "title": "分区器",
+              "topics": [
+                {
+                  "title": "分区器返回分区id,  参数列表包括 topic,msg key, keyBytes, value, valueBytes, cluster 等集群信息"
+                },
+                {
+                  "title": "configure 方法 可用来获取 配置信息和初始化 数据. "
+                },
+                {
+                  "title": "close 用来关闭分区器"
+                },
+                {
+                  "title": "默认分区器",
+                  "topics": [
+                    {
+                      "title": "如果不指定key, 则在可用分区中 轮训获取一个分区"
+                    },
+                    {
+                      "title": "如果指定分区, 通过murmurHash2 一致性hash 获取分区. "
+                    },
+                    {
+                      "title": "不指定key 在可用分区中找, 指定key 在所有分区中 hash获取"
+                    }
+                  ]
+                },
+                {
+                  "title": "可自定分区器.在一个分区内消息顺序消费,  所以可以通过hash 保证顺序消费"
+                }
+              ]
+            },
+            {
+              "title": "拦截器",
+              "topics": [
+                {
+                  "title": "在消息发送前拦截消息",
+                  "topics": [
+                    {
+                      "title": "可修改分区, topic, value等."
+                    }
+                  ]
+                },
+                {
+                  "title": "在被应答之前, 或者消息发送失败时, 调用 拦截器的方法, 优先于callback ",
+                  "topics": [
+                    {
+                      "title": "可以计算消息成功率"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "生产者架构",
+              "topics": [
+                {
+                  "title": "消息producer线程将消息放入到一个队列中, 缓冲消息, 另一个发送线程批量的发送消息."
+                },
+                {
+                  "title": "可通过生产者配置 队列的大小. ",
+                  "topics": [
+                    {
+                      "title": "每个分区都会维护一个双端队列"
+                    }
+                  ]
+                },
+                {
+                  "title": "如果队列满了, producer send 会被阻塞, 直至超时,默认超时 60s"
+                },
+                {
+                  "title": "为了保证消息可靠性, 发送端会缓存 那些发送但是还未收到 broker 确认的消息
+并且该缓存数有最大限制, 每一个链接(客户端和broker) 最多有5个.可配置",
+                  "topics": [
+                    {
+                      "title": "如果配置大于1 , 因为重试可能不能保证 分区消息有序性.因为一个发送失败了, 重试时,可能已经落后了, 如果要求有序, 必须指定为1 "
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "更新元数据信息",
+              "topics": [
+                {
+                  "title": "有哪些",
+                  "topics": [
+                    {
+                      "title": "例如主题分区数量, 每一个分区 leader 副本在哪一个 broker上."
+                    }
+                  ]
+                },
+                {
+                  "title": "通过往MetaRequest 请求从broker获取"
+                },
+                {
+                  "title": "五分钟更新一次."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "淘气 三千问",
+          "topics": [
+            {
+              "title": "kafka可能导致重复消费的场景有哪些",
+              "topics": [
+                {
+                  "title": "获取到消息,已经消费但是还未提交, 此时崩溃导致消息重复消费"
+                },
+                {
+                  "title": "消息异步提交时, 提交失败,但是事实上offset已经被其他提交覆盖, 此时重试 会导致降低offset,导致重复消费"
+                },
+                {
+                  "title": "poll超时导致 consuemr被broker剔除, 导致再平衡, 此时如果commit提交可能会有延迟.再提交会报错"
+                }
+              ]
+            },
+            {
+              "title": "kafka可能导致消息丢失的场景有哪些",
+              "topics": [
+                {
+                  "title": "消息收到后立即提交, 但是还未处理, 此时崩溃导致事实上消息没有消费到."
+                },
+                {
+                  "title": null
+                }
+              ]
+            },
+            {
+              "title": "kafka如何存储位移信息的"
+            },
+            {
+              "title": "kafka如何控制消息回溯",
+              "topics": [
+                {
+                  "title": "使用seek可以指定从哪处位移开始消费, 和commitSync 修改poll offset一样. 但是两者不能混用,即commitSYnc保存在kafka中,seek可以指定额外的存储, 而绕过kafka的commitSync机制,(每次poll之前seek一下.或者在seek到某个点之后,再次使用commitSync机制. 完全自由的由客户端控制)"
+                },
+                {
+                  "title": "小心处理位移越界问题"
+                }
+              ]
+            },
+            {
+              "title": "seek和commit机制的区别",
+              "topics": [
+                {
+                  "title": "和commit区别, commit是将offset管理起来, seek只是修改consumer本地offset, 如果seek一次后,多次poll会获取到重复的数据. 只有再次seek, poll才会获取新的数据, 而commit也会修改本地的offset,同时上传到broker, 当consumer本地没有offset会从broker远端拉取, 如果不存在使用consumer 配置的 reset 决定使用最新,还是最早. "
+                }
+              ]
+            },
+            {
+              "title": "kafkaConsumer 非线程安全, 除wakeup方法 , 为什么这么设计",
+              "topics": [
+                {
+                  "title": "不要多个线程调用poll , 无法控制commit ,及消息重复消费"
+                },
+                {
+                  "title": "多线程调用会报错"
+                }
+              ]
+            },
+            {
+              "title": "为什么同一个consumer group下只能有一个consumer 消费某个分区. 即分区不能被多个consumer共同消费",
+              "topics": [
+                {
+                  "title": "这个是kafka的整体设计决定的, 即 消息只存储一份,且kfaka不负责决定向consumer推送消息, 而是由consumer拉取决定的, kafka 做到无状态, 即一条消息不会保存其是否ack, 也不保存其 被哪个consumer消费,只是按照consumer 的需求给其消息, 如果一个分区有多个consumer,那么offset如何管理呢? 如果同时又两个consumer 获取该offset 间隔的数据,是否是重复消费了? 即 多个consumer消费同一个分区不能使用一个offset. (所以多个group 有多个offset )"
+                },
+                {
+                  "title": "拉模式之下, 只能有一个consumer 拉取一个分区,这样offset不会混乱, 相反 rabbitmq使用推模式, 需要记录某个队列的消息推给了哪个consumer, 超时没有ack需要重新推, 还需要记录此时队列哪些消息被ack了,下次不能再推了, 也就是没有了消息回溯的能力. "
+                }
+              ]
+            },
+            {
+              "title": "消费端offset如何管理"
+            },
+            {
+              "title": "如果一个consumer 注册了一个topic,但是该consumer group下其他consumer没有注册该topic,会如何?"
+            },
+            {
+              "title": "consumer group如何创建",
+              "topics": [
+                {
+                  "title": "创建consumer时指定的  group 会自动创建. "
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
