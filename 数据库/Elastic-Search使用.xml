@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">Elastic-Search使用</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">tip 提示</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">term 查询是包含查询, 并不是严格相等查询, 如果一个字分词了, 即使完全匹配可能也可能查不出来, 因为没有命中任何一个分词.</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">结构化搜索</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">范围</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">range </title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">&quot;range&quot; : {
+ 	&quot;price&quot; : {
+        &quot;gte&quot; : 20,
+        &quot;lte&quot; : 40
+    }
+}</title>
+										</item>
+									</topics>
+								</item>
+								<item type="dict">
+									<title type="str">日期范围</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str"> &quot;gt&quot; : &quot;now-1h&quot;</title>
+										</item>
+										<item type="dict">
+											<title type="str">&quot;gt&quot; : &quot;2014-01-01 00:00:00&quot;,
+ &quot;lt&quot; : &quot;2014-01-01 00:00:00||+1M&quot; </title>
+										</item>
+										<item type="dict">
+											<title type="str">支持一些计算</title>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+						<item type="dict">
+							<title type="str">精确值查找</title>
+							<topics type="list">
+								<item type="dict">
+									<title type="str">处理数字（numbers）、布尔值（Booleans）、日期（dates</title>
+								</item>
+								<item type="dict">
+									<title type="str">term 查询</title>
+									<topics type="list">
+										<item type="dict">
+											<title type="str">&quot;term&quot; : { 
+                    &quot;price&quot; : 20
+                }</title>
+										</item>
+										<item type="dict">
+											<title type="str">使用倒排索引方式查询, 对于数字, 日期,bool 能精确匹配,对于 文本由于文本会分词, 非精确匹配</title>
+										</item>
+										<item type="dict">
+											<title type="str">如果想使用对text 使用精确匹配,必须对 text在创建索引时 ,指定不进行分词</title>
+											<topics type="list">
+												<item type="dict">
+													<title type="str">  &quot;productID&quot; : {
+                    &quot;type&quot; : &quot;string&quot;,
+                    &quot;index&quot; : &quot;not_analyzed&quot; 
+                }</title>
+												</item>
+											</topics>
+										</item>
+									</topics>
+								</item>
+							</topics>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">全文搜索</title>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>

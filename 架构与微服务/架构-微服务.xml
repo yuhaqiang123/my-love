@@ -6,7 +6,7 @@
 			<title type="str">架构-微服务</title>
 			<topics type="list">
 				<item type="dict">
-					<title type="str">特点</title>
+					<title type="str">微服务特点</title>
 					<topics type="list">
 						<item type="dict">
 							<title type="str">服务粒度要小，而每个服务是针对一个单一职责的业务能力的封装，专注做好一件事情</title>
@@ -258,6 +258,17 @@
 				</item>
 				<item type="dict">
 					<title type="str">SOA的区别</title>
+				</item>
+				<item type="dict">
+					<title type="str">架构本质</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">[Image]</title>
+						</item>
+						<item type="dict">
+							<title type="str">架构的本质在于面对业务场景给出优雅的解决方案，使得业务能够快速迭代和持续交付，从而达到降本增效的目标。</title>
+						</item>
+					</topics>
 				</item>
 			</topics>
 		</topic>

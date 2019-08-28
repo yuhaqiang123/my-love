@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf8"?>
+<root>
+	<item type="dict">
+		<title type="str">画布 1</title>
+		<topic type="dict">
+			<title type="str">Elastic-Search使用</title>
+			<topics type="list">
+				<item type="dict">
+					<title type="str">tip 提示</title>
+					<topics type="list">
+						<item type="dict">
+							<title type="str">term 查询是包含查询, 并不是严格相等查询, 如果一个字分词了, 即使完全匹配可能也可能查不出来, 因为没有命中任何一个分词.</title>
+						</item>
+					</topics>
+				</item>
+				<item type="dict">
+					<title type="str">结构化搜索</title>
+				</item>
+			</topics>
+		</topic>
+		<structure type="str">org.xmind.ui.map.unbalanced</structure>
+	</item>
+</root>
