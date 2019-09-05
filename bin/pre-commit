@@ -1,0 +1,5 @@
+echo `pwd`
+python ./bin/generate_json.py
+git add */*.json
+git add */*/*.json
+git add *.json
