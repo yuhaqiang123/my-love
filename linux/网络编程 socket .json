@@ -91,6 +91,31 @@
                       "topics": [
                         {
                           "title": "指定tcp连接的backlog"
+                        },
+                        {
+                          "title": "backlog 指定的是处于Established状态的tcp连接的个数.而不是处于syn状态的tcp连接. syn和establish两个状态分别在两个队列, 此backlog 是establish状态的连接的队列长度. "
+                        },
+                        {
+                          "title": "SYN RECEIVED队列长度 由linux系统参数指定. 不能针对一个socket 设置. ",
+                          "topics": [
+                            {
+                              "title": "/proc/sys/net/ipv4/tcp_max_syn_backlog 默认值128"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "accept只是从establish状态的队列取出连接."
+                        },
+                        {
+                          "title": "如果accept队列满了, 不会再将其他连接置为establish状态, 即使该连接已经接收到sync ack. (此时客户端认为已经建立成功,就会出现read timeout.客户端认为连接已经建立,所以不会是connect timeout)",
+                          "makers": [
+                            "priority-1",
+                            "task-done",
+                            "flag-red"
+                          ]
+                        },
+                        {
+                          "title": "https://blog.csdn.net/yangbodong22011/article/details/60399728"
                         }
                       ]
                     },
