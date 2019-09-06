@@ -165,7 +165,26 @@
                   "title": "调用顺序",
                   "topics": [
                     {
-                      "title": "int connect(int sockfd, struct sockaddr * addr, socklen_t addrlen);"
+                      "title": "int connect(int sockfd, struct sockaddr * addr, socklen_t addrlen);",
+                      "topics": [
+                        {
+                          "title": "connect在三次握手后 返回, 也就是服务端已经收到ack了.
+进入establish, 或者即将进入establish.",
+                          "topics": [
+                            {
+                              "title": "可能 backlog满了,这样已经收到ack的无法进入establish队列"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "客户端地址何时分配, 如何分配",
+                          "topics": [
+                            {
+                              "title": "发送方本地有路由表 标识每个网卡的下一跳路由地址. 通过子网掩码得出下一跳地址."
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
