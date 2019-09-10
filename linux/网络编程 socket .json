@@ -8,7 +8,34 @@
           "title": "淘气三千问",
           "topics": [
             {
-              "title": "localhost, 127.0.0.1, 0.0.0.0  的区别"
+              "title": "localhost, 127.0.0.1, 0.0.0.0  的区别",
+              "topics": [
+                {
+                  "title": "0.0.0.0 不能ping通，代表本机所有的IP地址",
+                  "topics": [
+                    {
+                      "title": "如果监听0.0.0.0 无论是通过127.0.0.1 & 10.1.xxx.xxx都可以访问该socket"
+                    },
+                    {
+                      "title": "等同于IP_ADDR_ANY"
+                    }
+                  ]
+                },
+                {
+                  "title": "示例区别",
+                  "topics": [
+                    {
+                      "title": "0.0.0.0:9999 外部可以通过本机ip访问，这种方式最是保险 "
+                    },
+                    {
+                      "title": "192.168.0.105:9999 外部可以通过这个ip访问9999 "
+                    },
+                    {
+                      "title": "127.0.0.1：9999这种方式外部访问不了，本机可以访问"
+                    }
+                  ]
+                }
+              ]
             },
             {
               "title": "如何进行udp socket编程"
@@ -91,6 +118,31 @@
                       "topics": [
                         {
                           "title": "指定tcp连接的backlog"
+                        },
+                        {
+                          "title": "backlog 指定的是处于Established状态的tcp连接的个数.而不是处于syn状态的tcp连接. syn和establish两个状态分别在两个队列, 此backlog 是establish状态的连接的队列长度. "
+                        },
+                        {
+                          "title": "SYN RECEIVED队列长度 由linux系统参数指定. 不能针对一个socket 设置. ",
+                          "topics": [
+                            {
+                              "title": "/proc/sys/net/ipv4/tcp_max_syn_backlog 默认值128"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "accept只是从establish状态的队列取出连接."
+                        },
+                        {
+                          "title": "如果accept队列满了, 不会再将其他连接置为establish状态, 即使该连接已经接收到sync ack. (此时客户端认为已经建立成功,就会出现read timeout.客户端认为连接已经建立,所以不会是connect timeout)",
+                          "makers": [
+                            "priority-1",
+                            "task-done",
+                            "flag-red"
+                          ]
+                        },
+                        {
+                          "title": "https://blog.csdn.net/yangbodong22011/article/details/60399728"
                         }
                       ]
                     },
@@ -113,7 +165,26 @@
                   "title": "调用顺序",
                   "topics": [
                     {
-                      "title": "int connect(int sockfd, struct sockaddr * addr, socklen_t addrlen);"
+                      "title": "int connect(int sockfd, struct sockaddr * addr, socklen_t addrlen);",
+                      "topics": [
+                        {
+                          "title": "connect在三次握手后 返回, 也就是服务端已经收到ack了.
+进入establish, 或者即将进入establish.",
+                          "topics": [
+                            {
+                              "title": "可能 backlog满了,这样已经收到ack的无法进入establish队列"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "客户端地址何时分配, 如何分配",
+                          "topics": [
+                            {
+                              "title": "发送方本地有路由表 标识每个网卡的下一跳路由地址. 通过子网掩码得出下一跳地址."
+                            }
+                          ]
+                        }
+                      ]
                     }
                   ]
                 }
