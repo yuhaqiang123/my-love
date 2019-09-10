@@ -85,11 +85,44 @@
                   "title": "已经listen了,但是没有及时accept"
                 }
               ]
+            },
+            {
+              "title": "listen 和bind的区别 .",
+              "topics": [
+                {
+                  "title": "listen",
+                  "topics": [
+                    {
+                      "title": "创建半连接队列的实例，初始化全连接队列。"
+                    },
+                    {
+                      "title": "初始化sock的一些变量，把它的状态设为TCP_LISTEN。"
+                    },
+                    {
+                      "title": "检查端口是否可用，防止bind()后其它进程修改了端口信息。"
+                    },
+                    {
+                      "title": "把sock链接进入监听哈希表listening_hash中"
+                    }
+                  ]
+                },
+                {
+                  "title": "bind",
+                  "topics": [
+                    {
+                      "title": "该调用通过传递进来的文件描述符找到对应的socket, 结构，然后通过socket访问sock结构。操作sock进行地址的绑定。如果指定了端口检查端口的可用性并绑定，否则随机分配一个端口进行绑定"
+                    }
+                  ]
+                },
+                {
+                  "title": "udp的服务端 只需要bind,不需要listen"
+                }
+              ]
             }
           ]
         },
         {
-          "title": "套接字编程基础",
+          "title": "TCP  套接字编程基础",
           "topics": [
             {
               "title": "服务端网络编程模型",
@@ -276,6 +309,74 @@
                     },
                     {
                       "title": "这三个参数是相互关联的, 例如type选定后, protocol就需要设置匹配的协议. "
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "udp编程",
+          "topics": [
+            {
+              "title": "bind",
+              "topics": [
+                {
+                  "title": "客户端和服务端都需要bind . 只要需要recv数据都需要bind, 指定socket 从哪个ip, 端口接受数据"
+                }
+              ]
+            },
+            {
+              "title": "connect",
+              "topics": [
+                {
+                  "title": "connect是可选项, 因为sentto可以指定目的ip, 端口 .所以一般不需要connect指定目标ip, port.
+但是sentto中默认了一个绑定目标IP,port的行为, 如果使用connect 可以指定绑定. 当长时间和某一个目的ip,端口通讯时可以使用connect优化这个问题"
+                },
+                {
+                  "title": "和tcp中的connect的区别",
+                  "topics": [
+                    {
+                      "title": "tcp中的connect会三次握手, 而udp的connect只会注册socket到目标ip,port. "
+                    },
+                    {
+                      "title": "udp connect后, 可以使用write写socket, 而不用sendto指定ip,port"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "如何获取对端的ip,port",
+              "topics": [
+                {
+                  "title": "recv的时候,可获取对方的ip,port"
+                }
+              ]
+            },
+            {
+              "title": "udp",
+              "topics": [
+                {
+                  "title": "是有边界的消息服务, 即对方sendto的次数和recv的次数完全相同."
+                },
+                {
+                  "title": "不存在像tcp那样, 流数据, 没有边界, 需要客户端自己定义边界."
+                }
+              ]
+            },
+            {
+              "title": "适合使用udp的服务",
+              "topics": [
+                {
+                  "title": "dns"
+                },
+                {
+                  "title": "视频服务等",
+                  "topics": [
+                    {
+                      "title": "丢失几帧数据不影响"
                     }
                   ]
                 }

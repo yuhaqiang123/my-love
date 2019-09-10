@@ -66,6 +66,22 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
             },
             {
               "title": "如果读缓冲区满了. 此时报文就会被丢弃掉. 对端会重发.说明接收端处理比较慢,此时 TCP 滑动窗口会变少"
+            },
+            {
+              "title": "读缓冲区不存在溢出的问题.即按照FIFO等将已经ack的数据丢失, 而是将新收到的数据丢失, 同时减少滑动窗口, 对端发现超时后,会重发",
+              "makers": [
+                "priority-1",
+                "task-done",
+                "flag-red"
+              ]
+            },
+            {
+              "title": "网卡环形缓冲区存在FIFO溢出问题.",
+              "makers": [
+                "task-done",
+                "flag-red",
+                "priority-1"
+              ]
             }
           ]
         },
