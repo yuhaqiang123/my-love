@@ -79,6 +79,57 @@
                   ]
                 }
               ]
+            },
+            {
+              "title": "bool 过滤器",
+              "topics": [
+                {
+                  "title": "must",
+                  "topics": [
+                    {
+                      "title": "所有的语句都 必须（must） 匹配，与 AND 等价。"
+                    }
+                  ]
+                },
+                {
+                  "title": "must-not",
+                  "topics": [
+                    {
+                      "title": "所有的语句都 不能（must not） 匹配，与 NOT 等价。",
+                      "topics": [
+                        {
+                          "title": "[Image]"
+                        },
+                        {
+                          "title": "也可以指定多个 term. 中间默认使用 and 连接"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "should",
+                  "topics": [
+                    {
+                      "title": "至少有一个语句要匹配，与 OR 等价。"
+                    },
+                    {
+                      "title": "should 语句中理论上最少有两个子条件"
+                    }
+                  ]
+                },
+                {
+                  "title": "示例",
+                  "topics": [
+                    {
+                      "title": "[Image]"
+                    },
+                    {
+                      "title": "[Image]"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },

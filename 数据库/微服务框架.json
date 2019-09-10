@@ -1,0 +1,19 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "微服务框架",
+      "topics": [
+        {
+          "title": "通信层",
+          "topics": [
+            {
+              "title": "类似于thrift 使用 epoll, reactor 模型等选择. dubbo 提供了几种通讯工具, 包括netty 在内.都可以选择"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
