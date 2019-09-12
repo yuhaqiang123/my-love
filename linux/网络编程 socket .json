@@ -317,6 +317,107 @@
           ]
         },
         {
+          "title": "套接字参数",
+          "topics": [
+            {
+              "title": "套接字可选项目",
+              "topics": [
+                {
+                  "title": "SOL_SOCKET 层"
+                },
+                {
+                  "title": "IPPROTO_IP"
+                },
+                {
+                  "title": "IPPROTO_TCP"
+                },
+                {
+                  "title": "套接字是分层的. "
+                }
+              ]
+            },
+            {
+              "title": "设置获取套接字参数",
+              "topics": [
+                {
+                  "title": "getsocketopt(int sock, int level, int optname, void * optval, socklen_t * optlen)"
+                },
+                {
+                  "title": "setsocketopt(int sock, int level, int optname, const void * optval, socklen_t * optlen)"
+                },
+                {
+                  "title": "在socket方法创建完sock后"
+                }
+              ]
+            },
+            {
+              "title": "设置缓冲区大小",
+              "topics": [
+                {
+                  "title": "so_SNDBUF",
+                  "topics": [
+                    {
+                      "title": "发送缓冲区"
+                    }
+                  ]
+                },
+                {
+                  "title": "SO_RCVBUF",
+                  "topics": [
+                    {
+                      "title": "接受缓冲区"
+                    }
+                  ]
+                },
+                {
+                  "title": "接收缓冲区的最大值是8M，发送缓冲区的最大值是16M",
+                  "topics": [
+                    {
+                      "title": "默认值发送160k, 接受80k"
+                    }
+                  ]
+                },
+                {
+                  "title": "https://www.cnblogs.com/zengkefu/p/5749009.html",
+                  "topics": [
+                    {
+                      "title": "tcp参数设置"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "so_reuseaddr",
+              "topics": [
+                {
+                  "title": "设置该值将保证socket处于timewait状态也能被分配出去.
+否则该端口绑定时会出错"
+                }
+              ]
+            },
+            {
+              "title": "tcp_nodelay",
+              "topics": [
+                {
+                  "title": "是否禁用nagle算法"
+                },
+                {
+                  "title": "nagle算法",
+                  "topics": [
+                    {
+                      "title": "该算法优化网络流量, 当发送缓冲区的数据 到来比较缓慢时, tcp并不会没到来一个字节发送一次, 而是等到服务端ack的时候,再发送数据, 这样延迟的时间就能等待更多的数据到达发送缓冲区"
+                    },
+                    {
+                      "title": "子主题 2"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "title": "udp编程",
           "topics": [
             {
