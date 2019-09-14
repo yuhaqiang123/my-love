@@ -404,14 +404,220 @@
                 },
                 {
                   "title": "nagle算法",
+                  "makers": [
+                    "priority-1",
+                    "task-done"
+                  ],
                   "topics": [
                     {
                       "title": "该算法优化网络流量, 当发送缓冲区的数据 到来比较缓慢时, tcp并不会没到来一个字节发送一次, 而是等到服务端ack的时候,再发送数据, 这样延迟的时间就能等待更多的数据到达发送缓冲区"
                     },
                     {
-                      "title": "子主题 2"
+                      "title": "如果发送缓冲区一直比较慢, 就数据传输量一直很大, 则因该禁用该算法, 该算法默认开启"
                     }
                   ]
+                }
+              ]
+            },
+            {
+              "title": null,
+              "topics": [
+                {
+                  "title": null
+                }
+              ]
+            },
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "net.ipv4.tcp_syncookies",
+              "topics": [
+                {
+                  "title": "默认值：1
+# 作用：是否打开SYN Cookie功能，该功能可以防止部分SYN攻击"
+                }
+              ]
+            },
+            {
+              "title": "net.ipv4.ip_local_port_range = 1024  65535",
+              "topics": [
+                {
+                  "title": " 默认值：32768   61000
+# 作用：可用端口的范围"
+                }
+              ]
+            },
+            {
+              "title": "# 默认值：0"
+            },
+            {
+              "title": "# 作用：针对TIME-WAIT，做为客户端可以启用（例如，作为nginx-proxy前端代理，要访问后端的服务）"
+            },
+            {
+              "title": "net.ipv4.tcp_tw_reuse = 1",
+              "topics": [
+                {
+                  "title": "# 作用：针对TIME-WAIT，做为客户端可以启用（例如，作为nginx-proxy前端代理，要访问后端的服务）
+net.ipv4.tcp_tw_reuse = 1",
+                  "topics": [
+                    {
+                      "title": "默认关闭"
+                    }
+                  ]
+                },
+                {
+                  "title": "net.ipv4.tcp_max_tw_buckets = 5000",
+                  "topics": [
+                    {
+                      "title": "表示系统同时保持TIME_WAIT套接字的最大数量，如果超过这个数字，TIME_WAIT套接字将立刻被清除并打印警告信息。默认为180000。设为较小数值此项参数可以控制TIME_WAIT套接字的最大数量，避免服务器被大量的TIME_WAIT套接字拖死。"
+                    }
+                  ]
+                },
+                {
+                  "title": "net.ipv4.tcp_tw_recycle = 1",
+                  "topics": [
+                    {
+                      "title": "表示开启TCP连接中TIME-WAIT sockets的快速回收,默认为0,表示关闭"
+                    }
+                  ]
+                },
+                {
+                  "title": "net.ipv4.tcp_max_tw_buckets = 180000",
+                  "topics": [
+                    {
+                      "title": "表示系统同时保持TIME_WAIT套接字的最大数量,如果超过这个数字,TIME_WAIT套接字将立刻被清除并打印警告信息"
+                    },
+                    {
+                      "title": "#默认为180000,建议使用默认值,不建议调小"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "三次握手",
+              "topics": [
+                {
+                  "title": "tcp_syn_retries",
+                  "topics": [
+                    {
+                      "title": "对于一个新建连接，内核要发送多少个 SYN 连接请求才决定放弃。不应该大于255，默认值是5，对应于180秒左右时间。。(对于大负载而物理通信良好的网络而言,这个值偏高,可修改为2.这个值仅仅是针对对外的连接,对进来的连接,是由tcp_retries1决定的)"
+                    },
+                    {
+                      "title": "默认值  5"
+                    }
+                  ]
+                },
+                {
+                  "title": "tcp_synack_retries",
+                  "topics": [
+                    {
+                      "title": "对于远端的连接请求SYN，内核会发送SYN ＋ ACK数据报，以确认收到上一个 SYN连接请求包。这是所谓的三次握手( threeway handshake)机制的第二个步骤。这里决定内核在放弃连接之前所送出的 SYN+ACK 数目。不应该大于255，默认值是5，对应于180秒左右时间"
+                    },
+                    {
+                      "title": "默认值5"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "tcp_keepalive_time",
+              "topics": [
+                {
+                  "title": "TCP发送keepalive探测消息的间隔时间（秒），用于确认TCP连接是否有效。防止两边建立连接但不发送数据的攻击, 默认值  7200"
+                },
+                {
+                  "title": "tcp_keepalive_probes",
+                  "topics": [
+                    {
+                      "title": "TCP发送keepalive探测消息的间隔时间（秒），用于确认TCP连接是否有效。"
+                    },
+                    {
+                      "title": "默认值 9"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "tcp_retries1",
+              "topics": [
+                {
+                  "title": "放弃回应一个TCP连接请求前﹐需要进行多少次重试。RFC 规定最低的数值是3"
+                },
+                {
+                  "title": "这个指外部请求进来, 发送sync 多次之后, 才放弃继续回应.(可能是发送RESET .)"
+                }
+              ]
+            },
+            {
+              "title": "tcp_retries2",
+              "topics": [
+                {
+                  "title": "在丢弃激活(已建立通讯状况)的TCP连接之前﹐需要进行多少次重试。默认值为15，根据RTO的值来决定，相当于13-30分钟(RFC1122规定，必须大于100秒).(这个值根据目前的网络设置,可以适当地改小,我的网络内修改为了5)"
+                },
+                {
+                  "title": "TCP失败重传次数,默认值15,意味着重传15次才彻底放弃.可减少到5,以尽早释放内核资源"
+                },
+                {
+                  "title": "tcp并不是无限次的超时重发"
+                }
+              ]
+            },
+            {
+              "title": "net.ipv4.tcp_max_orphans = 131072",
+              "topics": [
+                {
+                  "title": "系统所能处理不属于任何进程的TCP sockets最大数量。假如超过这个数量，那么不属于任何进程的连接会被立即reset，并同时显示警告信息。之所以要设定这个限制﹐纯粹为了抵御那些简单的 DoS 攻击﹐千万不要依赖这个或是人为的降低这个限制，更应该增加这个值(如果增加了内存之后)。每个孤儿套接字最多能够吃掉你64K不可交换的内存。",
+                  "topics": [
+                    {
+                      "title": "增加这个值是因为 内存增加后, socekt支持句柄数也可以增加. 但是close后的socket受这个值的限制. 在高并发场景下,需要增加这个值"
+                    }
+                  ]
+                },
+                {
+                  "title": "进程调用close关闭这个socket后, 该socket并不是立即回收, 但是与进程已经无关了, 变成孤儿socket"
+                }
+              ]
+            },
+            {
+              "title": "net.ipv4.tcp_fin_timeout ",
+              "topics": [
+                {
+                  "title": "表示如果套接字由本端要求关闭,这个参数决定了它保持在FIN-WAIT-2状态的时间"
+                }
+              ]
+            },
+            {
+              "title": "/proc/sys/net/ipv4/tcp_abort_on_overflow"
+            },
+            {
+              "title": " /proc/sys/net/ipv4/ip_default_ttl",
+              "topics": [
+                {
+                  "title": "该文件表示一个数据报的生存周期（Time To Live），即最多经过多少路由器。
+缺省设置：64  增加该值会降低系统性能。"
+                }
+              ]
+            },
+            {
+              "title": " /proc/sys/net/ipv4/tcp_abort_on_overflow",
+              "topics": [
+                {
+                  "title": "当守护进程太忙而不能接受新的连接，就向对方发送reset消息，默认值是false。这意味着当溢出的原因是因为一个偶然的猝发，那么连接将恢复状态。只有在你确信守护进程真的不能完成连接请求时才打开该选项，该选项会影响客户的使用。"
+                }
+              ]
+            },
+            {
+              "title": "/proc/sys/net/ipv4/tcp_sack",
+              "topics": [
+                {
+                  "title": "该文件表示是否启用有选择的应答（Selective Acknowledgment），这可以通过有选择地应答乱序接收到的报文来提高性能（这样可以让发送者只发送丢失的报文段）；（对于广域网通信来说）这 个选项应该启用，但是这会增加对 CPU 的占用。"
+                },
+                {
+                  "title": "默认启用"
                 }
               ]
             }

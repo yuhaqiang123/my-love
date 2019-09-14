@@ -5,6 +5,29 @@
       "title": "tcp",
       "topics": [
         {
+          "title": "淘气三千问",
+          "topics": [
+            {
+              "title": "tcp重发时,如果一直失败会怎样",
+              "topics": [
+                {
+                  "title": "会reset这个请求",
+                  "topics": [
+                    {
+                      "title": "net.ipv4.tcp_retries2",
+                      "topics": [
+                        {
+                          "title": "最大的重发次数."
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "title": "Time_wait时间",
           "topics": [
             {
