@@ -1,0 +1,95 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "linux配置",
+      "topics": [
+        {
+          "title": "文件句柄",
+          "topics": [
+            {
+              "title": "最大数量限制",
+              "topics": [
+                {
+                  "title": "soft nofile （软限制）",
+                  "topics": [
+                    {
+                      "title": "是指Linux在当前系统能够承受的范围内进一步限制用户同时打开的文件数"
+                    }
+                  ]
+                },
+                {
+                  "title": "hard nofile （硬限制）",
+                  "topics": [
+                    {
+                      "title": "是根据系统硬件资源状况(主要是系统内存)计算出来的系统最多可同时打开的文件数量"
+                    }
+                  ]
+                },
+                {
+                  "title": "软限制小于或等于硬限制"
+                },
+                {
+                  "title": "所有进程打开的文件描述符数不能超过/proc/sys/fs/file-max",
+                  "topics": [
+                    {
+                      "title": "所有进程"
+                    },
+                    {
+                      "title": "单个进程打开的文件描述符数不能超过user limit中nofile的soft limit"
+                    },
+                    {
+                      "title": "/etc/security/limits.conf"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "子主题 2"
+            }
+          ]
+        },
+        {
+          "title": "proc配置",
+          "topics": [
+            {
+              "title": "   /proc/sys/kernel/threads-max",
+              "topics": [
+                {
+                  "title": "该文件表示内核所能使用的线程的最大数目。
+缺省设置：2048"
+                }
+              ]
+            },
+            {
+              "title": "/proc/sys/vm/优化",
+              "topics": [
+                {
+                  "title": " /proc/sys/vm/dirty_background_ratio",
+                  "topics": [
+                    {
+                      "title": "该文件表示脏数据到达系统整体内存的百分比，此时触发pdflush进程把脏数据写回磁盘。"
+                    }
+                  ]
+                },
+                {
+                  "title": "   /proc/sys/vm/dirty_expire_centisecs",
+                  "topics": [
+                    {
+                      "title": "该文件表示如果脏数据在内存中驻留时间超过该值，pdflush进程在下一次将把这些数据写回磁盘。"
+                    },
+                    {
+                      "title": "缺省设置：3000（1/100秒）"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
