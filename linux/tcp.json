@@ -24,6 +24,14 @@
                   ]
                 }
               ]
+            },
+            {
+              "title": "如何理解tcp , udp 有状态和无状态.",
+              "topics": [
+                {
+                  "title": "tcp 中三次握手, 四次挥手分别在客户端和服务端记录本次tcp 连接的状态信息, 同时报文中也存在基于状态变更的报文内容. 以及tcp 处理可靠性时, 串行发送, 基于package 序列进行超时重传,ack,滑动窗口等特性,都是基于状态的. 没收到一个报文都需要检测该报文 是不是符合当前状态. 否则丢弃"
+                }
+              ]
             }
           ]
         },
@@ -143,19 +151,6 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
           ]
         },
         {
-          "title": "问题",
-          "topics": [
-            {
-              "title": "如何理解tcp , udp 有状态和无状态.",
-              "topics": [
-                {
-                  "title": "tcp 中三次握手, 四次挥手分别在客户端和服务端记录本次tcp 连接的状态信息, 同时报文中也存在基于状态变更的报文内容. 以及tcp 处理可靠性时, 串行发送, 基于package 序列进行超时重传,ack,滑动窗口等特性,都是基于状态的. 没收到一个报文都需要检测该报文 是不是符合当前状态. 否则丢弃"
-                }
-              ]
-            }
-          ]
-        },
-        {
           "title": "TCP_NODELAY、TCP_CORK, TCP_QUICKACK",
           "topics": [
             {
@@ -167,7 +162,12 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
 2）或者处于快速回复模式
 3）或者出现了乱序的包
 4）或者接收窗口的数据足够多
-如果接收方有数据回写，则ACK也会搭车一起发送。当以上条件都不满足时，接收方会延迟40ms再回应ACK。"
+如果接收方有数据回写，则ACK也会搭车一起发送。当以上条件都不满足时，接收方会延迟40ms再回应ACK。",
+                  "makers": [
+                    "task-done",
+                    "priority-1",
+                    "star-red"
+                  ]
                 }
               ]
             },
@@ -175,7 +175,11 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
               "title": "为什么TCP_NODELAY失效",
               "topics": [
                 {
-                  "title": "TCP_NODELAY同时禁止了nagle算法和delayed ACK算法，因此小块数据可以直接发送。然而Linux实现中，TCP_NODELAY只禁止了nagle算法。另一方面，协议栈在发送包的时候，不仅受到TCP_NODELAY的影响，还受到协议栈里面拥塞窗口的影响。由于server端delayed ack，client迟迟无法收到ack应答，拥塞窗口堵满，从而无法继续发送更多数据；一直到40ms后ack达到，才能继续发送（题外话： TCP_NODELAY在FREEBSD上性能优于Linux上，因为FREEBSD并不像Linux一样需要第一个包到达后就响应ACK）。"
+                  "title": "TCP_NODELAY同时禁止了nagle算法和delayed ACK算法，
+因此小块数据可以直接发送。然而Linux实现中，TCP_NODELAY只禁止了nagle算法。另一方面，协议栈在发送包的时候，不仅受到TCP_NODELAY的影响，还受到协议栈里面拥塞窗口的影响。由于server端delayed ack，client迟迟无法收到ack应答，拥塞窗口堵满，从而无法继续发送更多数据；一直到40ms后ack达到，才能继续发送（题外话： TCP_NODELAY在FREEBSD上性能优于Linux上，因为FREEBSD并不像Linux一样需要第一个包到达后就响应ACK）。"
+                },
+                {
+                  "title": "TCP_NODELAY只禁止了nagle算法"
                 }
               ]
             },
@@ -185,6 +189,89 @@ MSL（Maximum Segment Lifetime），TCP允许不同的实现可以设置不同�
                 {
                   "title": "而TCP_QUICKACK选项就是向内核建议进入快速回复模式。快速回复ack模式的判断条件如下：(tp->ack.quick && tp->ack.pingpong)，其中设置QUICKACK选项会置pingpong=0。
 然而，随着TCP连接的重用和数据的不断收发，快速回复模式有可能失效。例如在后续的交互过程当中，pingpong变为1的条件就有：1.收到fin后；2. 发送方发送数据时，发现当前时间与上次接收数据的时间小于40ms。此外，发送方发现数据包带有ack标志位时，也会减小ack.quick值。这些都会导致快速回复模式的退出。因此，即使每次接受数据前都设置TCP_QUICKACK选项，也不能完全解决delayed ack问题。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "超时重发& 快速重发",
+          "topics": [
+            {
+              "title": "重发",
+              "topics": [
+                {
+                  "title": "超时重发",
+                  "topics": [
+                    {
+                      "title": "发送方送出一个TCP片段后，将开始计时，等待该TCP片段的ACK回复。如果接收方正确接收到符合次序的片段，接收方会利用ACK片段回复发送方。发送方得到ACK回复后，继续移动窗口，发送接下来的TCP片段。如果直到计时完成，发送方还是没有收到ACK回复，那么发送方推断之前发送的TCP片段丢失，因此重新发送之前的TCP片段"
+                    }
+                  ]
+                },
+                {
+                  "title": "快速重发",
+                  "topics": [
+                    {
+                      "title": "当接收方收到乱序片段的时候，需要重复发送ACK。比如接收到乱序片段9的时候，接收方需要回复ACK。回复号为8 (7+1)。此后接收方如果继续收到乱序片段(序号不是8的片段)，将再次重复发送ACK=8。当发送方收到3个ACK=8的回复时，发送方推断片段8丢失。即使此时片段8的计时器还没有超时，发送方会打断计时，直接重新发送片段8，这就是快速重新发送机制"
+                    },
+                    {
+                      "title": "乱序发送",
+                      "topics": [
+                        {
+                          "title": "由于IP包的传输是无序的，所以接收方有可能先收到后发出的片段，也就是乱序(out-of-order)片段。乱序片段的序号并不等于最近发出的ACK回复号。已接收的文本流和乱序片段之间将出现空洞(hole)，也就是等待接收的空位。比如已经接收了正常片段5,6,7，此时又接收乱序片段9。这时片段8依然空缺，片段8的位置就是一个空洞"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "快速重新发送机制利用重复的ACK来提示空洞的存在。当重复次数达到阈值时，认为空洞对应的片段在网络中丢失。快速重新发送机制提高了检测丢失片段的效率，往往可以在超时之前探测到丢失片段，并重复发送丢失的片段。"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "时间如何定义",
+              "topics": [
+                {
+                  "title": "RTT",
+                  "topics": [
+                    {
+                      "title": "1. 发送片段从发送方到接收方的传输，2. ACK片段从接收方到发送方的传输。整个过程实际耗费的时间称做往返时间(RTT, round trip time)"
+                    }
+                  ]
+                },
+                {
+                  "title": "RTO",
+                  "topics": [
+                    {
+                      "title": "计时等待的时间叫做重新发送超时时间(RTO, retransmission timeout)。"
+                    }
+                  ]
+                },
+                {
+                  "title": "在RTT浮动的情况下，如果我们设置了过小的RTO，那么TCP会等待很短的时间之后重新发送，而实际上之前发送的片段并没有丢失，只是传输速度比较慢而已，这样，网络中就被重复注入TCP片段，从而浪费网络传输资源。另一方面，如果RTO时间过长，那么当TCP片段已经实际丢失的情况下，发送方不能及时重新发送，会造成网络资源的闲置。所以，RTO必须符合当前网络的使用状况。网络状况越好，RTO应该越短；网络状况越差，RTO应该越长"
+                },
+                {
+                  "title": "RTO统计",
+                  "topics": [
+                    {
+                      "title": "TCP协议通过统计RTT，来决定合理的RTO。发送方可以测量每一次TCP传输的RTT (从发送出数据片段开始，到接收到ACK片段为止)，这样的每次测量得到的往返时间，叫做采样RTT(srtt, sampling round trip time)。建立连接之后，每次的srtt作为采样样本，计算平均值(mean)和标准差(standard deviation)，并让RTO等于srtt平均值加上四倍的srtt标准差。"
+                    },
+                    {
+                      "title": "RTO = mean + 4 std"
+                    },
+                    {
+                      "title": "RTO 为RTT统计的平均值+ 4倍的标准差"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "iink",
+              "topics": [
+                {
+                  "title": "https://blog.csdn.net/nizhannizhan/article/details/47688439"
                 }
               ]
             }
