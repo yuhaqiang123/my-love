@@ -237,6 +237,45 @@
           ]
         },
         {
+          "title": "通信框架",
+          "topics": [
+            {
+              "title": "netty"
+            },
+            {
+              "title": "nio & bio"
+            },
+            {
+              "title": "server端 线程模型"
+            },
+            {
+              "title": "服务端的职责",
+              "topics": [
+                {
+                  "title": "提供上层API. 初始化服务端实例, 设置服务端通信参数, IO线程池参数, 监听地址, backlog, tcp相关参数, 例如 no_dalay, quickack, 收发缓冲池大小."
+                },
+                {
+                  "title": "提供可扩展的编解码插件, 提供拦截面"
+                },
+                {
+                  "title": "原则",
+                  "topics": [
+                    {
+                      "title": "不负责编解码的实现, 不负责具体通信协议."
+                    },
+                    {
+                      "title": "屏蔽底层的通讯细节, NIO, BIO, IO 多路复用, 等."
+                    },
+                    {
+                      "title": "可扩展性要强"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "title": "主要的服务框架",
           "topics": [
             {
@@ -279,9 +318,6 @@
               "title": "spring cloud:"
             }
           ]
-        },
-        {
-          "title": null
         }
       ]
     },
