@@ -5,6 +5,14 @@
       "title": "分布式服务框架",
       "topics": [
         {
+          "title": "profile",
+          "topics": [
+            {
+              "title": "分布式服务框架 主要是为了解决内部服务化之后业务接口跨进程通信问题."
+            }
+          ]
+        },
+        {
           "title": "最简化的思路",
           "topics": [
             {
@@ -268,6 +276,35 @@
                     },
                     {
                       "title": "可扩展性要强"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "影响通讯框架性能的三个方面",
+              "topics": [
+                {
+                  "title": "传输",
+                  "topics": [
+                    {
+                      "title": "BIO, NIO, AIO "
+                    }
+                  ]
+                },
+                {
+                  "title": "协议",
+                  "topics": [
+                    {
+                      "title": "rpc请求的协议类型, http? dubbo, thrift协议?"
+                    }
+                  ]
+                },
+                {
+                  "title": "线程模型",
+                  "topics": [
+                    {
+                      "title": "使用何种线程模型进行处理socket "
                     }
                   ]
                 }
