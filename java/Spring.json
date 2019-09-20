@@ -163,6 +163,14 @@ public class Lambda {
           ]
         },
         {
+          "title": "beanPostProcessor",
+          "topics": [
+            {
+              "title": "https://fangjian0423.github.io/2017/06/20/spring-bean-post-processor/"
+            }
+          ]
+        },
+        {
           "title": "bean的生命周期",
           "topics": [
             {

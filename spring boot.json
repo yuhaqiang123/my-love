@@ -28,6 +28,15 @@
                   "title": "Repeatable：Java 8 引入的特性，通过关联注解容器定义可重复注解，小小语法糖提高了代码可读性，对于元素有多个重复注解其实是很常见的事情，比如某方法可以是A角色可以访问也可以是B角色可以访问，某方法需要定时任务执行，要在A条件执行也需要在B条件执行"
                 }
               ]
+            },
+            {
+              "title": "命令行中连续的两个减号--就是对application.properties中的属性值进行赋值的标识"
+            },
+            {
+              "title": "configuration可以被自动扫描进spring容器."
+            },
+            {
+              "title": "为什么ConditionalOnClass可以指定class是否在classpath上. 既然已经静态依赖了这个Class,难道还有可能不在classpath上."
             }
           ]
         },
@@ -222,6 +231,10 @@ public int insertUser(User user) {
           "title": "AutoConfiguration配置",
           "topics": [
             {
+              "title": "自动装配一般用于 装配其他maven模块(jar)的类.  如果可以被ComponentScan扫描到 ,就不需要这种方式.
+当想引入ComponentScan之外的类,可以使用自动装配, 也可以使用@Import."
+            },
+            {
               "title": "@Configuration
 @ConditionalOnClass(ExampleService.class)
 @EnableConfigurationProperties(ExampleServiceProperties.class)
@@ -257,6 +270,56 @@ org.springframework.boot.autoconfigure.aop.AopAutoConfiguration"
             },
             {
               "title": "从classpath中搜寻所有的 META-INF/spring.factories 配置文件，并将其中org.springframework.boot.autoconfigure.EnableutoConfiguration 对应的配置项通过反射实例化为对应的标注了@Configuration的JavaConfig形式的IoC容器配置类，然后汇总为一个并加载到IoC容器。"
+            },
+            {
+              "title": "@EnableAutoConfiguration注解，这个注解是通过AutoConfigurationImportSelector来扫描spring.factories文件，把定义的配置类引入的。"
+            }
+          ]
+        },
+        {
+          "title": "如何注册一个bean",
+          "topics": [
+            {
+              "title": "使用component. +component scan"
+            },
+            {
+              "title": "AutoConfiguration",
+              "topics": [
+                {
+                  "title": "引入的是配置类"
+                }
+              ]
+            },
+            {
+              "title": "Import",
+              "topics": [
+                {
+                  "title": "可引入配置类"
+                },
+                {
+                  "title": "   b.ImportSelector的子类 可直接注册bean",
+                  "topics": [
+                    {
+                      "title": "@Import引入ImportBeanDefinitionRegistrar子类"
+                    },
+                    {
+                      "title": "为什么使用这种方式",
+                      "topics": [
+                        {
+                          "title": "如果是第三方包，而且又不是确定的类，并且这些类并不是spring专用，所以不想用spring的注解进行侵入式标识，那么如果找到这些类放到spring的容器呢"
+                        },
+                        {
+                          "title": "例如 mybatis mybatis，使用工具自动生成了一批mapper和entity，而如何把这些普通的类放入容器，就是通过注解@MapperScan
+ 这个注解用@Import引入了MapperScannerRegistrar类，这个类里会取得注解@MapperScan作设置的package，然后扫描这个package下所有的类，并放入容器中。"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Configuration"
             }
           ]
         },
@@ -393,6 +456,25 @@ public @interface EnableAsync {
                       "title": "动态注册Bean（实现 ImportBeanDefinitionRegistrar 接口）"
                     }
                   ]
+                }
+              ]
+            },
+            {
+              "title": "EnableXXX和Import不可划分",
+              "topics": [
+                {
+                  "title": "Enable中可以配置configuration, 或者selecor其实是根据configuration,注册一些bean, 来处理这些注解, 例如enable async,其实是注册一些bean处理async注解"
+                }
+              ]
+            },
+            {
+              "title": "Conditional",
+              "topics": [
+                {
+                  "title": "@ConditionalOnClass：该注解的参数对应的类必须存在，否则不解析该注解修饰的配置类；"
+                },
+                {
+                  "title": "@ConditionalOnMissingBean：该注解表示，如果存在它修饰的类的bean，则不需要再创建这个bean；可以给该注解传入参数例如@ConditionOnMissingBean(name = "example")，这个表示如果name为“example”的bean存在，这该注解修饰的代码块不执行。"
                 }
               ]
             }
