@@ -53,28 +53,86 @@
               "topics": [
                 {
                   "title": "处理数字（numbers）、布尔值（Booleans）、日期（dates"
-                },
+                }
+              ]
+            },
+            {
+              "title": "term 查询",
+              "topics": [
                 {
-                  "title": "term 查询",
-                  "topics": [
-                    {
-                      "title": ""term" : { 
+                  "title": ""term" : { 
                     "price" : 20
                 }"
-                    },
+                },
+                {
+                  "title": "使用倒排索引方式查询, 对于数字, 日期,bool 能精确匹配,对于 文本由于文本会分词, 非精确匹配"
+                },
+                {
+                  "title": "如果想使用对text 使用精确匹配,必须对 text在创建索引时 ,指定不进行分词",
+                  "topics": [
                     {
-                      "title": "使用倒排索引方式查询, 对于数字, 日期,bool 能精确匹配,对于 文本由于文本会分词, 非精确匹配"
-                    },
-                    {
-                      "title": "如果想使用对text 使用精确匹配,必须对 text在创建索引时 ,指定不进行分词",
-                      "topics": [
-                        {
-                          "title": "  "productID" : {
+                      "title": "  "productID" : {
                     "type" : "string",
                     "index" : "not_analyzed" 
                 }"
+                    }
+                  ]
+                },
+                {
+                  "title": "非精确查找, 当查询的term 字段是 list 时, 匹配条件是包含而非 精确等于",
+                  "topics": [
+                    {
+                      "title": "{ "tags" : ["search"] }
+{ "tags" : ["search", "open_source"] } 
+
+{ "term" : { "tags" : "search" } }
+",
+                      "topics": [
+                        {
+                          "title": "[Image]"
+                        },
+                        {
+                          "title": "倒排索引表"
                         }
                       ]
+                    },
+                    {
+                      "title": "它会与以下两个文档 同时 匹配："
+                    },
+                    {
+                      "title": "倒排索引会对字段进行分词. 当然分词时会考虑字段类型. 倒排索引 处理 tags 为list,会建立两个索引记录"
+                    },
+                    {
+                      "title": "由于倒排索引表自身的特性，整个字段是否相等会难以计算，如果确定某个特定文档是否 只（only） 包含我们想要查找的词呢？首先我们需要在倒排索引中找到相关的记录并获取文档 ID，然后再扫描 倒排索引中的每行记录 ，查看它们是否包含其他的 terms 。
+
+可以想象，这样不仅低效，而且代价高昂。正因如此， term 和 terms 是 必须包含（must contain） 操作，而不是 必须精确相等（must equal exactly）",
+                      "topics": [
+                        {
+                          "title": "这种方式非常低效."
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "title": "terms 查询 指定一个待查list, 当字段中包含 list 中任何一个,即命中这个记录"
+                }
+              ]
+            },
+            {
+              "title": "基于term 实现精确等于查询",
+              "topics": [
+                {
+                  "title": "如果一定期望得到我们前面说的那种行为（即整个字段完全相等），最好的方式是增加并索引另一个字段， 这个字段用以存储该字段包含词项的数量，同样以上面提到的两个文档为例，现在我们包括了一个维护标签数的新字段："
+                },
+                {
+                  "title": "[Image]"
+                },
+                {
+                  "title": "使用这个查询",
+                  "topics": [
+                    {
+                      "title": "[Image]"
                     }
                   ]
                 }
