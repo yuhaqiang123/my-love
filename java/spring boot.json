@@ -1,0 +1,487 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "spring boot",
+      "topics": [
+        {
+          "title": "profile",
+          "topics": [
+            {
+              "title": "在运行程序的时候添加--debug标志，这样Spring会打印额外的调试信息"
+            },
+            {
+              "title": "java 注解可以合并.",
+              "topics": [
+                {
+                  "title": "多个注解合并为一个注解"
+                }
+              ]
+            },
+            {
+              "title": "Java注解可以继承, 即注解上声明Inhberited ,子类可继承父类声明的这个注解",
+              "topics": [
+                {
+                  "title": "如果子类没有定义注解的话，能自动从父类获取定义了继承属性的注解，比如Spring的@Service是没有继承特性的，但是@Transactional是有继承特性的，在OO继承体系中使用Spring注解的时候请特别注意这点，理所当然认为注解是能被子类继承的话可能会引起不必要的Bug，需要仔细斟酌是否开启继承"
+                },
+                {
+                  "title": "Repeatable：Java 8 引入的特性，通过关联注解容器定义可重复注解，小小语法糖提高了代码可读性，对于元素有多个重复注解其实是很常见的事情，比如某方法可以是A角色可以访问也可以是B角色可以访问，某方法需要定时任务执行，要在A条件执行也需要在B条件执行"
+                }
+              ]
+            },
+            {
+              "title": "命令行中连续的两个减号--就是对application.properties中的属性值进行赋值的标识"
+            },
+            {
+              "title": "configuration可以被自动扫描进spring容器."
+            },
+            {
+              "title": "为什么ConditionalOnClass可以指定class是否在classpath上. 既然已经静态依赖了这个Class,难道还有可能不在classpath上."
+            }
+          ]
+        },
+        {
+          "title": "注册事件",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "在监听器中可以设置下面几种事件。
+ApplicationStartingEvent
+ApplicationEnvironmentPreparedEvent
+ApplicationPreparedEvent
+ApplicationReadyEvent
+ApplicationFailedEvent",
+              "topics": [
+                {
+                  "title": "@SpringBootApplication()
+public class SpringBootSampleApplication {
+
+    public static void main(String[] args) {
+        SpringApplication application = new SpringApplication(SpringBootSampleApplication.class);
+        application.setBannerMode(Banner.Mode.OFF);
+        application.addListeners(new MyAppListener());
+        application.run(args);
+    }
+}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Profiles",
+          "topics": [
+            {
+              "title": "使用application-{profile}.properties格式来区分不同的Profile，例如一个测试profile（application-test.properties），一个生产环境profile（application-product.properties）"
+            },
+            {
+              "title": "application.properties中列出和启用这些Profiles。列出使用spring.profiles.include，激活其中的一个使用spring.profiles.active"
+            },
+            {
+              "title": "使用yaml",
+              "topics": [
+                {
+                  "title": "spring:
+  output:
+    ansi:
+      enabled: always
+  thymeleaf:
+    cache: false
+  profiles:
+    include:
+    - product
+    - test
+    active: test",
+                  "topics": [
+                    {
+                      "title": "如果需要多个Profile，YAML只需要一个文件即可，profiles之间使用---分隔开",
+                      "topics": [
+                        {
+                          "title": "server:
+    address: 192.168.1.100
+---
+spring:
+    profiles: development
+server:
+    address: 127.0.0.1
+---
+spring:
+    profiles: production
+server:
+    address: 192.168.1.120"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "自动装配",
+          "topics": [
+            {
+              "title": "Spring Boot的核心就是自动配置，它为几乎所有的Spring组件都提供了相应的自动配置类，而且默认是打开的。所以只要相关的jar文件存在，这些自动配置就会被使用。其中有些配置属于必配的（例如Web模板），自动配置会为我们省下不少时间；有些配置（例如数据源）则往往需要我们修改。"
+            },
+            {
+              "title": "Spring的自动配置是非侵入式的，所以如果我们声明了自己的数据源，那么Spring自动配置的嵌入式数据源就会取消",
+              "topics": [
+                {
+                  "title": "[Image]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "SQL数据库自动配置",
+          "topics": [
+            {
+              "title": "如果类路径中包含HSQL、Derby或H2的相应jar包，那么Spring就会自动配置这些嵌入式数据库的实例和数据源。它们会将数据保存在内存中，当程序结束之后数据会丢失。这非常适合开发和测试。"
+            },
+            {
+              "title": "JdbcTemplate和NamedParameterJdbcTemplate会由上面的数据源自动配置。我们直接使用@Autowire注入到程序中即可。"
+            },
+            {
+              "title": "事务控制",
+              "topics": [
+                {
+                  "title": "@Transactional(rollbackFor = Exception.class)
+@Override
+public int insertUser(User user) {
+    int result = userMapper.insertSelective(user);
+    TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter(){
+        @Override
+        public void afterCommit() {
+            System.out.println("Transaction is commit");
+        }
+    });
+    return result;
+}"
+                }
+              ]
+            },
+            {
+              "title": "Transactional标注的方法里面处理一段事务逻辑提交之后，再处理非事务的逻辑"
+            }
+          ]
+        },
+        {
+          "title": "starter",
+          "topics": [
+            {
+              "title": "常见starter",
+              "topics": [
+                {
+                  "title": "https://github.com/ityouknow/awesome-spring-boot/blob/master/starter-list.md"
+                },
+                {
+                  "title": "https://github.com/spring-projects/spring-boot/tree/v1.5.7.RELEASE/spring-boot-starters"
+                }
+              ]
+            },
+            {
+              "title": "starter原理",
+              "topics": [
+                {
+                  "title": "Spring Boot在启动时扫描项目所依赖的JAR包，寻找包含spring.factories文件的JAR包"
+                },
+                {
+                  "title": "根据spring.factories配置加载AutoConfigure类"
+                },
+                {
+                  "title": "根据 @Conditional注解的条件，进行自动配置并将Bean注入Spring Context"
+                }
+              ]
+            },
+            {
+              "title": "starter其实就是AutoConfiguration"
+            },
+            {
+              "title": "虽然不同的starter实现起来各有差异，但是他们基本上都会使用到两个相同的内容：ConfigurationProperties和AutoConfiguration。因为Spring Boot坚信“约定大于配置”这一理念，所以我们使用ConfigurationProperties来保存我们的配置，并且这些配置都可以有一个默认值，即在我们没有主动覆写原始配置的情况下，默认值就会生效，这在很多情况下是非常有用的。除此之外，starter的ConfigurationProperties还使得所有的配置属性被聚集到一个文件中（一般在resources目录下的application.properties），这样我们就告别了Spring项目中XML地狱。"
+            }
+          ]
+        },
+        {
+          "title": "条件化配置",
+          "topics": [
+            {
+              "title": "@ConditionalOnClass，当classpath下发现该类的情况下进行自动配置。"
+            },
+            {
+              "title": "@ConditionalOnMissingBean，当Spring Context中不存在该Bean时。"
+            },
+            {
+              "title": "@ConditionalOnProperty(prefix = "example.service",value = "enabled",havingValue = "true")，当配置文件中example.service.enabled=true时。"
+            },
+            {
+              "title": "@AutoConfigureOrder  //指定自动配置类的顺序",
+              "topics": [
+                {
+                  "title": "@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE) ，这里的 Ordered.HIGHEST_PRECEDENCE  其实是int类型的最小值，代表最高的优先级。"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "AutoConfiguration配置",
+          "topics": [
+            {
+              "title": "自动装配一般用于 装配其他maven模块(jar)的类.  如果可以被ComponentScan扫描到 ,就不需要这种方式.
+当想引入ComponentScan之外的类,可以使用自动装配, 也可以使用@Import."
+            },
+            {
+              "title": "@Configuration
+@ConditionalOnClass(ExampleService.class)
+@EnableConfigurationProperties(ExampleServiceProperties.class)
+public class ExampleAutoConfigure {
+
+    @Autowired
+    private ExampleServiceProperties properties;
+
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnProperty(prefix = "example.service",value = "enabled",havingValue = "true")
+    ExampleService exampleService (){
+        return  new ExampleService(properties.getPrefix(),properties.getSuffix());
+    }
+
+}"
+            },
+            {
+              "title": "在resources/META-INF/下创建spring.factories文件，内容供参考下面~",
+              "topics": [
+                {
+                  "title": "org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.example.autocinfigure.ExampleAutoConfigure"
+                },
+                {
+                  "title": "使用 \分行. 逗号分隔"
+                },
+                {
+                  "title": "org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
+org.springframework.boot.autoconfigure.aop.AopAutoConfiguration"
+                }
+              ]
+            },
+            {
+              "title": "从classpath中搜寻所有的 META-INF/spring.factories 配置文件，并将其中org.springframework.boot.autoconfigure.EnableutoConfiguration 对应的配置项通过反射实例化为对应的标注了@Configuration的JavaConfig形式的IoC容器配置类，然后汇总为一个并加载到IoC容器。"
+            },
+            {
+              "title": "@EnableAutoConfiguration注解，这个注解是通过AutoConfigurationImportSelector来扫描spring.factories文件，把定义的配置类引入的。"
+            }
+          ]
+        },
+        {
+          "title": "如何注册一个bean",
+          "topics": [
+            {
+              "title": "使用component. +component scan"
+            },
+            {
+              "title": "AutoConfiguration",
+              "topics": [
+                {
+                  "title": "引入的是配置类"
+                }
+              ]
+            },
+            {
+              "title": "Import",
+              "topics": [
+                {
+                  "title": "可引入配置类"
+                },
+                {
+                  "title": "   b.ImportSelector的子类 可直接注册bean",
+                  "topics": [
+                    {
+                      "title": "@Import引入ImportBeanDefinitionRegistrar子类"
+                    },
+                    {
+                      "title": "为什么使用这种方式",
+                      "topics": [
+                        {
+                          "title": "如果是第三方包，而且又不是确定的类，并且这些类并不是spring专用，所以不想用spring的注解进行侵入式标识，那么如果找到这些类放到spring的容器呢"
+                        },
+                        {
+                          "title": "例如 mybatis mybatis，使用工具自动生成了一批mapper和entity，而如何把这些普通的类放入容器，就是通过注解@MapperScan
+ 这个注解用@Import引入了MapperScannerRegistrar类，这个类里会取得注解@MapperScan作设置的package，然后扫描这个package下所有的类，并放入容器中。"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Configuration"
+            }
+          ]
+        },
+        {
+          "title": "常见注解",
+          "topics": [
+            {
+              "title": "EnableConfigurationProperties注解的作用是：使使用 @ConfigurationProperties 注解的类生效。",
+              "topics": [
+                {
+                  "title": "如果一个配置类只配置@ConfigurationProperties注解，而没有使用@Component，那么在IOC容器中是获取不到properties 配置文件转化的bean。说白了 @EnableConfigurationProperties 相当于把使用 @ConfigurationProperties 的类进行了一次注入。"
+                },
+                {
+                  "title": "@ConfigurationProperties(prefix = "http") // 自动获取配置文件中前缀为http的属性，把值传入对象参数
+@Setter
+@Getter
+public class HttpProperties {
+
+    // 如果配置文件中配置了http.url属性，则该默认属性会被覆盖
+    private String url = "http://www.baidu.com/";
+
+}",
+                  "topics": [
+                    {
+                      "title": "@Configuration
+@EnableConfigurationProperties(HttpProperties.class)
+public class HttpAutoConfiguration {
+
+    @Resource
+    private HttpProperties properties; // 使用配置
+
+    // 在Spring上下文中创建一个对象
+    @Bean
+    @ConditionalOnMissingBean
+    public HttpClient init() {
+        HttpClient client = new HttpClient();
+
+        String url = properties.getUrl();
+        client.setUrl(url);
+        return client;
+    }
+
+}"
+                    },
+                    {
+                      "title": "org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.nosuchfield.httpstarter.HttpAutoConfiguration"
+                    }
+                  ]
+                },
+                {
+                  "title": "如何使用ConfigurationProerties"
+                },
+                {
+                  "title": "starter其实是把这一些繁琐的配置操作交给了自己，而把简单交给了用户。除了帮助用户去除了繁琐的构建操作，在“约定大于配置”的理念下，ConfigurationProperties还帮助用户减少了无谓的配置操作。并且因为 application.properties 文件的存在，即使需要自定义配置，所有的配置也只需要在一个文件中进行，使用起来非常方便。",
+                  "topics": [
+                    {
+                      "title": "通过properties 配置starter"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "ComponentScan"
+            },
+            {
+              "title": "Import",
+              "topics": [
+                {
+                  "title": "导入额外的配置信息",
+                  "topics": [
+                    {
+                      "title": "直接导入配置类（@Configuration 类）",
+                      "topics": [
+                        {
+                          "title": "@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Import(SchedulingConfiguration.class)
+@Documented
+public @interface EnableScheduling {
+
+}",
+                          "topics": [
+                            {
+                              "title": "@Configuration
+@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+public class SchedulingConfiguration {
+
+	@Bean(name = TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME)
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	public ScheduledAnnotationBeanPostProcessor scheduledAnnotationProcessor() {
+		return new ScheduledAnnotationBeanPostProcessor();
+	}
+
+}"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "title": "依据条件选择配置类（实现 ImportSelector 接口）",
+                      "topics": [
+                        {
+                          "title": "如果并不确定引入哪个配置类，需要根据@Import注解所标识的类或者另一个注解(通常是注解)里的定义信息选择配置类的话，用这种方式"
+                        },
+                        {
+                          "title": "ImportSelector接口只有一个方法",
+                          "topics": [
+                            {
+                              "title": "String[] selectImports(AnnotationMetadata importingClassMetadata);"
+                            },
+                            {
+                              "title": "AnnotationMetadata：用来获得当前配置类上的注解"
+                            }
+                          ]
+                        },
+                        {
+                          "title": "@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import(AsyncConfigurationSelector.class)
+public @interface EnableAsync {
+	Class<? extends Annotation> annotation() default Annotation.class;
+	boolean proxyTargetClass() default false;
+	AdviceMode mode() default AdviceMode.PROXY;
+	int order() default Ordered.LOWEST_PRECEDENCE;
+}"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "动态注册Bean（实现 ImportBeanDefinitionRegistrar 接口）"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "EnableXXX和Import不可划分",
+              "topics": [
+                {
+                  "title": "Enable中可以配置configuration, 或者selecor其实是根据configuration,注册一些bean, 来处理这些注解, 例如enable async,其实是注册一些bean处理async注解"
+                }
+              ]
+            },
+            {
+              "title": "Conditional",
+              "topics": [
+                {
+                  "title": "@ConditionalOnClass：该注解的参数对应的类必须存在，否则不解析该注解修饰的配置类；"
+                },
+                {
+                  "title": "@ConditionalOnMissingBean：该注解表示，如果存在它修饰的类的bean，则不需要再创建这个bean；可以给该注解传入参数例如@ConditionOnMissingBean(name = "example")，这个表示如果name为“example”的bean存在，这该注解修饰的代码块不执行。"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
