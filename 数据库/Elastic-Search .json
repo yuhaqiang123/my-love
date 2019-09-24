@@ -2,7 +2,7 @@
   {
     "title": "画布 1",
     "topic": {
-      "title": "Elastic-Search使用",
+      "title": "Elastic-Search 架构&优化",
       "topics": [
         {
           "title": "tip 提示",
@@ -14,6 +14,39 @@
         },
         {
           "title": "结构化搜索"
+        },
+        {
+          "title": "如何提高 ES 性能",
+          "topics": [
+            {
+              "title": "不要返回大的结果集",
+              "topics": [
+                {
+                  "title": "大量的结果集也就意味着大量的磁盘, 网络 IO"
+                }
+              ]
+            },
+            {
+              "title": "避免稀疏"
+            },
+            {
+              "title": "避免将不相关的数据放到相同的索引中"
+            },
+            {
+              "title": "索引刷新间隔调整: refresh_interval",
+              "topics": [
+                {
+                  "title": "index.refresh_interval: 120s"
+                },
+                {
+                  "title": "默认情况下索引的refresh_interval为1秒,这意味着数据写1秒后就可以被搜索到,每次索引的 refresh 会产生一个新的 lucene 段,这会导致频繁的 segment merge 行为,如果你不需要这么高的搜索实时性,应该降低索引refresh 周期,"
+                }
+              ]
+            },
+            {
+              "title": "segment merge"
+            }
+          ]
         }
       ]
     },

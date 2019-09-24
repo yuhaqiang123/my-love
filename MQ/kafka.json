@@ -341,6 +341,41 @@ payload ： n bytes "
           ]
         },
         {
+          "title": "异常",
+          "topics": [
+            {
+              "title": " Commit cannot be completed due to group rebalance",
+              "topics": [
+                {
+                  "title": "当 reblance 发生时, consumer commit 是不被允许的,因为 rebalance 时, consumer 被分配的分区是不确定的.此时是不允许commit 消费数据的."
+                },
+                {
+                  "title": "此时会发生消息重复消费"
+                },
+                {
+                  "title": "发生原因,等同于为什么会频繁 rebalance的原因?",
+                  "topics": [
+                    {
+                      "title": "consumer 拉取到了数据, 但是按时 commit, 心跳超时断了",
+                      "topics": [
+                        {
+                          "title": "调参 session.timeout.ms"
+                        },
+                        {
+                          "title": "加快消息的消费速度，我推荐的方式是单Consumer拿到消息后放到一个队列中，多线程的方式进行消费处理，设置ShutdownHook保证关闭的时候队列中的消息不丢失"
+                        },
+                        {
+                          "title": "采用自动commit的方式，但是有数据丢失的风险"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "title": "持久化实现",
           "topics": [
             {
