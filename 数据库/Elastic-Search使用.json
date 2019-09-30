@@ -5,12 +5,69 @@
       "title": "Elastic-Search使用",
       "topics": [
         {
+          "title": "参考",
+          "topics": [
+            {
+              "title": "https://mp.weixin.qq.com/s/nKt3NWVG9Gcr-tR48rJpOw",
+              "topics": [
+                {
+                  "title": "搜索引擎选开源的 ElasticSearch 还是商业的 Splunk"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "淘气三千问",
+          "topics": [
+            {
+              "title": "keyword 和 text 的区别",
+              "topics": [
+                {
+                  "title": "Text：会分词，然后进行索引
+       不支持聚合",
+                  "topics": [
+                    {
+                      "title": "用于存储全文搜索数据, 例如: 邮箱内容、地址、代码块、博客文章内容等。"
+                    },
+                    {
+                      "title": "默认结合standard analyzer(标准解析器)对文本进行分词、倒排索引。"
+                    },
+                    {
+                      "title": "默认结合标准分析器进行词命中、词频相关度打分"
+                    }
+                  ]
+                },
+                {
+                  "title": "keyword：不进行分词，直接索引
+       支持模糊、精确查询
+       支持聚合",
+                  "topics": [
+                    {
+                      "title": "用于存储邮箱号码、手机号码、主机名、状态码、邮政编码、标签、年龄、性别等数据。"
+                    },
+                    {
+                      "title": "用于筛选数据(例如: select * from x where status='open')、排序、聚合(统计)。"
+                    },
+                    {
+                      "title": "直接将完整的文本保存到倒排索引中。"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "title": "tip 提示",
           "topics": [
             {
               "title": "term 查询是包含查询, 并不是严格相等查询, 如果一个字分词了, 即使完全匹配可能也可能查不出来, 因为没有命中任何一个分词."
             }
           ]
+        },
+        {
+          "title": "全文搜索"
         },
         {
           "title": "结构化搜索",
@@ -190,9 +247,6 @@
               ]
             }
           ]
-        },
-        {
-          "title": "全文搜索"
         }
       ]
     },
