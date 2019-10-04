@@ -167,6 +167,9 @@ public class Lambda {
           "topics": [
             {
               "title": "https://fangjian0423.github.io/2017/06/20/spring-bean-post-processor/"
+            },
+            {
+              "title": "https://fangjian0423.github.io/2017/06/24/spring-embedded-bean-post-processor/"
             }
           ]
         },
