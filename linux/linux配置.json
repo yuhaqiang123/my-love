@@ -87,6 +87,88 @@
               ]
             }
           ]
+        },
+        {
+          "title": "core dump配置",
+          "topics": [
+            {
+              "title": "当程序运行的过程中异常终止或崩溃，操作系统会将程序当时的内存状态记录下来，保存在一个文件中，这种行为就叫做Core Dump（中文有的翻译成“核心转储”)。core dump 对于编程人员诊断和调试程序是非常有帮助的，因为对于有些程序错误是很难重现的，例如指针异常，而 core dump 文件可以再现程序出错时的情景。"
+            },
+            {
+              "title": "生成core dump",
+              "topics": [
+                {
+                  "title": "在终端中输入命令 ulimit -c ，输出的结果为 0，说明默认是关闭 core dump 的，即当程序异常终止时，也不会生成 core dump 文件"
+                },
+                {
+                  "title": "我们可以使用命令 ulimit -c unlimited 来开启 core dump 功能，并且不限制 core dump 文件的大小； 如果需要限制文件的大小，将 unlimited 改成你想生成 core 文件最大的大小，注意单位为 blocks（KB）"
+                },
+                {
+                  "title": "用上面命令只会对当前的终端环境有效，如果想需要永久生效，可以修改文件 /etc/security/limits.conf文件"
+                }
+              ]
+            },
+            {
+              "title": "文件位置",
+              "topics": [
+                {
+                  "title": "core文件默认的存储位置与对应的可执行程序在同一目录下",
+                  "topics": [
+                    {
+                      "title": "通过下面的命令看到core文件的存在位置："
+                    },
+                    {
+                      "title": "   cat  /proc/sys/kernel/core_pattern"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "core原因",
+              "topics": [
+                {
+                  "title": "内存访问越界",
+                  "topics": [
+                    {
+                      "title": " a) 由于使用错误的下标，导致数组访问越界。"
+                    },
+                    {
+                      "title": "  b) 搜索字符串时，依靠字符串结束符来判断字符串是否结束，但是字符串没有正常的使用结束符。"
+                    },
+                    {
+                      "title": "  c) 使用strcpy, strcat, sprintf, strcmp,strcasecmp等字符串操作函数，将目标字符串读/写爆。应该使用strncpy, strlcpy, strncat, strlcat, snprintf, strncmp, strncasecmp等函数防止读写越界。"
+                    }
+                  ]
+                },
+                {
+                  "title": "多线程程序使用了线程不安全的函数"
+                },
+                {
+                  "title": "多线程读写的数据未加锁保护"
+                },
+                {
+                  "title": "非法指针",
+                  "topics": [
+                    {
+                      "title": ") 使用空指针"
+                    },
+                    {
+                      "title": "  b) 随意使用指针转换。一个指向一段内存的指针，除非确定这段内存原先就分配为某种结构或类型，或者这种结构或类型的数组，否则不要将它转换为这种结构或类型的指针，而应该将这段内存拷贝到一个这种结构或类型中，再访问这个结构或类型。这是因为如果这段内存的开始地址不是按照这种结构或类型对齐的，那么访问它时就很容易因为bus error而core dump。"
+                    }
+                  ]
+                },
+                {
+                  "title": "堆栈溢出",
+                  "topics": [
+                    {
+                      "title": "不要使用大的局部变量（因为局部变量都分配在栈上），这样容易造成堆栈溢出，破坏系统的栈和堆结构，导致出现莫名其妙的错误。  "
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
