@@ -311,6 +311,17 @@ java -version"
                   "title": "查看类实例的柱状信息"
                 }
               ]
+            },
+            {
+              "title": "pmap 490 |sort -t ' ' -n -k 2 -r|less",
+              "topics": [
+                {
+                  "title": "将进程的内存按照大小进行排序"
+                },
+                {
+                  "title": "需要加这个参数  -XX:NativeMemoryTracking=detail"
+                }
+              ]
             }
           ]
         },
