@@ -5,6 +5,14 @@
       "title": "分布式&&zookeeper",
       "topics": [
         {
+          "title": "淘气三千问",
+          "topics": [
+            {
+              "title": "如果leader收到半数ack,发起commit之后, leader挂了, 此时重新选举, 如何保证这个deliver的提议不丢? 或者commit之前,挂了, 如果报障这个提议不被commit"
+            }
+          ]
+        },
+        {
           "title": "部署",
           "topics": [
             {
