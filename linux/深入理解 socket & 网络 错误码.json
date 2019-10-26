@@ -226,6 +226,85 @@
           ]
         },
         {
+          "title": "对于connection timeout/refused的理解",
+          "topics": [
+            {
+              "title": "Client 发送 SYN，Server 收到之后回 SYN_ACK，接着 Client 再回 ACK，这时 Client 便完成了 connect() 调用，进入 ESTAB "
+            },
+            {
+              "title": "Connection timeout",
+              "topics": [
+                {
+                  "title": "如果 Client 发送 SYN 之后，由于网络原因或者其他问题没有收到 Server 的 SYN_ACK，那么这时 Client 便会重传 SYN。重传的次数由内核参数 net.ipv4.tcp_syn_retries 控制，重传的间隔为 [1,3,7,15,31]s"
+                },
+                {
+                  "title": "如果 Client 重传完所有 SYN 之后依然没有收到 SYN_ACK，那么这时 connect() 调用便会抛出 connection timeout 错误。如果 Client 在重传 SYN 期间，Client 的 sock timeout 时间到了，那么这时 connect() 会抛出 timeout 错误"
+                },
+                {
+                  "title": "一个是系统默认最大超时时间, connection timeout"
+                },
+                {
+                  "title": "一个是设置的最大超时时间 timeout"
+                }
+              ]
+            },
+            {
+              "title": "查询工具",
+              "topics": [
+                {
+                  "title": "netstat -s |grep -i listen",
+                  "topics": [
+                    {
+                      "title": "观察socket overflow 和 socket droped"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "连接时 如果backlog满了 服务端怎么办",
+              "topics": [
+                {
+                  "title": " /proc/sys/net/ipv4/tcp_abort_on_overflow",
+                  "topics": [
+                    {
+                      "title": "如果为0 表示直接丢弃."
+                    },
+                    {
+                      "title": "如果为1, 表示会发送reset. 对端发生 connection reset by peer"
+                    }
+                  ]
+                },
+                {
+                  "title": "如果满了是丢弃的话. ",
+                  "topics": [
+                    {
+                      "title": "服务端建立syn_recv状态时, 会建立定时器, 会定时重发sync+ack给客户端."
+                    },
+                    {
+                      "title": "客户端认为是建立状态,会可能发送数据....此时 服务端依然丢弃这些消息. 对方write可能会发生timeout"
+                    },
+                    {
+                      "title": "丢弃重发次数也有上线, 到了上线,对client会发送reset报文"
+                    }
+                  ]
+                },
+                {
+                  "title": "connection refused",
+                  "topics": [
+                    {
+                      "title": "即报文可以从client发送到server,但是该端口上没有进程监听. 报文为 syn-> <-rst "
+                    },
+                    {
+                      "title": "当出现sync报文丢弃,或者backlog满了,网络状况不好时, 会出现connection timeout. (可以先ping一下,确认是否是客户端到服务端网络状况好不好, 如果没问题,大概率是backlog)"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
           "title": "shutdown & close",
           "topics": [
             {
