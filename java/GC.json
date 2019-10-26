@@ -311,6 +311,17 @@ java -version"
                   "title": "查看类实例的柱状信息"
                 }
               ]
+            },
+            {
+              "title": "pmap 490 |sort -t ' ' -n -k 2 -r|less",
+              "topics": [
+                {
+                  "title": "将进程的内存按照大小进行排序"
+                },
+                {
+                  "title": "需要加这个参数  -XX:NativeMemoryTracking=detail"
+                }
+              ]
             }
           ]
         },
@@ -324,7 +335,13 @@ java -version"
               "title": "xmx xms设定要相同,每次申请内存之前,实际上都是需要Full GC  的"
             },
             {
-              "title": "-XX:+HeapDumpOnOutOfMemoryError  在发生OOM时 生成 dump文件"
+              "title": "-XX:+HeapDumpOnOutOfMemoryError  在发生OOM时 生成 dump文件",
+              "makers": [
+                "priority-1",
+                "task-done",
+                "star-red",
+                "symbol-question"
+              ]
             },
             {
               "title": "-XX:+DisableExplictitGC  禁用 System.gc()"
