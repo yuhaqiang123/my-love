@@ -322,6 +322,16 @@ java -version"
                   "title": "需要加这个参数  -XX:NativeMemoryTracking=detail"
                 }
               ]
+            },
+            {
+              "title": "-XX:NativeMemoryTracking=detail
+
+jcmd pid VM.native_memory detail",
+              "topics": [
+                {
+                  "title": "查看各个内存的占用大小"
+                }
+              ]
             }
           ]
         },
