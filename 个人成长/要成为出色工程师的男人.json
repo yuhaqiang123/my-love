@@ -120,6 +120,33 @@
           ]
         },
         {
+          "title": "测试",
+          "topics": [
+            {
+              "title": "压测",
+              "topics": [
+                {
+                  "title": "jmeter"
+                },
+                {
+                  "title": "gatling"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "日志收集",
+          "topics": [
+            {
+              "title": "sentry"
+            },
+            {
+              "title": "falcon"
+            }
+          ]
+        },
+        {
           "title": "Python",
           "makers": [
             "priority-5"

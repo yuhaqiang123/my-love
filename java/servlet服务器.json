@@ -1,0 +1,95 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "servlet服务器",
+      "topics": [
+        {
+          "title": "异步servlet",
+          "topics": [
+            {
+              "title": "connector和worker 本身是异步的"
+            },
+            {
+              "title": "思路",
+              "topics": [
+                {
+                  "title": "如何为一个web应用各个接口进行线程池隔离,避免某一个接口,某一个servlet慢,qps高拖累整体性能."
+                },
+                {
+                  "title": "通过异步servlet. 在worker处理中,将请求处理单独的线程池(由业务方自己管理)"
+                }
+              ]
+            },
+            {
+              "title": "使用方式",
+              "topics": [
+                {
+                  "title": "声明Servlet，注意增加asyncSupported的属性，开启异步处理支持。@WebServlet(urlPatterns = "/demo", asyncSupported = true)"
+                },
+                {
+                  "title": "在Servlet内部，需要独立线程处理的地方，使用request获取异步Context。AsyncContext ctx = req.startAsync();",
+                  "topics": [
+                    {
+                      "title": "开启超时监测线程"
+                    }
+                  ]
+                },
+                {
+                  "title": "在独立线程中，使用异步Context，可以获取到其绑定的request和response，此时，就可以按照原来Servlet的写法，继续编写逻辑了。"
+                },
+                {
+                  "title": "独立线程内的操作处理完成后，需要调用异步Context的complet方法，来结束该异步线程。",
+                  "topics": [
+                    {
+                      "title": "结束超时检测线程, 发出事件,给监听器"
+                    }
+                  ]
+                },
+                {
+                  "title": "注意",
+                  "topics": [
+                    {
+                      "title": "异步Servlet有对应的超时时间，如果在指定的时间内没有执行完操作，response依然会走原来Servlet的结束逻辑，后续的异步操作执行完再写回的时候，可能会遇到异常。"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "spring mvc怎么处理呢?",
+              "topics": [
+                {
+                  "title": "基于servlet 3"
+                },
+                {
+                  "title": "DeferredResult",
+                  "topics": [
+                    {
+                      "title": "通过返回DeferredResult告诉spring 我要异步处理"
+                    }
+                  ]
+                },
+                {
+                  "title": "[Image]"
+                },
+                {
+                  "title": "业务方自己处理, 但是要将结果返回到result中, 通过result.setResult设置返回值. 此时spring就会得到通知. 然后处理response了",
+                  "topics": [
+                    {
+                      "title": "可以通过自己使用线程池"
+                    },
+                    {
+                      "title": "也可以使用spring 的async注解. 异步处理"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

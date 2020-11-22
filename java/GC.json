@@ -324,6 +324,9 @@ java -version"
               ]
             },
             {
+              "title": "jfr 飞行记录仪"
+            },
+            {
               "title": "-XX:NativeMemoryTracking=detail
 
 jcmd pid VM.native_memory detail",
