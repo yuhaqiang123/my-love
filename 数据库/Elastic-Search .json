@@ -47,6 +47,84 @@
               "title": "segment merge"
             }
           ]
+        },
+        {
+          "title": "refresh 和 flush 区别",
+          "topics": [
+            {
+              "title": "[Image]"
+            },
+            {
+              "title": "translog长度达到一定程度的时候，会触发flush操作，否则默认每隔30分钟也会定时flush，其主要过程：",
+              "topics": [
+                {
+                  "title": "4.1. 执行refresh操作将mem buffer中的数据写入到新的segment并写入os cache，然后打开本segment以供search使用，最后再次清空mem buffer。"
+                },
+                {
+                  "title": "4.2. 一个commit point被写入磁盘，这个commit point中标明所有的index segment。"
+                },
+                {
+                  "title": "4.3. filesystem cache（os cache）中缓存的所有的index segment文件被fsync强制刷到磁盘os disk，当index segment被fsync强制刷到磁盘上以后，就会被打开，供查询使用。"
+                },
+                {
+                  "title": "4.4. translog被清空和删除，创建一个新的translog。"
+                }
+              ]
+            },
+            {
+              "title": "refresh",
+              "topics": [
+                {
+                  "title": "最原始的ES版本里，必须等待fsync将segment刷入磁盘，才能将segment打开供search使用，这样的话，从一个document写入到它可以被搜索，可能会超过一分钟，主要瓶颈是在fsync实际发生磁盘IO写数据进磁盘，是很耗时的，这就不是近实时的搜索了。为此，引入refresh操作的目的是提高ES的实时性，使添加文档尽可能快的被搜索到，同时又避免频繁fsync带来性能开销，依靠的原理就是文件系统缓存OS cache里缓存的文件可以被打开(open/reopen)和读取，而这个os cache实际是一块内存区域，而非磁盘，所以操作是很快的。"
+                },
+                {
+                  "title": "优化",
+                  "topics": [
+                    {
+                      "title": "1）数据写入到内存buffer队列中"
+                    },
+                    {
+                      "title": "2）每隔一定时间，buffer中的数据被写入segment文件，然后先写入os cache"
+                    },
+                    {
+                      "title": "3）只要segment数据写入os cache，那就直接打开segment供search使用，而不必调用fsync将segment刷新到磁盘"
+                    },
+                    {
+                      "title": "将缓存数据生成segment后刷入os cache，并被打开供搜索的过程就叫做refresh，默认每隔1秒。也就是说，每隔1秒就会将buffer中的数据写入一个新的index segment file，先写入os cache中。所以，es是近实时的，输入写入到os cache中可以被搜索，默认是1秒，所以从数据插入到被搜索到，最长是1秒（可配）。"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "flush操作与translog",
+              "topics": [
+                {
+                  "title": "index segment刷入到os cache后就可以打开供查询，这个操作是有潜在风险的，因为os cache中的数据有可能在意外的故障中丢失，而此时数据必备并未刷入到os disk，此时数据丢失将是不可逆的，这个时候就需要一种机制，可以将对es的操作记录下来，来确保当出现故障的时候，已经落地到磁盘的数据不会丢失，并在重启的时候可以从操作记录中将数据恢复过来。elasticsearch提供了translog来记录这些操作，结合os cached segments数据定时落盘来实现数据可靠性保证（flush）"
+                },
+                {
+                  "title": "translog记录的是已经在内存生成(segments)并存储到os cache但是还没写到磁盘的那些索引操作（注意，有一种解释说，添加到buffer中但是没有被存入segment中的数据没有被记录到translog中，这依赖于写translog的时机，不同版本可能有变化，不影响理解），此时这些新写入的数据可以被搜索到，但是当节点挂掉后这些未来得及落入磁盘的数据就会丢失，可以通过trangslog恢复。"
+                },
+                {
+                  "title": "translog只是记录了操作,用于崩溃恢复. 由于是追加写入,所以速度极快."
+                },
+                {
+                  "title": "translog可能会丢失吗?",
+                  "topics": [
+                    {
+                      "title": "当然translog本身也是磁盘文件，频繁的写入磁盘会带来巨大的IO开销，因此对translog的追加写入操作的同样操作的是os cache，因此也需要定时落盘（fsync）。translog落盘的时间间隔直接决定了ES的可靠性，因为宕机可能导致这个时间间隔内所有的ES操作既没有生成segment磁盘文件，又没有记录到Translog磁盘文件中，导致这期间的所有操作都丢失且无法恢复。"
+                    },
+                    {
+                      "title": "translog的fsync是ES在后台自动执行的，默认是每5秒钟主动进行一次translog fsync，或者当translog文件大小大于512MB主动进行一次fsync，对应的配置是"
+                    },
+                    {
+                      "title": "从ES2.0开始，每次index、bulk、delete、update完成的时候也会触发translog flush，当flush到磁盘成功后才给请求端返回 200 OK。这个改变提高了数据安全性，但是会对写入的性能造成不小的影响，因此在可靠性要求不十分严格且写入效率优先的情况下，可以在 index template 里设置如下参数："index.translog.durability":"async"，这相当于关闭了index、bulk等操作的同步flush translog操作，仅使用默认的定时刷新、文件大小阈值刷新的机制，同时可以调高 "index.translog.sync_interval":30s (默认是5s)和index.translog.flush_threshold_size"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
         }
       ]
     },
