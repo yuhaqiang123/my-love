@@ -1,0 +1,98 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "增长发券使用现状梳理",
+      "topics": [
+        {
+          "title": "按承载形式",
+          "topics": [
+            {
+              "title": "落地页",
+              "topics": [
+                {
+                  "title": "合集",
+                  "topics": [
+                    {
+                      "title": "券活动"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "按场景区分",
+          "topics": [
+            {
+              "title": "投放",
+              "topics": [
+                {
+                  "title": "头条抖音等渠道"
+                }
+              ]
+            },
+            {
+              "title": "老带新",
+              "topics": [
+                {
+                  "title": "老用户分享H5链接"
+                }
+              ]
+            },
+            {
+              "title": "扩科"
+            }
+          ]
+        },
+        {
+          "title": "按发券时机",
+          "topics": [
+            {
+              "title": "进入下单页",
+              "topics": [
+                {
+                  "title": "用户是否有券, 没有帮用户领取"
+                }
+              ]
+            },
+            {
+              "title": "支付后",
+              "topics": [
+                {
+                  "title": "需确认支付发券是 增长代领还是 使用下单发券规则发券"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "发券类型",
+          "topics": [
+            {
+              "title": "立减券"
+            },
+            {
+              "title": "满减券",
+              "topics": [
+                {
+                  "title": "满减目前是临时方案.没有单独的满减券类型"
+                }
+              ]
+            },
+            {
+              "title": "无",
+              "topics": [
+                {
+                  "title": "某些投放模板没有券"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

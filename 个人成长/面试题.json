@@ -1,0 +1,27 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "面试题",
+      "topics": [
+        {
+          "title": "数据库",
+          "topics": [
+            {
+              "title": "写数据库 & 写缓存, 发消息 如何保证事务一致性"
+            }
+          ]
+        },
+        {
+          "title": "缓存",
+          "topics": [
+            {
+              "title": "缓存的更新策略  先删除缓存, 还是操作数据库"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

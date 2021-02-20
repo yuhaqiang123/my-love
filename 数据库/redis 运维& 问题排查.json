@@ -1,0 +1,89 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "redis 运维& 问题排查",
+      "topics": [
+        {
+          "title": "慢查询日志",
+          "topics": [
+            {
+              "title": "配置参数",
+              "topics": [
+                {
+                  "title": " 1. showlog-log-slower-than",
+                  "topics": [
+                    {
+                      "title": "执行是时间超过多少微秒的命令将会被记录到日志上。"
+                    },
+                    {
+                      "title": "默认 10ms"
+                    }
+                  ]
+                },
+                {
+                  "title": " 2. slowlog-max-len",
+                  "topics": [
+                    {
+                      "title": "服务器最多保存多少条慢查询日志。"
+                    },
+                    {
+                      "title": "服务器使用FIFO的方式保存多条查询日志，当服务器存储的慢查询日志数量等于showlog-max-len选项时，服务器在添加一条新的慢查询日志之前，会先将最旧的慢查询日志删除。"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "使用方式",
+              "topics": [
+                {
+                  "title": "SLOWLOG GET",
+                  "topics": [
+                    {
+                      "title": "通过该命令查看服务器所保存的慢查询日志。"
+                    }
+                  ]
+                },
+                {
+                  "title": "SLOWLOG LEN",
+                  "topics": [
+                    {
+                      "title": "获取慢查询列表当前的长度"
+                    }
+                  ]
+                },
+                {
+                  "title": "SLOWLOG RESET",
+                  "topics": [
+                    {
+                      "title": "对慢查询列表清理（重置）"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "Redis命令执行流程",
+              "topics": [
+                {
+                  "title": "1、发送命令
+2、命令排队
+3、命令执行
+4、返回结果"
+                },
+                {
+                  "title": "慢查询只统计步骤3的时间,所以没有慢查询并不代表客户端没有超时问题。"
+                },
+                {
+                  "title": "redis的慢查询记录时间指的是不包括像客户端响应、发送回复等IO操作，而单单是执行一个查询命令所耗费的时间"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
