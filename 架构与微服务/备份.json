@@ -1,0 +1,146 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "备份",
+      "topics": [
+        {
+          "title": "按照备份时机",
+          "topics": [
+            {
+              "title": "运行时热备份"
+            },
+            {
+              "title": "离线备份"
+            },
+            {
+              "title": "运行时 限制性热备份",
+              "topics": [
+                {
+                  "title": "热备份时 对功能 和性能有损耗"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "按照备份内容",
+          "topics": [
+            {
+              "title": "裸文件备份",
+              "topics": [
+                {
+                  "title": "mysql 备份物理文件"
+                },
+                {
+                  "title": "redis rdb 文件备份"
+                }
+              ]
+            },
+            {
+              "title": "逻辑备份",
+              "topics": [
+                {
+                  "title": "mysqldump 备份sql"
+                },
+                {
+                  "title": "binlog 按照 row 备份"
+                },
+                {
+                  "title": "redis AOF  备份写命令"
+                },
+                {
+                  "title": "binlog 按照sql 备份"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "redis 备份",
+          "topics": [
+            {
+              "title": " RDB（默认）",
+              "topics": [
+                {
+                  "title": "Redis默认的持久化方式。按照一定的时间将内存的数据以快照的形式保存到硬盘中，对应产生的数据文件为dump.rdb。通过配置文件中的save参数来定义快照的周期。"
+                },
+                {
+                  "title": "定时"
+                },
+                {
+                  "title": "复制内存中的数据 相当于裸文件复制"
+                },
+                {
+                  "title": "优势",
+                  "topics": [
+                    {
+                      "title": "1、只有一个文件 dump.rdb，方便持久化。"
+                    },
+                    {
+                      "title": "2、容灾性好，一个文件可以保存到安全的磁盘。"
+                    },
+                    {
+                      "title": "3、性能最大化，fork 子进程来完成写操作，让主进程继续处理命令，所以是 IO 最大化。使用单独子进程来进行持久化，主进程不会进行任何 IO 操作，保证了 redis 的高性能"
+                    },
+                    {
+                      "title": "4.相对于数据集大时，比 AOF 的启动效率更高。"
+                    }
+                  ]
+                },
+                {
+                  "title": "缺点",
+                  "topics": [
+                    {
+                      "title": "1、数据安全性低。RDB 是间隔一段时间进行持久化，如果持久化之间 redis 发生故障，会发生数据丢失。所以这种方式更适合数据要求不严谨的时候)"
+                    },
+                    {
+                      "title": "2、AOF（Append-only file)持久化方式： 是指所有的命令行记录以 redis 命令请 求协议的格式完全持久化存储)保存为 aof 文件。"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "AOF",
+              "topics": [
+                {
+                  "title": "将Redis执行的每次写命令记录到单独的日志文件中，当重启Redis会重新将持久化的日志中文件恢复数据。"
+                },
+                {
+                  "title": "优势",
+                  "topics": [
+                    {
+                      "title": "1、数据安全，aof 持久化可以配置 appendfsync 属性，有 always，每进行一次 命令操作就记录到 aof 文件中一次。"
+                    },
+                    {
+                      "title": "2、通过 append 模式写文件，即使中途服务器宕机，可以通过 redis-check-aof 工具解决数据一致性问题。"
+                    },
+                    {
+                      "title": "3、AOF 机制的 rewrite 模式。AOF 文件没被 rewrite 之前（文件过大时会对命令 进行合并重写），可以删除其中的某些命令（比如误操作的 flushall）)"
+                    }
+                  ]
+                },
+                {
+                  "title": "缺点",
+                  "topics": [
+                    {
+                      "title": "1、AOF 文件比 RDB 文件大，且恢复速度慢。"
+                    },
+                    {
+                      "title": "2、数据集大的时候，比 rdb 启动效率低。"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "当两种方式同时开启时，数据恢复Redis会优先选择AOF恢复。"
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
