@@ -1,0 +1,57 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "redis 具体实用场景",
+      "topics": [
+        {
+          "title": "缓存",
+          "topics": [
+            {
+              "title": "对于一致性要求不高, 但访问高的数据",
+              "topics": [
+                {
+                  "title": "例如所有的班课数据"
+                },
+                {
+                  "title": "用户数据"
+                },
+                {
+                  "title": "优惠券数据"
+                }
+              ]
+            },
+            {
+              "title": "数据库不适合存储的数据",
+              "topics": [
+                {
+                  "title": "例如一分钟内请求量 限速"
+                },
+                {
+                  "title": "验证码限速"
+                },
+                {
+                  "title": "密码失败 每天限制数量 ",
+                  "topics": [
+                    {
+                      "title": "高频数据, 如果写库, 数据量比较大"
+                    }
+                  ]
+                },
+                {
+                  "title": "共享Session",
+                  "topics": [
+                    {
+                      "title": "但是现在服务基本上不使用session"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
