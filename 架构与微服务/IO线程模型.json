@@ -1,0 +1,108 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "IO线程模型",
+      "topics": [
+        {
+          "title": "reactor线程模型",
+          "topics": [
+            {
+              "title": "reactor线程模型并不是之应用于网络编程, 并不是netty所独有，其是一种并发编程模型"
+            },
+            {
+              "title": "具体分类",
+              "topics": [
+                {
+                  "title": "单线程reactor线程模型",
+                  "topics": [
+                    {
+                      "title": "只有一个 accept线程模型"
+                    }
+                  ]
+                },
+                {
+                  "title": "多线程reactor线程模型",
+                  "topics": [
+                    {
+                      "title": "有多个accpet线程"
+                    }
+                  ]
+                },
+                {
+                  "title": "混合型reactor线程模型",
+                  "topics": [
+                    {
+                      "title": "有多个任务类型, 每个任务类型处理流程不同, 和多线程模型并无不同"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "title": "概念定义",
+              "topics": [
+                {
+                  "title": "通常将接受任务的线程称之为Accpet Thread。而任务的处理过程都是一个线程(worker thread)内完成的"
+                }
+              ]
+            },
+            {
+              "title": "单线程reactor模型",
+              "topics": [
+                {
+                  "title": "[Image]"
+                }
+              ]
+            },
+            {
+              "title": "多线程reactor模型",
+              "topics": [
+                {
+                  "title": "[Image]"
+                }
+              ]
+            },
+            {
+              "title": "混合型reactor线程模型",
+              "topics": [
+                {
+                  "title": "[Image]"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "netty典型reactor模型",
+          "topics": [
+            {
+              "title": "单线程处理模型",
+              "topics": [
+                {
+                  "title": "[Image]"
+                },
+                {
+                  "title": "accept模型 (也是NioEventLoop)只处理连接建立请求, 连接建立成功后, 交给NioEventLoop处理 读写请求
+相当于第一个accept 线程内部封装了一个epoll. 只处理connect请求"
+                }
+              ]
+            },
+            {
+              "title": "实际上可分离 三个过程",
+              "topics": [
+                {
+                  "title": "1. 请求建立 当大量请求建立时, 需要考虑高并发. 此时可使用多线程"
+                },
+                {
+                  "title": "子主题 2"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
