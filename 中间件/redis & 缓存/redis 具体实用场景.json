@@ -49,6 +49,17 @@
               ]
             }
           ]
+        },
+        {
+          "title": "redis 存储大list ",
+          "topics": [
+            {
+              "title": "由于使用单一的list 巨大, 创建和删除都会给redis带来抖动"
+            },
+            {
+              "title": "可以考虑在redis 大key上做 hash, 例如userId, 使用key:num  num = userId % 100 ."
+            }
+          ]
         }
       ]
     },

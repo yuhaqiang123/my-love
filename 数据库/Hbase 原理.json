@@ -1,0 +1,125 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "Hbase 原理",
+      "topics": [
+        {
+          "title": "如何根据 RowKey定位到Region",
+          "topics": [
+            {
+              "title": "基本原理",
+              "topics": [
+                {
+                  "title": "HBase的数据分片按表进行，以行为粒度，基于rowkey范围进行拆分，每个分片称为一个region。"
+                },
+                {
+                  "title": "一个集群有多张表，每张表划分为多个region，每台服务器服务很多region。所以，HBase的服务器称为RegionServer，简称RS。
+RS与表是正交的，即一张表的region会分布到多台RS上，一台RS也会调度多张表的region",
+                  "topics": [
+                    {
+                      "title": "子主题 1"
+                    }
+                  ]
+                },
+                {
+                  "title": "可以把 region 等同于 partition, shard, slot"
+                }
+              ]
+            },
+            {
+              "title": "两层路由",
+              "topics": [
+                {
+                  "title": "一是rowkey到region的路由，",
+                  "topics": [
+                    {
+                      "title": "一致性 hash方案",
+                      "topics": [
+                        {
+                          "title": "无法进行范围查找, 例如指定key1-100, 由于key经过hash, 
+也就意味着 这个范围的数据 可能分布到所有的节点"
+                        }
+                      ]
+                    },
+                    {
+                      "title": "排序后 路由表方案 例如
+       ------key x    region 1
+key x+1--- key y    region 2
+key y+1 ----          region 3"
+                    }
+                  ]
+                },
+                {
+                  "title": "二是region到RS的路由"
+                }
+              ]
+            },
+            {
+              "title": "Region 如何生成",
+              "topics": [
+                {
+                  "title": "建表时进行预分区：通过对rowkey进行预估，预先划分好region",
+                  "topics": [
+                    {
+                      "title": "默认1个分区"
+                    }
+                  ]
+                },
+                {
+                  "title": "region分裂：手工分裂，或达到一定条件时自动分裂(如region大小超过一个阈值)"
+                },
+                {
+                  "title": "region合并：手工合并"
+                }
+              ]
+            },
+            {
+              "title": "如何将业务查询逻辑转换为HBase的查询逻辑? ",
+              "topics": [
+                {
+                  "title": "需要把业务查询的查询方式 转化为 HBase 高效查询 "
+                }
+              ]
+            },
+            {
+              "title": "region的元数据管理与路由",
+              "topics": [
+                {
+                  "title": "写入时基本流程 ",
+                  "topics": [
+                    {
+                      "title": "ZK上找meta表所在的RS(缓存)"
+                    },
+                    {
+                      "title": "到meta表上找rowkey所在的region及这个region所在的RS(缓存)"
+                    },
+                    {
+                      "title": "发Put请求给这个RS，RS根据region名字来执行写操作"
+                    },
+                    {
+                      "title": "如果RS发现这个region不在自己这里，抛异常，客户端重新路由"
+                    }
+                  ]
+                },
+                {
+                  "title": "优点：region的归属RS可以任意更换，或者说，region在RS上的调度是灵活的、可人工干预的。
+缺点：meta表是一个单点，其有限的吞吐限制了集群的规模和客户端数量"
+                },
+                {
+                  "title": "为了降低客户端对meta表的访问，客户端会缓存region location信息，当且仅当缓存不正确时，才需要访问meta表来获取最新的信息。
+
+Base的请求路由是一种基于路由表的解决方案。相对应的，基于一致性Hash的分片方式，则是通过计算来得到分布信息的"
+                },
+                {
+                  "title": "如果是一致性hash 的话, 请求会经过 取余等运算, 找到相应的分片. 此时无法支持范围查询, (范围查询会被分散到全部节点) "
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]

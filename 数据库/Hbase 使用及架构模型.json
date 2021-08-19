@@ -1,0 +1,14 @@
+[
+  {
+    "title": "画布 1",
+    "topic": {
+      "title": "Hbase 使用及架构模型",
+      "topics": [
+        {
+          "title": "特性"
+        }
+      ]
+    },
+    "structure": "org.xmind.ui.map.unbalanced"
+  }
+]
